@@ -1,0 +1,40 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+// prisma/prisma.schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String    @id @default(auto()) @map("_id") @db.ObjectId
+  fullName          String
+  email             String    @unique
+  password          String?   // Optional for OAuth users
+  hasCreatedProfile Boolean   @default(false)
+  image             String?   // Optional profile image
+  
+  // Authentication related fields
+  provider          String?   // "credentials", "google", or "github"
+  providerId        String?   // ID from OAuth provider
+  
+  // Timestamps
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  // You might want to add related models
+  // For example:
+  // proposals        Proposal[]
+  // clients          Client[]
+
+  @@map("users")
+}
