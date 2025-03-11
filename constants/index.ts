@@ -1,4 +1,10 @@
-// WordPress Designer Skills
+export const JOB_TITLES = [
+  "WordPress Designer",
+  "Frontend Developer",
+  "Backend Developer",
+  "Fullstack Developer",
+];
+
 export const WORDPRESS_DESIGNER_SKILLS = [
   "WordPress Theme Development",
   "PHP",

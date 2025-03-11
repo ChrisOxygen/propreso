@@ -31,10 +31,53 @@ model User {
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
   
-  // You might want to add related models
-  // For example:
-  // proposals        Proposal[]
-  // clients          Client[]
+  
+  
+    // You might want to add related models
+    // For example:
+    // proposals        Proposal[]
+    // clients          Client[]
+    profile           Profile[]
 
   @@map("users")
+}
+
+model Profile {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  jobTitle    String    // Professional title/role
+  bio         String    // Professional biography
+  skills      String[]  // Array of skills
+  isDefault   Boolean   @default(false)  // Indicates if this is the default profile
+  
+  
+  // Relation to User
+  userId      String    @db.ObjectId
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Relation to Projects
+  projects    Project[]
+  
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  @@map("profiles")
+}
+
+model Project {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String   // Project title
+  description String   // Project description, problems solved and technologies used
+  liveLink    String?  // Optional live URL
+  githubLink  String?  // Optional GitHub URL
+  
+  // Relation to Profile
+  profileId   String   @db.ObjectId
+  profile     Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("projects")
 }

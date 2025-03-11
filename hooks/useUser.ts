@@ -2,13 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 
 // Define the User type based on your Prisma schema
-type User = {
-  id: string;
-  name: string;
-  email: string;
-  hasCreatedProfile: boolean;
-  // ... other user properties
-};
 
 export const useUser = () => {
   const { data: session } = useSession();

@@ -30,3 +30,20 @@ export const loginFormSchema = z.object({
     message: "Password is required.",
   }),
 });
+
+export const projectSchema = z.object({
+  projects: z
+    .array(
+      z.object({
+        title: z.string().min(1, "Project title is required"),
+        liveLink: z.string().url("Must be a valid URL").or(z.literal("")),
+        githubLink: z.string().url("Must be a valid URL").or(z.literal("")),
+        description: z
+          .string()
+          .min(10, "Description should be at least 10 characters")
+          .max(500, "Description should not exceed 500 characters"),
+      })
+    )
+    .min(1, "At least one project is required")
+    .max(4, "Maximum of 4 projects allowed"),
+});

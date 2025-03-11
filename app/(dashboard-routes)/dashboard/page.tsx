@@ -1,5 +1,7 @@
 "use client";
 
+import DashboardHeader from "@/components/DashboardHeader";
+import DashboardProfileSection from "@/components/DashboardProfileSection";
 import InBoxLoader from "@/components/InBoxLoader";
 import NoProfile from "@/components/NoProfile";
 import { useUser } from "@/hooks/useUser";
@@ -14,11 +16,9 @@ function DashBoard() {
       {!user?.hasCreatedProfile ? (
         <NoProfile />
       ) : (
-        <div className="flex flex-col items-center justify-center h-full">
-          <h1 className="text-4xl font-semibold">Welcome back, {user?.name}</h1>
-          <p className="text-lg mt-2">
-            You&apos;re logged in with {user?.email}
-          </p>
+        <div className="flex flex-col  h-full w-full">
+          <DashboardHeader />
+          <DashboardProfileSection />
         </div>
       )}
     </>

@@ -1,41 +1,44 @@
 "use client";
-import React, { Dispatch, useReducer } from "react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { FiArrowRight } from "react-icons/fi";
+import Step1 from "@/components/create-profile/Step1";
+import Step2 from "@/components/create-profile/Step2";
+import Step3 from "@/components/create-profile/Step3";
+import Step4 from "@/components/create-profile/Step4";
+import React, { useReducer } from "react";
 
 // Form state reducer
-const initialState = {
+const initialState: CreateProfileState = {
   currentStep: 1,
   userInformation: {
     jobTitle: "",
     skills: [],
     bio: "",
-    portfolioProjects: [],
+    projects: [],
   },
   // Add more fields as needed for other steps
 };
 
-interface State {
-  currentStep: number;
-  field: string;
-}
-
-interface Action {
-  type: string;
-  payload?: any;
-}
-
-function formReducer(state: State, action: Action) {
+function formReducer(state: CreateProfileState, action: CreateProfileAction) {
   switch (action.type) {
-    case "SET_FIELD":
-      return { ...state, field: action.payload };
+    case "SET_JOB_TITLE":
+      return {
+        ...state,
+        userInformation: { ...state.userInformation, jobTitle: action.payload },
+      };
+    case "SET_SKILLS":
+      return {
+        ...state,
+        userInformation: { ...state.userInformation, skills: action.payload },
+      };
+    case "SET_BIO":
+      return {
+        ...state,
+        userInformation: { ...state.userInformation, bio: action.payload },
+      };
+    case "SET_PROJECTS":
+      return {
+        ...state,
+        userInformation: { ...state.userInformation, projects: action.payload },
+      };
     case "NEXT_STEP":
       return { ...state, currentStep: state.currentStep + 1 };
     case "PREV_STEP":
@@ -48,83 +51,13 @@ function formReducer(state: State, action: Action) {
 }
 
 // Step 1 Component
-const Step1 = ({
-  state,
-  dispatch,
-}: {
-  state: State;
-  dispatch: Dispatch<Action>;
-}) => {
-  return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold">Select Your Field</h2>
-        <p className="text-gray-600 mt-2">
-          Please select your professional field from the options below.
-        </p>
-      </div>
-
-      <div className="mt-4">
-        <Select
-          onValueChange={(value) =>
-            dispatch({ type: "SET_FIELD", payload: value })
-          }
-          value={state.field}
-        >
-          <SelectTrigger className="w-full border-black">
-            <SelectValue placeholder="Select your field" />
-          </SelectTrigger>
-          <SelectContent className="bg-white border-black">
-            <SelectItem value="wordpress-designer">
-              WordPress Designer
-            </SelectItem>
-            <SelectItem value="frontend-developer">
-              Frontend Developer
-            </SelectItem>
-            <SelectItem value="backend-developer">
-              Back-end Developer
-            </SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className="mt-6">
-        <Button
-          className="w-full bg-black text-white hover:bg-gray-800 flex items-center justify-center gap-2"
-          disabled={!state.field}
-          onClick={() => dispatch({ type: "NEXT_STEP" })}
-        >
-          Next
-          <FiArrowRight />
-        </Button>
-      </div>
-    </div>
-  );
-};
 
 // Step placeholders for future steps
-const Step2 = () => <div>Step 2 content will go here</div>;
-const Step3 = () => <div>Step 3 content will go here</div>;
-const Step4 = () => <div>Step 4 content will go here</div>;
 
 export default function MultiStepForm() {
   const [state, dispatch] = useReducer(formReducer, initialState);
 
-  // Render the current step
-  const renderStep = () => {
-    switch (state.currentStep) {
-      case 1:
-        return <Step1 state={state} dispatch={dispatch} />;
-      case 2:
-        return <Step2 state={state} dispatch={dispatch} />;
-      case 3:
-        return <Step3 state={state} dispatch={dispatch} />;
-      case 4:
-        return <Step4 state={state} dispatch={dispatch} />;
-      default:
-        return <Step1 state={state} dispatch={dispatch} />;
-    }
-  };
+  const { currentStep } = state;
 
   return (
     <div className="min-h-screen bg-white text-black">
@@ -159,7 +92,12 @@ export default function MultiStepForm() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow">{renderStep()}</div>
+        <div className="bg-white p-6 rounded-lg border">
+          {currentStep === 1 && <Step1 state={state} dispatch={dispatch} />}
+          {currentStep === 2 && <Step2 state={state} dispatch={dispatch} />}
+          {currentStep === 3 && <Step3 state={state} dispatch={dispatch} />}
+          {currentStep === 4 && <Step4 state={state} dispatch={dispatch} />}
+        </div>
       </div>
     </div>
   );
