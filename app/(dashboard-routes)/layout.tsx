@@ -21,9 +21,10 @@ interface NavItemProps {
   icon: React.ReactNode;
   label: string;
   isActive: boolean;
+  onClick: () => void;
 }
 
-const NavItem = ({ href, icon, label, isActive }: NavItemProps) => (
+const NavItem = ({ href, icon, label, isActive, onClick }: NavItemProps) => (
   <Link
     href={href}
     className={cn(
@@ -32,6 +33,7 @@ const NavItem = ({ href, icon, label, isActive }: NavItemProps) => (
         ? "bg-gray-800 text-white"
         : "text-gray-400 hover:bg-gray-800 hover:text-white"
     )}
+    onClick={onClick}
   >
     <div className="text-xl">{icon}</div>
     <span>{label}</span>
@@ -64,6 +66,12 @@ function DashboardLayout({ children }: { children: ReactNode }) {
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
+  };
+
+  const closeSidebar = () => {
+    if (window.innerWidth < 768) {
+      setSidebarOpen(false);
+    }
   };
 
   const handleLogout = () => {
@@ -112,6 +120,7 @@ function DashboardLayout({ children }: { children: ReactNode }) {
                 icon={item.icon}
                 label={item.label}
                 isActive={pathname === item.href}
+                onClick={closeSidebar}
               />
             ))}
           </nav>
@@ -148,7 +157,7 @@ function DashboardLayout({ children }: { children: ReactNode }) {
       {sidebarOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
-          onClick={toggleSidebar}
+          onClick={closeSidebar}
         />
       )}
 

@@ -23,6 +23,7 @@ function DashboardProfileSection() {
     null
   );
   const [expandBio, setExpandBio] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(false);
 
   // Fetch all profiles
   const {
@@ -55,6 +56,10 @@ function DashboardProfileSection() {
     console.log(`Edit project ${projectId}`);
   };
 
+  const toggleSidebar = () => {
+    setShowSidebar(!showSidebar);
+  };
+
   if (error) {
     return (
       <div className="text-center py-6">
@@ -68,9 +73,6 @@ function DashboardProfileSection() {
       </div>
     );
   }
-
-  console.log("profiles", profiles);
-  console.log("selectedProfileDetails", selectedProfileDetails);
 
   const renderBio = (bio: string) => {
     if (!bio) return <p className="text-gray-500 italic">No bio available</p>;
@@ -127,7 +129,13 @@ function DashboardProfileSection() {
         className={`mb-3 cursor-pointer hover:border-gray-400 transition-colors ${
           profile.id === selectedProfileId ? "border-black" : ""
         }`}
-        onClick={() => setSelectedProfileId(profile.id)}
+        onClick={() => {
+          setSelectedProfileId(profile.id);
+          // On mobile, close the sidebar when a profile is selected
+          if (window.innerWidth < 1024) {
+            setShowSidebar(false);
+          }
+        }}
       >
         <CardContent className="p-4">
           <div className="flex justify-between items-center">
@@ -330,15 +338,43 @@ function DashboardProfileSection() {
   };
 
   return (
-    <section className="grid grid-cols-[minmax(300px,500px)_1fr] h-full">
-      {/* Left Section - Profile List */}
-      <div className="border-r border-gray-200 p-6">
-        <h2 className="font-bold text-xl mb-6">Your Profiles</h2>
-        {renderProfileList()}
+    <section className="flex h-full">
+      {/* Mobile toggle for profile list */}
+      <div className="lg:hidden fixed top-4 right-4 z-30">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={toggleSidebar}
+          className="bg-black text-white border-none"
+        >
+          {showSidebar ? "Hide Profiles" : "Show Profiles"}
+        </Button>
       </div>
 
-      {/* Right Section - Profile Details */}
-      <div className="bg-white">{renderProfileDetails()}</div>
+      {/* Profile list sidebar - responsive */}
+      <div
+        className={`${
+          showSidebar ? "fixed inset-0 z-20 bg-black bg-opacity-40" : "hidden"
+        } lg:block lg:static lg:bg-transparent lg:z-auto`}
+        onClick={() => setShowSidebar(false)}
+      >
+        <div
+          className={`${
+            showSidebar
+              ? "translate-x-0 w-[300px] max-w-[80vw]"
+              : "-translate-x-full"
+          } fixed z-20 left-0 top-0 h-full overflow-y-auto lg:translate-x-0 lg:static lg:w-64 lg:max-w-[300px] lg:mr-4 transition-transform duration-300 ease-in-out bg-white border-r border-gray-200 p-6`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <h2 className="font-bold text-xl mb-6">Your Profiles</h2>
+          {renderProfileList()}
+        </div>
+      </div>
+
+      {/* Main content area - full width on mobile, adjusted on desktop */}
+      <div className="flex-1 w-full bg-white overflow-y-auto pt-14 lg:pt-0">
+        {renderProfileDetails()}
+      </div>
     </section>
   );
 }

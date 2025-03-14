@@ -45,16 +45,11 @@ function ProposalSection() {
   useEffect(() => {
     if (analizeJobDetailsSuccess && analizeJobDetailsApiResponse) {
       // Extract the job description from the analyzed data
-
       const flattenedJobDetails = flattenJobData(analizeJobDetailsApiResponse);
-      // each item in the flattenedJobDetails is an object. now convert flattenedJobDetails to string where  each item thats has key-value pair, key is the title and value is the description
-      // e.g. "Title:
-      // Description"
-
+      // Convert flattenedJobDetails to string where each item that has key-value pair, key is the title and value is the description
       const jobDescription = flattenedJobDetails.reduce((acc, item) => {
         const curr = Object.entries(item);
-
-        return `${acc}${curr[0]}:\n${curr[1]}\n\n`;
+        return `${acc}${curr[0][0]}:\n${curr[0][1]}\n\n`;
       }, "");
 
       setJobDescription(jobDescription);
@@ -82,7 +77,7 @@ function ProposalSection() {
     : "";
 
   return (
-    <div className="grid grid-cols-[1fr_450px] h-full gap-4 relative">
+    <div className="grid grid-cols-1 lg:grid-cols-[1fr_450px] h-full w-full gap-4 relative">
       {isLoading ? (
         <div className="absolute inset-0 z-10">
           <SkeletonLoader
@@ -107,7 +102,8 @@ function ProposalSection() {
         </div>
       )}
 
-      <div className=""></div>
+      {/* This empty div is kept for layout purposes in the desktop grid */}
+      <div className="hidden lg:block"></div>
     </div>
   );
 }

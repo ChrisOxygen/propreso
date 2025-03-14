@@ -30,28 +30,28 @@ const DashboardHeader = () => {
   // Render skeleton loading state
   if (isLoading) {
     return (
-      <div className="bg-white border-b w-full border-gray-200 py-8">
+      <div className="bg-white border-b w-full border-gray-200 py-4 md:py-8">
         <div className="container mx-auto w-full px-4">
-          <div className="flex flex-col md:flex-row justify-between w-full items-start md:items-center gap-6">
+          <div className="flex flex-col md:flex-row justify-between w-full items-start md:items-center gap-4 md:gap-6">
             {/* Left section skeleton */}
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-4 md:gap-6">
               <div className="relative">
-                <Skeleton className="h-24 w-24 rounded-full" />
+                <Skeleton className="h-16 w-16 md:h-24 md:w-24 rounded-full" />
               </div>
               <div>
-                <Skeleton className="h-9 w-48 mb-2" />
-                <Skeleton className="h-5 w-36" />
+                <Skeleton className="h-7 md:h-9 w-40 md:w-48 mb-2" />
+                <Skeleton className="h-4 md:h-5 w-28 md:w-36" />
               </div>
             </div>
 
             {/* Right section skeleton */}
-            <div className="flex flex-col items-center md:items-end gap-3">
-              <div className="text-center md:text-right">
-                <Skeleton className="h-7 w-32" />
+            <div className="flex flex-col items-start md:items-end gap-3 w-full md:w-auto">
+              <div className="text-left md:text-right">
+                <Skeleton className="h-6 md:h-7 w-32" />
               </div>
-              <div className="flex flex-col sm:flex-row gap-3">
-                <Skeleton className="h-10 w-40" />
-                <Skeleton className="h-10 w-40" />
+              <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                <Skeleton className="h-10 w-full sm:w-40" />
+                <Skeleton className="h-10 w-full sm:w-40" />
               </div>
             </div>
           </div>
@@ -62,7 +62,7 @@ const DashboardHeader = () => {
 
   if (!user) {
     return (
-      <div className="bg-white border-b w-full border-gray-200 py-8">
+      <div className="bg-white border-b w-full border-gray-200 py-4 md:py-8">
         <div className="container mx-auto px-4 text-center">
           <p className="text-red-500">
             Error loading user data. Please refresh the page.
@@ -76,15 +76,15 @@ const DashboardHeader = () => {
   const proposalsSent = 0;
 
   return (
-    <div className="bg-white border-b w-full border-gray-200 py-8">
+    <div className="bg-white border-b w-full border-gray-200 py-4 md:py-8">
       <div className="container mx-auto w-full px-4">
-        <div className="flex flex-col md:flex-row justify-between w-full items-start md:items-center gap-6">
+        <div className="flex flex-col md:flex-row justify-between w-full items-start md:items-center gap-4 md:gap-6">
           {/* Left section - Profile */}
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4 md:gap-6">
             <div className="relative">
-              <Avatar className="h-24 w-24 border-2 border-gray-200">
+              <Avatar className="h-16 w-16 md:h-24 md:w-24 border-2 border-gray-200">
                 <AvatarImage src={image!} alt={fullName} />
-                <AvatarFallback className="text-xl bg-black text-white">
+                <AvatarFallback className="text-base md:text-xl bg-black text-white">
                   {getInitials(fullName)}
                 </AvatarFallback>
               </Avatar>
@@ -93,9 +93,10 @@ const DashboardHeader = () => {
                   <TooltipTrigger asChild>
                     <button
                       onClick={onEditProfilePicture}
-                      className="absolute bottom-0 right-0 bg-white text-black p-2 rounded-full border border-gray-200 shadow-sm hover:bg-gray-100 transition-colors"
+                      className="absolute bottom-0 right-0 bg-white text-black p-1.5 md:p-2 rounded-full border border-gray-200 shadow-sm hover:bg-gray-100 transition-colors"
                     >
-                      <FiEdit size={16} />
+                      <FiEdit size={14} className="md:hidden" />
+                      <FiEdit size={16} className="hidden md:block" />
                     </button>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -106,32 +107,37 @@ const DashboardHeader = () => {
             </div>
 
             <div>
-              <h1 className="text-3xl font-bold text-black truncate max-w-md">
+              <h1 className="text-xl md:text-3xl font-bold text-black truncate max-w-[200px] md:max-w-md">
                 {fullName}
               </h1>
-              <p className="text-gray-600 mt-1">{email}</p>
+              <p className="text-sm md:text-base text-gray-600 mt-0.5 md:mt-1 truncate max-w-[200px] md:max-w-md">
+                {email}
+              </p>
             </div>
           </div>
 
           {/* Right section - Stats and Actions */}
-          <div className="flex flex-col items-center md:items-end gap-3">
-            <div className="text-center md:text-right">
-              <span className="text-xl font-bold text-black">
+          <div className="flex flex-col items-start md:items-end gap-3 w-full md:w-auto">
+            <div className="text-left md:text-right">
+              <span className="text-lg md:text-xl font-bold text-black">
                 {proposalsSent}
               </span>
-              <span className="text-gray-600 text-xl"> Proposals sent</span>
+              <span className="text-base md:text-xl text-gray-600">
+                {" "}
+                Proposals sent
+              </span>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
               <Link
-                className="flex items-center gap-2 border px-6 py-2 text-black hover:bg-gray-100 rounded-lg"
+                className="flex items-center justify-center gap-2 border px-4 py-2 text-black hover:bg-gray-100 rounded-lg text-sm md:text-base"
                 href={`/dashboard/create-profile`}
               >
                 <FiUserPlus size={16} />
-                <span>Add New Profile</span>
+                <span>Add Profile</span>
               </Link>
               <Link
-                className="bg-black text-white hover:bg-gray-800 px-6 py-2 flex rounded-lg items-center gap-2"
+                className="bg-black text-white hover:bg-gray-800 px-4 py-2 flex rounded-lg items-center justify-center gap-2 text-sm md:text-base"
                 href={`/create-proposal`}
               >
                 <FiFileText size={16} />

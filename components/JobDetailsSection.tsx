@@ -10,21 +10,24 @@ function JobDetailsSection() {
   const isLoading = isGenerating || isRefining;
 
   return (
-    <div className="w-full grid relative h-full">
-      {isLoading ? (
-        <div className="absolute inset-0 z-10">
-          <SkeletonLoader
-            height="h-full"
-            width="w-full"
-            text={
-              isGenerating ? "Generating proposal..." : "Refining proposal..."
-            }
-            rounded="rounded-none"
-          />
-        </div>
-      ) : (
-        <JobDescriptionForm />
-      )}
+    <div className="w-full h-full relative">
+      {/* Job details are only visible on larger screens */}
+      <div className="w-full h-full">
+        {isLoading ? (
+          <div className="absolute inset-0 z-10">
+            <SkeletonLoader
+              height="h-full"
+              width="w-full"
+              text={
+                isGenerating ? "Generating proposal..." : "Refining proposal..."
+              }
+              rounded="rounded-none"
+            />
+          </div>
+        ) : (
+          <JobDescriptionForm />
+        )}
+      </div>
     </div>
   );
 }

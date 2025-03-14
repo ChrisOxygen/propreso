@@ -13,6 +13,7 @@ const initialState: CreateProfileState = {
     skills: [],
     bio: "",
     projects: [],
+    isDefaultProfile: false,
   },
   // Add more fields as needed for other steps
 };
@@ -50,10 +51,6 @@ function formReducer(state: CreateProfileState, action: CreateProfileAction) {
   }
 }
 
-// Step 1 Component
-
-// Step placeholders for future steps
-
 export default function MultiStepForm() {
   const [state, dispatch] = useReducer(formReducer, initialState);
 
@@ -61,13 +58,13 @@ export default function MultiStepForm() {
 
   return (
     <div className="min-h-screen bg-white text-black">
-      <div className="max-w-md mx-auto pt-16 px-4">
-        <div className="mb-8">
+      <div className="max-w-md mx-auto pt-8 sm:pt-12 md:pt-16 px-4">
+        <div className="mb-6 md:mb-8">
           <div className="flex justify-between items-center">
             {[1, 2, 3, 4].map((step) => (
               <div key={step} className="flex flex-col items-center">
                 <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                  className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm ${
                     step === state.currentStep
                       ? "bg-black text-white"
                       : step < state.currentStep
@@ -77,7 +74,7 @@ export default function MultiStepForm() {
                 >
                   {step}
                 </div>
-                <div className="text-xs mt-1">Step {step}</div>
+                <div className="text-[10px] sm:text-xs mt-1">Step {step}</div>
               </div>
             ))}
           </div>
@@ -86,13 +83,13 @@ export default function MultiStepForm() {
           <div className="relative mt-2">
             <div className="absolute h-1 w-full bg-gray-200"></div>
             <div
-              className="absolute h-1 bg-black"
+              className="absolute h-1 bg-black transition-all duration-300"
               style={{ width: `${(state.currentStep - 1) * 33.33}%` }}
             ></div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg border">
+        <div className="bg-white p-4 sm:p-6 rounded-lg border">
           {currentStep === 1 && <Step1 state={state} dispatch={dispatch} />}
           {currentStep === 2 && <Step2 state={state} dispatch={dispatch} />}
           {currentStep === 3 && <Step3 state={state} dispatch={dispatch} />}
