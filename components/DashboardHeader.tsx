@@ -132,7 +132,7 @@ const DashboardHeader = () => {
               </Link>
               <Link
                 className="bg-black text-white hover:bg-gray-800 px-6 py-2 flex rounded-lg items-center gap-2"
-                href={`/dashboard/proposal-editor`}
+                href={`/create-proposal`}
               >
                 <FiFileText size={16} />
                 <span>Proposal Editor</span>

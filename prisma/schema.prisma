@@ -38,6 +38,7 @@ model User {
     // proposals        Proposal[]
     // clients          Client[]
     profile           Profile[]
+    jobDetail JobDetail?
 
   @@map("users")
 }
@@ -80,4 +81,18 @@ model Project {
   updatedAt   DateTime @updatedAt
   
   @@map("projects")
+}
+
+model JobDetail {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+
+// Relation to User (One-to-One)
+  userId      String    @unique @db.ObjectId // Ensures only one job detail per user
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  jobUrl    String
+  jobHtml   String    
+  timestamp DateTime  @default(now())
+
+ @@map("jobDetails")
 }

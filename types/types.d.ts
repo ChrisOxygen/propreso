@@ -66,3 +66,75 @@ declare interface PrismaUserProfile {
   skills: string[];
   projects: PrismaProject[];
 }
+
+declare interface JobDetailsFromPlatform {
+  url: string;
+  html: string;
+  timestamp: number;
+}
+
+declare interface AnalizedUpworkJobData {
+  jobDetails: {
+    title: string; // Required field
+    description: string; // Required field
+    type?: "Hourly" | "Fixed-Price";
+    projectLength?: string;
+    experienceLevel?: string;
+    hourlyRate?: {
+      min?: string;
+      max?: string;
+    };
+    skills?: string[];
+    connectsRequired?: string;
+  };
+  clientInfo?: {
+    clientName?: string; // New field for client's name
+    location?: string;
+    city?: string;
+    rating?: string;
+    reviews?: string;
+    jobsPosted?: string;
+    hireRate?: string;
+    totalSpent?: string;
+    memberSince?: string;
+    paymentVerified?: boolean;
+    phoneVerified?: boolean;
+  };
+}
+
+declare type FlattenedItem = Record<string, string | boolean | number>;
+
+declare type FetchStateStatusType =
+  | null
+  | "fetchJobDetails"
+  | "analizingJobDetails"
+  | "generatingProposal"
+  | "ready"
+  | "error";
+
+declare interface SkeletonLoaderProps {
+  /** Text to display in the middle of the skeleton */
+  text?: string;
+  /** Width of the skeleton (Tailwind class) */
+  width?: string;
+  /** Height of the skeleton (Tailwind class) */
+  height?: string;
+  /** Border radius (Tailwind class) */
+  rounded?: string;
+  /** Text size (Tailwind class) */
+  textSize?: string;
+  /** Text color (Tailwind class) */
+  textColor?: string;
+  /** Whether to animate the skeleton */
+  animate?: boolean;
+  /** Additional CSS classes */
+  className?: string;
+}
+
+declare interface ServerJobDetails {
+  id: string;
+  userId: string;
+  jobUrl: string;
+  jobHtml: string;
+  timestamp: Date;
+}
