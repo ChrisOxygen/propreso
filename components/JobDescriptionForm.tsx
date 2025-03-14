@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -27,7 +27,8 @@ type FormValues = z.infer<typeof formSchema>;
 
 const JobDescriptionForm = () => {
   // Use the shared context
-  const { setJobDescription, jobDescription } = useProposal();
+  const { setJobDescription, jobDescription, isGenerating, isRefining } =
+    useProposal();
 
   // Initialize form with zod resolver
   const form = useForm<FormValues>({
@@ -37,10 +38,16 @@ const JobDescriptionForm = () => {
     },
   });
 
+  // Update form if jobDescription changes in context
+  useEffect(() => {
+    if (jobDescription !== form.getValues("jobDescription")) {
+      form.setValue("jobDescription", jobDescription);
+    }
+  }, [jobDescription, form]);
+
   // Form submission handler
   const onSubmit = async (values: FormValues) => {
     setJobDescription(values.jobDescription);
-    // We're not generating the proposal here anymore - that happens in the ProposalForm
   };
 
   return (
@@ -61,8 +68,9 @@ const JobDescriptionForm = () => {
                 <FormControl>
                   <Textarea
                     placeholder="Paste the job description here..."
-                    className="border h-full w-full bg-white text-black"
+                    className="border h-full  w-full bg-white text-black"
                     {...field}
+                    disabled={isGenerating || isRefining}
                     onBlur={(e) => {
                       field.onBlur();
                       // Update context on blur for real-time access

@@ -1,14 +1,18 @@
 "use client";
 
 import React, { createContext, useContext, useState, ReactNode } from "react";
+import { useMutation } from "@tanstack/react-query";
 
 interface ProposalContextType {
   jobDescription: string;
   proposal: string;
   isGenerating: boolean;
+  isRefining: boolean;
   setJobDescription: (description: string) => void;
   setProposal: (proposal: string) => void;
-  generateProposal: () => Promise<void>;
+  generateProposal: () => void;
+  refineProposal: () => void;
+  error: Error | null;
 }
 
 const ProposalContext = createContext<ProposalContextType | undefined>(
@@ -18,52 +22,87 @@ const ProposalContext = createContext<ProposalContextType | undefined>(
 export function ProposalProvider({ children }: { children: ReactNode }) {
   const [jobDescription, setJobDescription] = useState("");
   const [proposal, setProposal] = useState("");
-  const [isGenerating, setIsGenerating] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
 
-  // Function to generate proposal based on job description
-  const generateProposal = async () => {
-    if (!jobDescription.trim()) {
-      return;
-    }
+  // Generate proposal mutation
+  const generateMutation = useMutation({
+    mutationFn: async () => {
+      if (!jobDescription.trim()) {
+        throw new Error("Job description is required");
+      }
 
-    setIsGenerating(true);
-    try {
-      // Mock API call - replace with your actual API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const response = await fetch("/api/generate-proposal", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ jobDescription }),
+      });
 
-      // For demo purposes, we're just creating a simple proposal
-      // Replace this with your actual AI-based proposal generation
-      const generatedProposal = `Dear Hiring Manager,
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to generate proposal");
+      }
 
-I'm excited to apply for the position outlined in your job post. Based on your requirements, I believe I'm an excellent fit for this role.
-
-[This is where the AI-generated proposal would be based on: "${jobDescription.substring(
-        0,
-        50
-      )}..."]
-
-I look forward to discussing how my skills and experience align with your needs.
-
-Best regards,
-[Your Name]`;
-
-      setProposal(generatedProposal);
-    } catch (error) {
+      return response.json();
+    },
+    onSuccess: (data) => {
+      setProposal(data.proposal);
+      setError(null);
+    },
+    onError: (error: Error) => {
       console.error("Error generating proposal:", error);
-    } finally {
-      setIsGenerating(false);
-    }
-  };
+      setError(error);
+    },
+  });
+
+  // Refine proposal mutation
+  const refineMutation = useMutation({
+    mutationFn: async () => {
+      if (!jobDescription.trim() || !proposal.trim()) {
+        throw new Error("Job description and proposal are required");
+      }
+
+      const response = await fetch("/api/refine-proposal", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          jobDescription,
+          originalProposal: proposal,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to refine proposal");
+      }
+
+      return response.json();
+    },
+    onSuccess: (data) => {
+      setProposal(data.refinedProposal);
+      setError(null);
+    },
+    onError: (error: Error) => {
+      console.error("Error refining proposal:", error);
+      setError(error);
+    },
+  });
 
   return (
     <ProposalContext.Provider
       value={{
         jobDescription,
         proposal,
-        isGenerating,
+        isGenerating: generateMutation.isPending,
+        isRefining: refineMutation.isPending,
         setJobDescription,
         setProposal,
-        generateProposal,
+        generateProposal: generateMutation.mutate,
+        refineProposal: refineMutation.mutate,
+        error,
       }}
     >
       {children}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -15,6 +15,8 @@ import {
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { useProposal } from "@/context/ProposalContext";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 // Define form validation schema with zod
 const formSchema = z.object({
@@ -33,11 +35,13 @@ const ProposalForm = () => {
     proposal,
     setProposal,
     generateProposal,
+    refineProposal,
     isGenerating,
+    isRefining,
+    error,
   } = useProposal();
 
-  const [isRefining, setIsRefining] = React.useState(false);
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Initialize form with zod resolver
   const form = useForm<FormValues>({
@@ -48,56 +52,33 @@ const ProposalForm = () => {
   });
 
   // Update form when proposal changes in context
-  React.useEffect(() => {
+  useEffect(() => {
     form.setValue("proposal", proposal);
   }, [proposal, form]);
 
-  // Refine proposal handler
-  const handleRefineProposal = async () => {
-    const currentProposal = form.getValues("proposal");
-
-    if (!currentProposal.trim()) {
+  // Handle form errors from context
+  useEffect(() => {
+    if (error) {
       form.setError("proposal", {
         type: "manual",
-        message: "Please generate or write a proposal first before refining",
+        message: error.message || "An error occurred with your proposal",
       });
-      return;
     }
-
-    setIsRefining(true);
-    try {
-      // Here you would call your API to refine the proposal
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // Set the refined proposal in the form
-      const refinedProposal =
-        currentProposal +
-        "\n\n[This proposal has been refined and improved. Replace this with your actual refinement logic.]";
-
-      setProposal(refinedProposal);
-      form.setValue("proposal", refinedProposal);
-    } catch (error) {
-      console.error("Error refining proposal:", error);
-    } finally {
-      setIsRefining(false);
-    }
-  };
+  }, [error, form]);
 
   // Form submission handler
-  const onSubmit = async (values: FormValues) => {
+  const handleSubmit = async (values: FormValues) => {
     setIsSubmitting(true);
     try {
-      // Here you would send the proposal to your API
-      console.log("Submitting proposal:", values);
-
-      // Simulate API call
+      // Replace with your actual submission API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Reset form or handle success
       alert("Proposal submitted successfully!");
     } catch (error) {
       console.error("Error submitting proposal:", error);
+      form.setError("proposal", {
+        type: "manual",
+        message: "Failed to submit proposal. Please try again.",
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -107,9 +88,18 @@ const ProposalForm = () => {
     <div className="w-full h-full mx-auto p-4 bg-white text-black">
       <Form {...form}>
         <form
-          onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={form.handleSubmit(handleSubmit)}
           className="space-y-6 flex flex-col h-full"
         >
+          {error && (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                {error.message || "An error occurred. Please try again."}
+              </AlertDescription>
+            </Alert>
+          )}
+
           <FormField
             control={form.control}
             name="proposal"
@@ -123,6 +113,7 @@ const ProposalForm = () => {
                     placeholder="Write your proposal here or generate one..."
                     className="flex-1 min-h-[300px] border border-gray-300 bg-white text-black resize-none"
                     {...field}
+                    disabled={isGenerating || isRefining || isSubmitting}
                     onChange={(e) => {
                       field.onChange(e);
                       setProposal(e.target.value);
@@ -142,7 +133,7 @@ const ProposalForm = () => {
           <div className="flex flex-col sm:flex-row gap-3 mt-4">
             <Button
               type="button"
-              onClick={generateProposal}
+              onClick={() => generateProposal()}
               disabled={
                 isGenerating ||
                 isRefining ||
@@ -166,7 +157,7 @@ const ProposalForm = () => {
 
             <Button
               type="button"
-              onClick={handleRefineProposal}
+              onClick={() => refineProposal()}
               disabled={
                 isGenerating || isRefining || isSubmitting || !proposal.trim()
               }
