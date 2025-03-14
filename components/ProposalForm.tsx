@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -14,6 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
+import { useProposal } from "@/context/ProposalContext";
 
 // Define form validation schema with zod
 const formSchema = z.object({
@@ -27,37 +28,29 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 const ProposalForm = () => {
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [isRefining, setIsRefining] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const {
+    jobDescription,
+    proposal,
+    setProposal,
+    generateProposal,
+    isGenerating,
+  } = useProposal();
+
+  const [isRefining, setIsRefining] = React.useState(false);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   // Initialize form with zod resolver
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      proposal: "",
+      proposal: proposal || "",
     },
   });
 
-  // Generate proposal handler
-  const handleGenerateProposal = async () => {
-    setIsGenerating(true);
-    try {
-      // Here you would call your API to generate a proposal
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // Set the generated proposal in the form
-      form.setValue(
-        "proposal",
-        "This is a sample generated proposal. Replace this with your actual AI-generated content from your API call."
-      );
-    } catch (error) {
-      console.error("Error generating proposal:", error);
-    } finally {
-      setIsGenerating(false);
-    }
-  };
+  // Update form when proposal changes in context
+  React.useEffect(() => {
+    form.setValue("proposal", proposal);
+  }, [proposal, form]);
 
   // Refine proposal handler
   const handleRefineProposal = async () => {
@@ -78,11 +71,12 @@ const ProposalForm = () => {
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
       // Set the refined proposal in the form
-      form.setValue(
-        "proposal",
+      const refinedProposal =
         currentProposal +
-          "\n\n[This proposal has been refined and improved. Replace this with your actual refinement logic.]"
-      );
+        "\n\n[This proposal has been refined and improved. Replace this with your actual refinement logic.]";
+
+      setProposal(refinedProposal);
+      form.setValue("proposal", refinedProposal);
     } catch (error) {
       console.error("Error refining proposal:", error);
     } finally {
@@ -101,7 +95,6 @@ const ProposalForm = () => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Reset form or handle success
-      // form.reset();
       alert("Proposal submitted successfully!");
     } catch (error) {
       console.error("Error submitting proposal:", error);
@@ -130,6 +123,10 @@ const ProposalForm = () => {
                     placeholder="Write your proposal here or generate one..."
                     className="flex-1 min-h-[300px] border border-gray-300 bg-white text-black resize-none"
                     {...field}
+                    onChange={(e) => {
+                      field.onChange(e);
+                      setProposal(e.target.value);
+                    }}
                   />
                 </FormControl>
                 <div className="flex justify-between items-center mt-2">
@@ -145,8 +142,13 @@ const ProposalForm = () => {
           <div className="flex flex-col sm:flex-row gap-3 mt-4">
             <Button
               type="button"
-              onClick={handleGenerateProposal}
-              disabled={isGenerating || isRefining || isSubmitting}
+              onClick={generateProposal}
+              disabled={
+                isGenerating ||
+                isRefining ||
+                isSubmitting ||
+                !jobDescription.trim()
+              }
               className="flex-1 bg-black text-white hover:bg-gray-800 flex items-center justify-center gap-2"
             >
               {isGenerating ? (
@@ -165,7 +167,9 @@ const ProposalForm = () => {
             <Button
               type="button"
               onClick={handleRefineProposal}
-              disabled={isGenerating || isRefining || isSubmitting}
+              disabled={
+                isGenerating || isRefining || isSubmitting || !proposal.trim()
+              }
               className="flex-1 border border-black bg-white text-black hover:bg-gray-100 flex items-center justify-center gap-2"
             >
               {isRefining ? (
@@ -183,7 +187,9 @@ const ProposalForm = () => {
 
             <Button
               type="submit"
-              disabled={isGenerating || isRefining || isSubmitting}
+              disabled={
+                isGenerating || isRefining || isSubmitting || !proposal.trim()
+              }
               className="flex-1 bg-gray-800 text-white hover:bg-gray-700 flex items-center justify-center gap-2"
             >
               {isSubmitting ? (
