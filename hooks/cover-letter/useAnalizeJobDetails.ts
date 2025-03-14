@@ -9,7 +9,13 @@ export const useAnalizeJobDetails = () => {
     data: analizeJobDetailsApiResponse,
   } = useMutation({
     mutationFn: async (details: JobDetailsFromPlatform) => {
-      console.log("function in services------ analizingJobDetails", details);
+      console.log("Analyzing job details:", details);
+
+      // Make sure we have the HTML content
+      if (!details.html) {
+        throw new Error("HTML content is required for job analysis");
+      }
+
       const response = await fetch("/api/analize-job-details", {
         method: "POST",
         headers: {
@@ -19,11 +25,11 @@ export const useAnalizeJobDetails = () => {
       });
 
       if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
+        const errorData = await response.json();
+        throw new Error(errorData.error || `API error: ${response.status}`);
       }
 
       const data = await response.json();
-
       return data as AnalizedUpworkJobData;
     },
   });

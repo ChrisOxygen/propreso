@@ -67,7 +67,7 @@ const ProposalForm = () => {
   }, [error, form]);
 
   // Form submission handler
-  const handleSubmit = async (values: FormValues) => {
+  const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
       // Replace with your actual submission API call

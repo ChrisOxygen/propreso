@@ -2,12 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 
 /**
  * Custom hook to fetch job details from the API
- *
+ * @param jobId The ID of the job to fetch
+ * @param enabled Whether the query should be enabled
  */
-export const useJobDetailsQuery = (
-  jobId: string,
-  fetchStateStatus: FetchStateStatusType
-) => {
+export const useJobDetailsQuery = (jobId: string, enabled: boolean = false) => {
   return useQuery({
     queryKey: ["jobDetails", jobId],
     queryFn: async () => {
@@ -17,9 +15,8 @@ export const useJobDetailsQuery = (
       }
       return response.json();
     },
-
-    enabled: fetchStateStatus === "fetchJobDetails" && !!jobId,
-    staleTime: 5 * 60 * 1000,
+    enabled: enabled && !!jobId,
+    staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 3,
   });
 };

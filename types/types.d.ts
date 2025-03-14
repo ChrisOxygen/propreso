@@ -68,9 +68,9 @@ declare interface PrismaUserProfile {
 }
 
 declare interface JobDetailsFromPlatform {
-  url: string;
+  url?: string;
   html: string;
-  timestamp: number;
+  timestamp?: string | Date;
 }
 
 declare interface AnalizedUpworkJobData {
