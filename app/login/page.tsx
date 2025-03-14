@@ -5,9 +5,7 @@ import { FaGoogle, FaGithub } from "react-icons/fa";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-
 import { FiEye, FiEyeOff } from "react-icons/fi";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -19,12 +17,18 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { loginFormSchema } from "@/formSchemas";
-import { useLogin } from "@/hooks/useLogin";
+import { useRouter } from "next/navigation";
+import InBoxLoader from "@/components/InBoxLoader";
+import { signIn, useSession } from "next-auth/react";
 
 function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const { status } = useSession();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   // Initialize form
   const form = useForm<z.infer<typeof loginFormSchema>>({
@@ -35,14 +39,48 @@ function LoginPage() {
     },
   });
 
-  const { onSubmit, isLoading, error } = useLogin();
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (status === "authenticated") {
+      console.log("User is authenticated, redirecting to dashboard");
+      router.push("/dashboard");
+    }
+  }, [status, router]);
 
-  if (error) {
-    console.error("Login failed:", error);
-    form.setError("root", {
-      type: "manual",
-      message: "Invalid email or password",
-    });
+  // Handle form submission
+  const onSubmit = async (values: z.infer<typeof loginFormSchema>) => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      console.log("Attempting to sign in");
+      const result = await signIn("credentials", {
+        redirect: false,
+        email: values.email,
+        password: values.password,
+      });
+
+      if (result?.error) {
+        console.error("Sign in error:", result.error);
+        setError(result.error);
+        return;
+      }
+
+      if (result?.ok) {
+        console.log("Sign in successful, redirecting to dashboard");
+        router.push("/dashboard");
+      }
+    } catch (err) {
+      console.error("Login failed:", err);
+      setError("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Show loading state while checking session
+  if (status === "loading") {
+    return <InBoxLoader />;
   }
 
   // Toggle password visibility
@@ -50,6 +88,7 @@ function LoginPage() {
     setShowPassword(!showPassword);
   };
 
+  // Only show the login form if not authenticated
   return (
     <div className="flex min-h-screen bg-white">
       {/* Left Column - Image */}
@@ -96,6 +135,12 @@ function LoginPage() {
           {/* Login Form with Shadcn components */}
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              {error && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+                  {error}
+                </div>
+              )}
+
               <FormField
                 control={form.control}
                 name="email"

@@ -29,7 +29,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         // Find the user in the database
         const user = await prisma.user.findUnique({
           where: {
-            email: credentials.email,
+            email: credentials.email as string,
           },
         });
 
@@ -92,6 +92,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   session: {
     strategy: "jwt",
+    maxAge: 30 * 60, // 30 minutes in seconds
   },
   secret: process.env.NEXTAUTH_SECRET,
 });

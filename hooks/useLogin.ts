@@ -1,5 +1,6 @@
+// hooks/useLogin.ts
 import { loginFormSchema } from "@/formSchemas";
-import { signIn } from "next-auth/react";
+import { signIn } from "next-auth/react"; // Use next-auth/react for client components
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { z } from "zod";
