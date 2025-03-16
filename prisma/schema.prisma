@@ -91,6 +91,8 @@ model JobDetail {
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   jobUrl    String
+  platform  String
+  platformJobId String
   jobHtml   String    
   timestamp DateTime  @default(now())
 

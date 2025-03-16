@@ -97,3 +97,21 @@ export function flattenJobData(
 
   return flattened;
 }
+
+/**
+ * Parse Upwork job details URL and extract job information
+ * @param url The Upwork job details URL
+ * @returns Object containing the platform and job ID
+ */
+export function parseJobUrl(url: string): {
+  platform: string;
+  jobId: string | null;
+} {
+  // Extract job ID - any digits after a tilde (~) character
+  const match = url.match(/~(\d{10,})/);
+
+  return {
+    platform: "upwork",
+    jobId: match && match[1] ? match[1] : null,
+  };
+}

@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { PrismaClient } from "@prisma/client";
+import { parseJobUrl } from "@/lib/services";
 
 // Initialize Prisma client
 const prisma = new PrismaClient();
@@ -38,6 +39,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const { platform, jobId } = parseJobUrl(jobDetails.url);
+
+    if (!platform || !jobId) {
+      return NextResponse.json(
+        { error: "Invalid job URL provided" },
+        { status: 400 }
+      );
+    }
+
     // Check if user already has a job details entry
     const existingJobDetail = await prisma.jobDetail.findFirst({
       where: { userId },
@@ -56,6 +66,8 @@ export async function POST(req: NextRequest) {
         userId,
         jobUrl: jobDetails.url,
         jobHtml: jobDetails.html,
+        platform,
+        platformJobId: jobId,
         timestamp: new Date(),
       },
     });
