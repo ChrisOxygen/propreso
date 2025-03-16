@@ -138,3 +138,21 @@ declare interface ServerJobDetails {
   jobHtml: string;
   timestamp: Date;
 }
+
+declare interface UserInformation {
+  jobTitle: string;
+  skills: string[];
+  bio: string;
+  projects: {
+    title: string;
+    description: string;
+    liveLink?: string;
+    githubLink?: string;
+  }[];
+  isDefaultProfile: boolean;
+}
+
+declare interface CreateProfileState {
+  currentStep: number;
+  userInformation: UserInformation;
+}

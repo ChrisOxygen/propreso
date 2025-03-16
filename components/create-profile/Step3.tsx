@@ -1,8 +1,10 @@
-import React, { Dispatch, useState } from "react";
+// components/create-profile/Step3.tsx
+import React, { Dispatch, useState, useContext } from "react";
 import { Button } from "@/components/ui/button";
 import { FiArrowRight, FiArrowLeft } from "react-icons/fi";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2, Sparkles, RefreshCw } from "lucide-react";
+import { ProfileProgressContext } from "@/context/ProfileProgressContext";
 
 const Step3 = ({
   state,
@@ -11,6 +13,9 @@ const Step3 = ({
   state: CreateProfileState;
   dispatch: Dispatch<CreateProfileAction>;
 }) => {
+  // Get the progress component ref from context
+  const progressRef = useContext(ProfileProgressContext);
+
   // Local state for bio text
   const [bioText, setBioText] = useState<string>(
     state.userInformation.bio || ""
@@ -37,7 +42,6 @@ const Step3 = ({
       const { jobTitle, skills } = state.userInformation;
 
       // Get the user's name - you'll need to adapt this based on your auth implementation
-      // This is just a placeholder - replace with actual code to get the user's name
       const userName = "User"; // Replace with actual user's name from your auth context/state
 
       const response = await fetch("/api/generate-bio", {
@@ -58,6 +62,12 @@ const Step3 = ({
 
       const data = await response.json();
       setBioText(data.bio);
+      dispatch({ type: "SET_BIO", payload: data.bio });
+
+      // Trigger bio analysis after generation
+      if (progressRef?.current) {
+        progressRef.current.handleBioFocus();
+      }
     } catch (error) {
       console.error("Error generating bio:", error);
       // Show error message to user
@@ -92,11 +102,24 @@ const Step3 = ({
 
       const data = await response.json();
       setBioText(data.refinedBio);
+      dispatch({ type: "SET_BIO", payload: data.refinedBio });
+
+      // Trigger bio analysis after refinement
+      if (progressRef?.current) {
+        progressRef.current.handleBioFocus();
+      }
     } catch (error) {
       console.error("Error refining bio:", error);
       // Show error message to user
     } finally {
       setIsRefining(false);
+    }
+  };
+
+  // Handle textarea focus and change events
+  const handleBioTextareaFocus = () => {
+    if (progressRef?.current) {
+      progressRef.current.handleBioFocus();
     }
   };
 
@@ -114,7 +137,7 @@ const Step3 = ({
           <Button
             type="button"
             onClick={generateBio}
-            disabled={isGenerating}
+            disabled={isGenerating || isRefining}
             className="flex items-center gap-2"
           >
             {isGenerating ? (
@@ -129,7 +152,7 @@ const Step3 = ({
             type="button"
             variant="outline"
             onClick={refineBio}
-            disabled={isRefining || !bioText.trim()}
+            disabled={isRefining || !bioText.trim() || isGenerating}
             className="flex items-center gap-2"
           >
             {isRefining ? (
@@ -143,13 +166,18 @@ const Step3 = ({
 
         <Textarea
           value={bioText}
-          onChange={(e) => setBioText(e.target.value)}
+          onChange={(e) => {
+            setBioText(e.target.value);
+            dispatch({ type: "SET_BIO", payload: e.target.value });
+          }}
+          onFocus={handleBioTextareaFocus}
           placeholder="Write or generate a professional bio that highlights your expertise, experience, and what you bring to client projects..."
           className="min-h-[200px] resize-none"
+          disabled={isGenerating || isRefining}
         />
 
         <p className="text-xs text-gray-500">
-          {bioText.length} characters | Recommended: 100-300 characters
+          {bioText.length} characters | Recommended: 150-200 characters
         </p>
       </div>
 
@@ -158,6 +186,7 @@ const Step3 = ({
           variant="outline"
           onClick={handleBack}
           className="flex items-center justify-center gap-2"
+          disabled={isGenerating || isRefining}
         >
           <FiArrowLeft />
           Back
@@ -165,7 +194,7 @@ const Step3 = ({
         <Button
           className="bg-black text-white hover:bg-gray-800 flex items-center justify-center gap-2"
           onClick={handleNext}
-          disabled={!bioText.trim()}
+          disabled={!bioText.trim() || isGenerating || isRefining}
         >
           Next
           <FiArrowRight />

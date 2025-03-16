@@ -1,4 +1,5 @@
-import React, { Dispatch } from "react";
+// components/create-profile/Step4.tsx
+import React, { Dispatch, useContext } from "react";
 import { Button } from "@/components/ui/button";
 import { FiArrowLeft, FiPlus, FiTrash } from "react-icons/fi";
 import {
@@ -21,6 +22,7 @@ import { AlertCircle, Check, Loader2 } from "lucide-react";
 import { projectSchema } from "@/formSchemas";
 import { useCreateProfile } from "@/hooks/user-profile-hooks/useCreateProfile";
 import { useUser } from "@/hooks/useUser";
+import { ProfileProgressContext } from "@/context/ProfileProgressContext";
 
 type ProjectFormValues = z.infer<typeof projectSchema>;
 
@@ -31,6 +33,9 @@ const Step4 = ({
   state: CreateProfileState;
   dispatch: Dispatch<CreateProfileAction>;
 }) => {
+  // Get the progress component ref from context
+  const progressRef = useContext(ProfileProgressContext);
+
   // Initialize the form with existing projects from state or at least one empty project
   const form = useForm<ProjectFormValues>({
     resolver: zodResolver(projectSchema),
@@ -85,6 +90,26 @@ const Step4 = ({
     dispatch({ type: "PREV_STEP" });
   };
 
+  // Handle form field changes and focus events
+  const handleFieldChange = () => {
+    const currentValues = form.getValues();
+    dispatch({ type: "SET_PROJECTS", payload: currentValues.projects });
+  };
+
+  // Handle focus on project description
+  const handleProjectDescriptionFocus = (index: number) => {
+    if (progressRef?.current) {
+      progressRef.current.handleProjectFocus(index);
+    }
+  };
+
+  // Handle focus/change on project links
+  const handleProjectLinkFocus = (index: number) => {
+    if (progressRef?.current) {
+      progressRef.current.handleProjectFocus(index);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -127,7 +152,15 @@ const Step4 = ({
                       <FormItem>
                         <FormLabel>Project Title*</FormLabel>
                         <FormControl>
-                          <Input placeholder="My Awesome Project" {...field} />
+                          <Input
+                            placeholder="My Awesome Project"
+                            {...field}
+                            onChange={(e) => {
+                              field.onChange(e);
+                              handleFieldChange();
+                            }}
+                            onFocus={() => handleProjectLinkFocus(index)}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -145,6 +178,11 @@ const Step4 = ({
                             <Input
                               placeholder="https://myproject.com"
                               {...field}
+                              onChange={(e) => {
+                                field.onChange(e);
+                                handleFieldChange();
+                              }}
+                              onFocus={() => handleProjectLinkFocus(index)}
                             />
                           </FormControl>
                           <FormMessage />
@@ -162,6 +200,11 @@ const Step4 = ({
                             <Input
                               placeholder="https://github.com/username/project"
                               {...field}
+                              onChange={(e) => {
+                                field.onChange(e);
+                                handleFieldChange();
+                              }}
+                              onFocus={() => handleProjectLinkFocus(index)}
                             />
                           </FormControl>
                           <FormMessage />
@@ -183,6 +226,11 @@ const Step4 = ({
                             placeholder="Describe the problems you solved and the technologies you used..."
                             className="min-h-[100px]"
                             {...field}
+                            onChange={(e) => {
+                              field.onChange(e);
+                              handleFieldChange();
+                            }}
+                            onFocus={() => handleProjectDescriptionFocus(index)}
                           />
                         </FormControl>
                         <FormDescription>
