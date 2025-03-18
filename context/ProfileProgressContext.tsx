@@ -4,7 +4,7 @@ import type { ProfileProgressRef } from "@/components/profile-progress";
 
 // Create a context with a RefObject of ProfileProgressRef type
 export const ProfileProgressContext =
-  createContext<React.RefObject<ProfileProgressRef> | null>(null);
+  createContext<React.RefObject<ProfileProgressRef | null> | null>(null);
 
 // Provider component
 export const ProfileProgressProvider: React.FC<{

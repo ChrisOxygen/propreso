@@ -53,9 +53,6 @@ const ProjectsFeedback: React.FC<ProjectsFeedbackProps> = ({
   }
 
   // Create an array of indices of projects that have been touched
-  const touchedIndices = Object.keys(touchedProjects)
-    .filter((key) => touchedProjects[parseInt(key)])
-    .map((key) => parseInt(key));
 
   return (
     <div className="space-y-3">

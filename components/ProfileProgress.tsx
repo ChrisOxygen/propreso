@@ -8,9 +8,9 @@ import {
   useProfileProgress,
   useFieldTracking,
 } from "@/hooks/profile-hooks";
-import StepGuidance from "./StepGuidance";
-import BioFeedback from "./BioFeedback";
-import ProjectsFeedback from "./ProjectsFeedback";
+import { StepGuidance } from "./profile-progress";
+import { BioFeedback } from "./profile-progress";
+import { ProjectsFeedback } from "./profile-progress";
 
 interface ProfileProgressProps {
   currentStep: number;
@@ -50,13 +50,13 @@ const ProfileProgress = forwardRef<ProfileProgressRef, ProfileProgressProps>(
     const {
       mutate: checkBio,
       data: bioFeedback,
-      isLoading: isBioLoading,
+      isPending: isBioLoading,
     } = useCheckBio();
 
     const {
       mutate: checkProjects,
       data: projectsFeedback,
-      isLoading: isProjectLoading,
+      isPending: isProjectLoading,
     } = useCheckProjects();
 
     // Calculate profile progress
