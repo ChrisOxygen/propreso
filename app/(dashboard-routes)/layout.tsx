@@ -85,7 +85,7 @@ function DashboardLayout({ children }: { children: ReactNode }) {
   ];
 
   return (
-    <main className="min-h-screen flex flex-col md:flex-row">
+    <main className="h-screen flex flex-col md:flex-row overflow-hidden">
       {/* Mobile sidebar toggle */}
       <div className="block md:hidden fixed top-4 left-4 z-50">
         <Button
@@ -101,13 +101,13 @@ function DashboardLayout({ children }: { children: ReactNode }) {
       {/* Sidebar - hidden on mobile unless toggled */}
       <div
         className={cn(
-          "bg-black text-white w-full md:w-64 flex-shrink-0 flex flex-col justify-between transition-all duration-300 ease-in-out",
+          "bg-black text-white w-full md:w-64 flex-shrink-0 flex flex-col justify-between transition-all duration-300 ease-in-out h-screen",
           "fixed md:static inset-y-0 left-0 z-40",
           sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         )}
       >
         {/* Logo & nav links */}
-        <div className="p-4">
+        <div className="p-4 overflow-y-auto">
           <div className="px-4 py-6">
             <h1 className="text-xl font-bold mb-6">Proposal AI</h1>
           </div>
@@ -162,8 +162,8 @@ function DashboardLayout({ children }: { children: ReactNode }) {
       )}
 
       {/* Main content */}
-      <div className="flex-1 md:ml-0 p-0">
-        <div className="min-h-screen bg-white">{children}</div>
+      <div className="flex-1 md:ml-0 p-0 overflow-y-auto">
+        <div className="min-h-full bg-white">{children}</div>
       </div>
     </main>
   );

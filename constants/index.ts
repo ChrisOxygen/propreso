@@ -523,3 +523,23 @@ export const ALL_SKILLS = {
   "data-analyst": DATA_ANALYST_SKILLS,
   "game-developer": GAME_DEVELOPER_SKILLS,
 };
+
+export const AVAILABLE_PLATFORMS = [
+  {
+    name: "upwork",
+    urlStructure: "https://www.upwork.com/nx/proposals/job/~[jobId]/apply/",
+    coverLetterSelector:
+      "div.air3-textarea textarea.air3-textarea.inner-textarea",
+  },
+  {
+    name: "freelancer",
+    urlStructure: "https://www.freelancer.com/projects/[jobId]/apply/",
+    coverLetterSelector: "textarea#projectDescription",
+  },
+  {
+    name: "fiverr",
+    urlStructure: "https://www.fiverr.com/jobs/[jobId]/apply",
+    coverLetterSelector: "textarea.job-application-textarea",
+  },
+  // Add more platforms as needed
+];

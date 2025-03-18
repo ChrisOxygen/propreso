@@ -1,68 +1,4 @@
-// app/api/generate-proposal/route.ts
-import { NextResponse } from "next/server";
-import OpenAI from "openai";
-import { auth } from "@/auth";
-import { PrismaClient } from "@prisma/client";
-
-// Initialize OpenAI client
-const openai = new OpenAI({
-  baseURL: "https://models.inference.ai.azure.com",
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
-// Initialize Prisma client
-const prisma = new PrismaClient();
-
-export async function POST(request: Request) {
-  try {
-    // Check authentication
-    const session = await auth();
-
-    if (!session || !session.user) {
-      return NextResponse.json(
-        { error: "Unauthorized: You must be logged in" },
-        { status: 401 }
-      );
-    }
-
-    // Get user ID from session
-    const userId = session.user.id;
-
-    // Get request body
-    const { jobDescription } = await request.json();
-
-    // Validate input
-    if (!jobDescription || jobDescription.trim().length < 10) {
-      return NextResponse.json(
-        {
-          error:
-            "Job description is required and must be at least 10 characters",
-        },
-        { status: 400 }
-      );
-    }
-
-    // Get user's default profile for personalization
-    const userProfile = await prisma.profile.findFirst({
-      where: {
-        userId: userId,
-        isDefault: true,
-      },
-      include: {
-        projects: true,
-        user: true,
-      },
-    });
-
-    if (!userProfile) {
-      return NextResponse.json(
-        { error: "No profile found. Please create a profile first." },
-        { status: 400 }
-      );
-    }
-
-    // Build the prompt for the AI
-    const prompt = `
+const prompt = `
 You are an expert proposal writer for freelancers. First, analyze the job description to determine the best copywriting formula to use from:
 
 1. AIDA (Attention, Interest, Desire, Action)
@@ -89,13 +25,12 @@ Then, create a compelling proposal based on the following job description:
 
 Use the following personal information for the freelancer:
 
-- Name: ${userProfile.user.fullName}
 - Job title: ${userProfile.jobTitle}
 - Skills: ${userProfile.skills.join(", ")}
 - Bio: ${userProfile.bio}
 - Projects: ${userProfile.projects
-      .map((p) => `${p.title}: ${p.description}`)
-      .join("; ")}
+  .map((p) => \`\${p.title}: \${p.description}\`)
+  .join("; ")}
 
 If the job post doesn't include a specific name to address the proposal to:
 
@@ -173,39 +108,4 @@ Universal requirements for ALL proposals:
 6. Make sure it reads like it was written by a real person, not AI-generated.
 7. Write the proposal in first person as if you are the freelancer.
 8. Use active voice, vary sentence structure, and avoid generic phrases and clichés.
-`;
-
-    // Call OpenAI API
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o", // Use appropriate model
-      messages: [
-        {
-          role: "system",
-          content:
-            "You are an expert proposal writer who helps freelancers win clients with compelling proposals.",
-        },
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
-      temperature: 0.7,
-      max_tokens: 1000,
-    });
-
-    // Extract the generated proposal
-    const generatedProposal =
-      completion.choices[0].message.content?.trim() || "";
-
-    // Save the generated proposal to history (optional)
-    // This could be implemented to track proposal history
-
-    return NextResponse.json({ proposal: generatedProposal });
-  } catch (error) {
-    console.error("Error generating proposal:", error);
-    return NextResponse.json(
-      { error: "Failed to generate proposal" },
-      { status: 500 }
-    );
-  }
-}
+   `

@@ -27,6 +27,12 @@ export default function Home() {
           >
             See How It Works
           </Link>
+          <Link
+            href="/login"
+            className="px-8 py-3 bg-white text-black font-medium rounded-lg shadow-md border-2 border-black hover:bg-gray-100 transition-colors inline-block sm:ml-0"
+          >
+            Login
+          </Link>
         </div>
       </div>
     </main>

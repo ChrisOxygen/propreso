@@ -109,7 +109,13 @@ export default function MultiStepForm() {
                   <ProfileProgress
                     ref={contextRef}
                     currentStep={state.currentStep}
-                    userInformation={state.userInformation}
+                    userInformation={{
+                      jobTitle: state.userInformation.jobTitle,
+                      skills: state.userInformation.skills,
+                      bio: state.userInformation.bio,
+                      projects: state.userInformation.projects || [],
+                      isDefaultProfile: state.userInformation.isDefaultProfile,
+                    }}
                   />
                 )}
               </ProfileProgressContext.Consumer>

@@ -1,3 +1,5 @@
+import { AVAILABLE_PLATFORMS } from "@/constants";
+
 export const analizingJobDetails = async (details: JobDetailsFromPlatform) => {
   console.log("function in services------ analizingJobDetails", details);
   const response = await fetch("/api/analize-job-details", {
@@ -114,4 +116,31 @@ export function parseJobUrl(url: string): {
     platform: "upwork",
     jobId: match && match[1] ? match[1] : null,
   };
+}
+
+/**
+ * Gets platform data by platform name
+ * @param platformName The name of the platform to look up
+ * @returns Platform data or undefined if not found
+ */
+export function getPlatformData(platformName: string) {
+  return AVAILABLE_PLATFORMS.find(
+    (p) => p.name.toLowerCase() === platformName.toLowerCase()
+  );
+}
+
+/**
+ * Formats a platform URL by replacing the [jobId] placeholder with the actual job ID
+ * @param platformName The name of the platform
+ * @param jobId The job ID to insert into the URL
+ * @returns Formatted URL or null if platform not found
+ */
+export function formatPlatformUrl(
+  platformName: string,
+  jobId: string
+): string | null {
+  const platformData = getPlatformData(platformName);
+  if (!platformData) return null;
+
+  return platformData.urlStructure.replace("[jobId]", jobId);
 }
