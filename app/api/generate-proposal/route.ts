@@ -29,7 +29,11 @@ export async function POST(request: Request) {
     const userId = session.user.id;
 
     // Get request body
-    const { jobDescription } = await request.json();
+    const {
+      jobDescription,
+      formula = "aida",
+      tone = "professional",
+    } = await request.json();
 
     // Validate input
     if (!jobDescription || jobDescription.trim().length < 10) {
@@ -61,27 +65,70 @@ export async function POST(request: Request) {
       );
     }
 
+    // Select the prompt based on the formula
+    let formulaGuidelines = "";
+    switch (formula) {
+      case "aida":
+        formulaGuidelines = `
+        Apply the AIDA formula:
+        - Attention: Hook the client with a compelling opening that shows you understand their needs
+        - Interest: Highlight your relevant skills and experience
+        - Desire: Explain specifically how you can solve their problem and deliver results
+        - Action: End with a clear call to action`;
+        break;
+      case "pas":
+        formulaGuidelines = `
+        Apply the PAS formula:
+        - Problem: Demonstrate deep understanding of their specific issue
+        - Agitate: Highlight implications if the problem persists or worsens
+        - Solution: Present your approach and resolution path`;
+        break;
+      case "bab":
+        formulaGuidelines = `
+        Apply the BAB formula:
+        - Before: Acknowledge their current situation and needs
+        - After: Paint a picture of the improved future state
+        - Bridge: Explain how you'll get them from before to after`;
+        break;
+      case "star":
+        formulaGuidelines = `
+        Apply the STAR formula:
+        - Situation: Acknowledge their specific project context
+        - Task: Clearly state what needs to be accomplished
+        - Action: Outline your process to complete it
+        - Result: Emphasize the outcomes and benefits`;
+        break;
+      case "fab":
+        formulaGuidelines = `
+        Apply the FAB formula:
+        - Feature: Highlight your specialized expertise and technical skills
+        - Advantage: Explain why your approach/methodology is superior
+        - Benefit: Translate technical capabilities into business outcomes`;
+        break;
+      default:
+        formulaGuidelines = `
+        Apply the AIDA formula:
+        - Attention: Hook the client with a compelling opening that shows you understand their needs
+        - Interest: Highlight your relevant skills and experience
+        - Desire: Explain specifically how you can solve their problem and deliver results
+        - Action: End with a clear call to action`;
+    }
+
+    // Select tone guidelines
+    const toneGuidelines =
+      tone === "professional"
+        ? "Use a professional tone that is clear, straightforward, and business-appropriate."
+        : "Use a friendly tone that is warm, approachable, and conversational while maintaining professionalism.";
+
     // Build the prompt for the AI
     const prompt = `
-You are an expert proposal writer for freelancers. First, analyze the job description to determine the best copywriting formula to use from:
+You are an expert proposal writer for freelancers. First, analyze the job description to determine the best approach for this specific opportunity.
 
-1. AIDA (Attention, Interest, Desire, Action)
-2. PAS (Problem, Agitate, Solution)
-3. BAB (Before, After, Bridge)
-4. STAR (Situation, Task, Action, Result)
-5. FAB (Feature, Advantage, Benefit)
+You'll be creating a proposal using the ${formula.toUpperCase()} formula as explicitly selected by the user.
 
-Use these guidelines to choose the most effective formula:
+${formulaGuidelines}
 
-- PAS works best for technical problem-solving, consulting, and when clients have specific pain points to address. It has the highest overall success rate across different job types because it acknowledges the client's challenge, creates emotional engagement, and positions you as the solution.
-
-- AIDA works best for creative services, marketing positions, and situations where you need to showcase innovation and fresh ideas.
-
-- BAB works best for transformation-focused services like design makeovers, business optimization, or coaching where you want to emphasize the contrast between current and potential states.
-
-- STAR works best for project-based work with clear deliverables and timelines, demonstrating methodical thinking for management, development, and implementation roles.
-
-- FAB works best for technical services where specific expertise is critical, helping translate complex capabilities into clear business outcomes.
+${toneGuidelines}
 
 Then, create a compelling proposal based on the following job description:
 
@@ -118,41 +165,7 @@ If the job post doesn't include a specific name to address the proposal to:
 
 5. After your greeting, immediately demonstrate knowledge of their specific project to show personalization despite the lack of a name.
 
-Based on your analysis, apply the selected formula:
-
-For AIDA formula:
-
-- Attention: Hook the client with a compelling opening that shows you understand their needs
-- Interest: Highlight your relevant skills and experience
-- Desire: Explain specifically how you can solve their problem and deliver results
-- Action: End with a clear call to action
-
-For PAS formula:
-
-- Problem: Demonstrate deep understanding of their specific issue
-- Agitate: Highlight implications if the problem persists or worsens
-- Solution: Present your approach and resolution path
-
-For BAB formula:
-
-- Before: Acknowledge their current situation and needs
-- After: Paint a picture of the improved future state
-- Bridge: Explain how you'll get them from before to after
-
-For STAR formula:
-
-- Situation: Acknowledge their specific project context
-- Task: Clearly state what needs to be accomplished
-- Action: Outline your process to complete it
-- Result: Emphasize the outcomes and benefits
-
-For FAB formula:
-
-- Feature: Highlight your specialized expertise and technical skills
-- Advantage: Explain why your approach/methodology is superior
-- Benefit: Translate technical capabilities into business outcomes
-
-Universal requirements for ALL proposals:
+Universal requirements for the proposal:
 
 1. First, analyze the job description to clearly identify what the client explicitly wants AND what they likely need (even if not directly stated)
 
@@ -167,12 +180,11 @@ Universal requirements for ALL proposals:
    - An invitation for a 15-minute call to discuss possibilities with no strings attached
    - A brief paragraph describing a similar project you've worked on (choose the most relevant from the profile info)
 
-3. Tone should be professional, confident but not arrogant, enthusiastic, and personalized.
-4. Use "you" more than "I" and frame capabilities in terms of client benefits.
-5. Keep the proposal between 250-350 words, emphasizing quality over quantity.
-6. Make sure it reads like it was written by a real person, not AI-generated.
-7. Write the proposal in first person as if you are the freelancer.
-8. Use active voice, vary sentence structure, and avoid generic phrases and clichés.
+3. Use "you" more than "I" and frame capabilities in terms of client benefits.
+4. Keep the proposal between 250-350 words, emphasizing quality over quantity.
+5. Make sure it reads like it was written by a real person, not AI-generated.
+6. Write the proposal in first person as if you are the freelancer.
+7. Use active voice, vary sentence structure, and avoid generic phrases and clichés.
 `;
 
     // Call OpenAI API

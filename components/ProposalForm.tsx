@@ -29,6 +29,8 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { useJobDetailsQuery } from "@/hooks/cover-letter/useJobDetailsQuery";
 import { toast } from "sonner";
+import { ProposalFormDialog, ProposalOptions } from "./ProposalFormDialog";
+import { RefinementDialog } from "./RefinementDialog";
 
 // Define form validation schema with zod
 const formSchema = z.object({
@@ -50,11 +52,18 @@ const ProposalForm = () => {
     refineProposal,
     isGenerating,
     isRefining,
+    isProposalRefined,
+    setIsProposalRefined,
     error,
   } = useProposal();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showJobDescription, setShowJobDescription] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isRefinementDialogOpen, setIsRefinementDialogOpen] = useState(false);
+  const [pendingAction, setPendingAction] = useState<
+    "copy" | "platform" | null
+  >(null);
   const searchParams = useSearchParams();
   const jobDetailsId = searchParams.get("jobDetailsId");
 
@@ -116,8 +125,14 @@ const ProposalForm = () => {
     setShowJobDescription(!showJobDescription);
   };
 
-  // Handle copy to clipboard
+  // Handle copy to clipboard with refinement check
   const handleCopyToClipboard = () => {
+    if (!isProposalRefined) {
+      setPendingAction("copy");
+      setIsRefinementDialogOpen(true);
+      return;
+    }
+
     if (proposal) {
       navigator.clipboard
         .writeText(proposal)
@@ -133,6 +148,12 @@ const ProposalForm = () => {
 
   // Helper function to copy to clipboard
   const copyToClipboard = () => {
+    if (!isProposalRefined) {
+      setPendingAction("copy");
+      setIsRefinementDialogOpen(true);
+      return;
+    }
+
     navigator.clipboard
       .writeText(proposal)
       .then(() => {
@@ -146,8 +167,51 @@ const ProposalForm = () => {
       });
   };
 
+  // Execute the pending action after confirmation
+  const executePendingAction = () => {
+    if (pendingAction === "copy") {
+      navigator.clipboard
+        .writeText(proposal)
+        .then(() => {
+          toast.success("Proposal copied to clipboard!");
+        })
+        .catch((err) => {
+          console.error("Failed to copy text: ", err);
+          toast.error("Failed to copy proposal");
+        });
+    } else if (pendingAction === "platform") {
+      handlePasteInEditor(true);
+    }
+
+    // Clear the pending action
+    setPendingAction(null);
+    setIsRefinementDialogOpen(false);
+
+    // Mark as manually confirmed as refined
+    setIsProposalRefined(true);
+  };
+
+  // Open the dialog for proposal options
+  const openProposalDialog = () => {
+    setIsDialogOpen(true);
+  };
+
+  // Handle generate proposal with options
+  const handleGenerateWithOptions = (options: ProposalOptions) => {
+    console.log("Generating proposal with options:", options);
+    // Pass options to the generateProposal function
+    generateProposal(options);
+    setIsDialogOpen(false);
+  };
+
   // Handle "Open in Editor" action
-  const handlePasteInEditor = () => {
+  const handlePasteInEditor = (bypassRefinementCheck = false) => {
+    // Check if proposal is refined unless bypassing
+    if (!isProposalRefined && !bypassRefinementCheck) {
+      setPendingAction("platform");
+      setIsRefinementDialogOpen(true);
+      return;
+    }
     if (proposal && platform && jobDetails?.platformJobId) {
       // Get the platform data from our constants
       const platformData = getPlatformData(platform);
@@ -282,6 +346,26 @@ const ProposalForm = () => {
         )}
       </div>
 
+      {/* Proposal Generation Dialog */}
+      <ProposalFormDialog
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        onGenerate={handleGenerateWithOptions}
+        isGenerating={isGenerating}
+      />
+
+      <RefinementDialog
+        isOpen={isRefinementDialogOpen}
+        onClose={() => setIsRefinementDialogOpen(false)}
+        onRefine={() => {
+          setIsRefinementDialogOpen(false);
+          refineProposal();
+        }}
+        onProceed={executePendingAction}
+        platformName={pendingAction === "platform" ? platformName : undefined}
+        isSubmitting={isSubmitting}
+      />
+
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(handleSubmit)}
@@ -314,6 +398,16 @@ const ProposalForm = () => {
                       field.onChange(e);
                       setProposal(e.target.value);
                     }}
+                    onBlur={(e) => {
+                      // If user has made substantial edits, consider it refined
+                      if (
+                        proposal &&
+                        e.target.value !== proposal &&
+                        Math.abs(e.target.value.length - proposal.length) > 50
+                      ) {
+                        setIsProposalRefined(true);
+                      }
+                    }}
                   />
                 </FormControl>
                 <div className="flex justify-between items-center mt-2">
@@ -330,7 +424,7 @@ const ProposalForm = () => {
           <div className="flex flex-col sm:flex-row gap-3 mt-4">
             <Button
               type="button"
-              onClick={() => generateProposal()}
+              onClick={openProposalDialog}
               disabled={
                 isGenerating ||
                 isRefining ||
@@ -368,7 +462,7 @@ const ProposalForm = () => {
               ) : (
                 <>
                   <RefreshCw className="h-4 w-4" />
-                  Refine Proposal
+                  {isProposalRefined ? "Refine Again" : "Refine Proposal"}
                 </>
               )}
             </Button>
@@ -393,7 +487,7 @@ const ProposalForm = () => {
 
                 <Button
                   type="button"
-                  onClick={handlePasteInEditor}
+                  onClick={() => handlePasteInEditor()}
                   disabled={
                     isGenerating ||
                     isRefining ||
