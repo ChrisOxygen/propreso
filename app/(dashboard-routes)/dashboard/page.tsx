@@ -1,7 +1,7 @@
 "use client";
 
+import DashboardProfileSection from "@/components/dashboard/DashboardProfileSection";
 import DashboardHeader from "@/components/DashboardHeader";
-import DashboardProfileSection from "@/components/DashboardProfileSection";
 import InBoxLoader from "@/components/InBoxLoader";
 import NoProfile from "@/components/NoProfile";
 import { useUser } from "@/hooks/useUser";
@@ -18,6 +18,7 @@ function DashBoard() {
       ) : (
         <div className="flex flex-col  h-full w-full">
           <DashboardHeader />
+          {/* <DashboardProfileSection /> */}
           <DashboardProfileSection />
         </div>
       )}
