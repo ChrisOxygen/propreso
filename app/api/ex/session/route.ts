@@ -11,6 +11,8 @@ export async function GET() {
     // Get the session using Auth.js
     const session = await auth();
 
+    console.log("session", session);
+
     // Return appropriate response with CORS headers
     return NextResponse.json(
       {
