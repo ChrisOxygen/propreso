@@ -1,12 +1,14 @@
 // app/api/generate-bio/route.ts
+import { generateWithOpenAI } from "@/lib/actions";
 import { NextResponse } from "next/server";
-import OpenAI from "openai";
+// import OpenAI from "openai";
 
 // Initialize OpenAI client
-const openai = new OpenAI({
-  baseURL: "https://models.inference.ai.azure.com",
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// const openai = new OpenAI({
+//   baseURL:
+//     "https://cheapest-gpt-4-turbo-gpt-4-vision-chatgpt-openai-ai-api.p.rapidapi.com",
+//   apiKey: process.env.OPENAI_API_KEY,
+// });
 
 export async function POST(request: Request) {
   try {
@@ -30,25 +32,31 @@ export async function POST(request: Request) {
     Do not use placeholders or generic statements.`;
 
     // Call OpenAI API
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o", // Use "gpt-3.5-turbo" for a more cost-effective option
-      messages: [
-        {
-          role: "system",
-          content:
-            "You are a professional profile writer who creates concise, compelling professional bios.",
-        },
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
-      temperature: 0.7,
-      max_tokens: 300,
+    // const completion = await openai.chat.completions.create({
+    //   model: "gpt-4o", // Use "gpt-3.5-turbo" for a more cost-effective option
+    //   messages: [
+    //     {
+    //       role: "system",
+    //       content:
+    //         "You are a professional profile writer who creates concise, compelling professional bios.",
+    //     },
+    //     {
+    //       role: "user",
+    //       content: prompt,
+    //     },
+    //   ],
+    //   temperature: 0.7,
+    //   max_tokens: 300,
+    // });
+
+    const generatedBio = await generateWithOpenAI({
+      prompt,
     });
 
+    console.log("generatedBio-----------", generatedBio);
+
     // Extract the generated bio
-    const generatedBio = completion.choices[0].message.content?.trim() || "";
+    // const generatedBio = completion.choices[0].message.content?.trim() || "";
 
     return NextResponse.json({ bio: generatedBio });
   } catch (error) {

@@ -1,12 +1,13 @@
 // File: app/api/parse-upwork-job/route.ts
+import { generateWithOpenAI } from "@/lib/actions";
 import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
+// import OpenAI from "openai";
 
-// Initialize OpenAI client
-const openai = new OpenAI({
-  baseURL: "https://models.inference.ai.azure.com",
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// // Initialize OpenAI client
+// const openai = new OpenAI({
+//   baseURL: "https://models.inference.ai.azure.com",
+//   apiKey: process.env.OPENAI_API_KEY,
+// });
 
 export async function POST(request: NextRequest) {
   try {
@@ -74,24 +75,28 @@ Extract the information and return ONLY the JSON object without any explanation 
 `;
 
     // Make the API call to OpenAI
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        {
-          role: "system",
-          content:
-            "You are an HTML parser that extracts structured information from Upwork job posting pages.",
-        },
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
-      response_format: { type: "json_object" },
-    });
+    // const completion = await openai.chat.completions.create({
+    //   model: "gpt-4o",
+    //   messages: [
+    //     {
+    //       role: "system",
+    //       content:
+    //         "You are an HTML parser that extracts structured information from Upwork job posting pages.",
+    //     },
+    //     {
+    //       role: "user",
+    //       content: prompt,
+    //     },
+    //   ],
+    //   response_format: { type: "json_object" },
+    // });
 
     // Extract the JSON response
-    const content = completion.choices[0].message.content;
+    const content = await generateWithOpenAI({
+      prompt,
+      response_format: "json_object",
+      max_tokens: 1000,
+    });
 
     if (!content) {
       return NextResponse.json(
@@ -99,6 +104,8 @@ Extract the information and return ONLY the JSON object without any explanation 
         { status: 500 }
       );
     }
+
+    console.log("content-----------", content);
 
     // Parse the JSON response
     const parsedData = JSON.parse(content) as AnalizedUpworkJobData;

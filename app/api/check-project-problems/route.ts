@@ -1,12 +1,13 @@
 // app/api/check-project-problems/route.ts
+import { generateWithOpenAI } from "@/lib/actions";
 import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
+// import OpenAI from "openai";
 
-// Initialize OpenAI client
-const openai = new OpenAI({
-  baseURL: "https://models.inference.ai.azure.com",
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// // Initialize OpenAI client
+// const openai = new OpenAI({
+//   baseURL: "https://models.inference.ai.azure.com",
+//   apiKey: process.env.OPENAI_API_KEY,
+// });
 
 export async function POST(request: NextRequest) {
   try {
@@ -52,24 +53,27 @@ Return ONLY a JSON object with this structure:
 `;
 
       // Call OpenAI API for each project
-      const completion = await openai.chat.completions.create({
-        model: "gpt-4o", // Use your available model
-        messages: [
-          {
-            role: "system",
-            content:
-              "You are an expert project reviewer that analyzes project details for completeness.",
-          },
-          {
-            role: "user",
-            content: prompt,
-          },
-        ],
-        response_format: { type: "json_object" },
-      });
+      // const completion = await openai.chat.completions.create({
+      //   model: "gpt-4o", // Use your available model
+      //   messages: [
+      //     {
+      //       role: "system",
+      //       content:
+      //         "You are an expert project reviewer that analyzes project details for completeness.",
+      //     },
+      //     {
+      //       role: "user",
+      //       content: prompt,
+      //     },
+      //   ],
+      //   response_format: { type: "json_object" },
+      // });
 
       // Extract the JSON response
-      const content = completion.choices[0].message.content;
+      const content = await generateWithOpenAI({
+        prompt,
+        response_format: "json_object",
+      });
 
       if (!content) {
         throw new Error("Failed to analyze project content");

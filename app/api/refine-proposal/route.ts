@@ -1,13 +1,14 @@
 // app/api/refine-proposal/route.ts
 import { NextResponse } from "next/server";
-import OpenAI from "openai";
+// import OpenAI from "openai";
 import { auth } from "@/auth";
+import { generateWithOpenAI } from "@/lib/actions";
 
 // Initialize OpenAI client
-const openai = new OpenAI({
-  baseURL: "https://models.inference.ai.azure.com",
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// const openai = new OpenAI({
+//   baseURL: "https://models.inference.ai.azure.com",
+//   apiKey: process.env.OPENAI_API_KEY,
+// });
 
 export async function POST(request: Request) {
   try {
@@ -67,25 +68,28 @@ export async function POST(request: Request) {
     `;
 
     // Call OpenAI API
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o", // Use appropriate model
-      messages: [
-        {
-          role: "system",
-          content:
-            "You are an expert proposal editor who helps freelancers refine their proposals to win more clients.",
-        },
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
-      temperature: 0.7,
-      max_tokens: 1000,
-    });
+    // const completion = await openai.chat.completions.create({
+    //   model: "gpt-4o", // Use appropriate model
+    //   messages: [
+    //     {
+    //       role: "system",
+    //       content:
+    //         "You are an expert proposal editor who helps freelancers refine their proposals to win more clients.",
+    //     },
+    //     {
+    //       role: "user",
+    //       content: prompt,
+    //     },
+    //   ],
+    //   temperature: 0.7,
+    //   max_tokens: 1000,
+    // });
 
     // Extract the refined proposal
-    const refinedProposal = completion.choices[0].message.content?.trim() || "";
+    const refinedProposal = await generateWithOpenAI({
+      prompt,
+      max_tokens: 1000,
+    });
 
     return NextResponse.json({ refinedProposal });
   } catch (error) {

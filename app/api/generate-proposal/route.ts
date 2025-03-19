@@ -1,14 +1,15 @@
 // app/api/generate-proposal/route.ts
 import { NextResponse } from "next/server";
-import OpenAI from "openai";
+// import OpenAI from "openai";
 import { auth } from "@/auth";
 import { PrismaClient } from "@prisma/client";
+import { generateWithOpenAI } from "@/lib/actions";
 
 // Initialize OpenAI client
-const openai = new OpenAI({
-  baseURL: "https://models.inference.ai.azure.com",
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// const openai = new OpenAI({
+//   baseURL: "https://models.inference.ai.azure.com",
+//   apiKey: process.env.OPENAI_API_KEY,
+// });
 
 // Initialize Prisma client
 const prisma = new PrismaClient();
@@ -188,26 +189,28 @@ Universal requirements for the proposal:
 `;
 
     // Call OpenAI API
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o", // Use appropriate model
-      messages: [
-        {
-          role: "system",
-          content:
-            "You are an expert proposal writer who helps freelancers win clients with compelling proposals.",
-        },
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
-      temperature: 0.7,
-      max_tokens: 1000,
-    });
+    // const completion = await openai.chat.completions.create({
+    //   model: "gpt-4o", // Use appropriate model
+    //   messages: [
+    //     {
+    //       role: "system",
+    //       content:
+    //         "You are an expert proposal writer who helps freelancers win clients with compelling proposals.",
+    //     },
+    //     {
+    //       role: "user",
+    //       content: prompt,
+    //     },
+    //   ],
+    //   temperature: 0.7,
+    //   max_tokens: 1000,
+    // });
 
     // Extract the generated proposal
-    const generatedProposal =
-      completion.choices[0].message.content?.trim() || "";
+    const generatedProposal = await generateWithOpenAI({
+      prompt,
+      max_tokens: 1000,
+    });
 
     // Save the generated proposal to history (optional)
     // This could be implemented to track proposal history

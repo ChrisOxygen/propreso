@@ -1,12 +1,13 @@
 // app/api/refine-bio/route.ts
+import { generateWithOpenAI } from "@/lib/actions";
 import { NextResponse } from "next/server";
-import OpenAI from "openai";
+// import OpenAI from "openai";
 
 // Initialize OpenAI client
-const openai = new OpenAI({
-  baseURL: "https://models.inference.ai.azure.com",
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// const openai = new OpenAI({
+//   baseURL: "https://models.inference.ai.azure.com",
+//   apiKey: process.env.OPENAI_API_KEY,
+// });
 
 export async function POST(request: Request) {
   try {
@@ -37,25 +38,27 @@ export async function POST(request: Request) {
     Return only the refined bio text without additional commentary.`;
 
     // Call OpenAI API
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o", // Use "gpt-3.5-turbo" for a more cost-effective option
-      messages: [
-        {
-          role: "system",
-          content:
-            "You are a professional bio editor who refines and improves professional profiles.",
-        },
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
-      temperature: 0.7,
-      max_tokens: 300,
-    });
+    // const completion = await openai.chat.completions.create({
+    //   model: "gpt-4o", // Use "gpt-3.5-turbo" for a more cost-effective option
+    //   messages: [
+    //     {
+    //       role: "system",
+    //       content:
+    //         "You are a professional bio editor who refines and improves professional profiles.",
+    //     },
+    //     {
+    //       role: "user",
+    //       content: prompt,
+    //     },
+    //   ],
+    //   temperature: 0.7,
+    //   max_tokens: 300,
+    // });
 
     // Extract the refined bio
-    const refinedBio = completion.choices[0].message.content?.trim() || "";
+    const refinedBio = await generateWithOpenAI({
+      prompt,
+    });
 
     return NextResponse.json({ refinedBio });
   } catch (error) {
