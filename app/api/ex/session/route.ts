@@ -11,7 +11,7 @@ export async function GET() {
     // Get the session using Auth.js
     const session = await auth();
 
-    console.log("session", session);
+    console.log("session---------", session);
 
     // Return appropriate response with CORS headers
     return NextResponse.json(
@@ -42,12 +42,13 @@ export async function GET() {
 /**
  * OPTIONS handler for CORS preflight requests
  */
-export async function OPTIONS() {
-  return NextResponse.json(
-    {},
-    {
-      status: 200,
-      headers: corsHeaders,
-    }
-  );
-}
+// export async function OPTIONS() {
+//   console.log("OPTIONS request received");
+//   return NextResponse.json(
+//     {},
+//     {
+//       status: 200,
+//       headers: corsHeaders,
+//     }
+//   );
+// }
