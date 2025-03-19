@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { PrismaClient } from "@prisma/client";
 import { parseJobUrl } from "@/lib/services";
+import { corsHeaders } from "@/utils/cors";
 
 // Initialize Prisma client
 const prisma = new PrismaClient();
@@ -76,6 +77,7 @@ export async function POST(req: NextRequest) {
       success: true,
       message: "Job details saved successfully",
       jobDetailsId: newJobDetails.id,
+      headers: corsHeaders,
     });
   } catch (error) {
     console.error("Error handling job details:", error);
