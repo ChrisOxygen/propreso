@@ -94,5 +94,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     strategy: "jwt",
     maxAge: 30 * 60, // 30 minutes in seconds
   },
+
+  cookies: {
+    sessionToken: {
+      name: "next-auth.session-token",
+      options: {
+        httpOnly: true,
+        sameSite: "none",
+        path: "/",
+        secure: true,
+        domain:
+          process.env.NODE_ENV === "production"
+            ? "https://propreso.vercel.app/" // Use your actual domain
+            : "localhost",
+      },
+    },
+  },
   secret: process.env.NEXTAUTH_SECRET,
 });
