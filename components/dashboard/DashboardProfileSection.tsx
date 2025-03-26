@@ -34,7 +34,7 @@ export function DashboardProfileSection() {
           onClick={() => window.location.reload()}
           className="bg-black text-white hover:bg-gray-800"
         >
-          Retry
+          try again
         </Button>
       </div>
     );
