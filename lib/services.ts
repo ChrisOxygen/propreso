@@ -144,3 +144,64 @@ export function formatPlatformUrl(
 
   return platformData.urlStructure.replace("[jobId]", jobId);
 }
+
+/**
+ * Breadcrumb item interface
+ */
+export interface BreadcrumbItem {
+  label: string;
+  href: string;
+  isCurrentPage: boolean;
+}
+
+/**
+ * Generates breadcrumb items from a given pathname
+ *
+ * @param pathname - The current URL pathname (e.g., "/settings/profile")
+ * @param homeLabel - Optional label for the home breadcrumb (defaults to "Dashboard")
+ * @param homeHref - Optional href for the home breadcrumb (defaults to "/")
+ * @returns Array of breadcrumb items with label, href, and isCurrentPage properties
+ */
+export function generateBreadcrumbs(
+  pathname: string,
+  homeLabel: string = "Dashboard",
+  homeHref: string = "/dashboard"
+): BreadcrumbItem[] {
+  // Skip the first empty string after splitting
+  const pathSegments = pathname.split("/").filter((segment) => segment);
+
+  // Create an array to store breadcrumb items
+  const breadcrumbs: BreadcrumbItem[] = [];
+
+  // Start with home/dashboard
+  breadcrumbs.push({
+    label: homeLabel,
+    href: homeHref,
+    isCurrentPage: pathSegments.length === 1 && pathSegments[0] === "dashboard",
+  });
+
+  if (pathSegments.length === 1 && pathSegments[0] === "dashboard") {
+    return breadcrumbs;
+  }
+
+  // Build the rest of the breadcrumbs
+  let currentPath = "";
+
+  pathSegments.forEach((segment, index) => {
+    currentPath += `/${segment}`;
+
+    // Format the segment for display (capitalize, replace hyphens, etc.)
+    const formattedLabel = segment
+      .split("-")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+
+    breadcrumbs.push({
+      label: formattedLabel,
+      href: currentPath,
+      isCurrentPage: index === pathSegments.length - 1,
+    });
+  });
+
+  return breadcrumbs;
+}

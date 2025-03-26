@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
 export function useProfile(profileId: string | null) {
-  console.log("Profile ID:----------------------", profileId);
   const fetchProfile = async () => {
     if (!profileId) {
       throw new Error("Profile ID is required");
@@ -24,6 +23,7 @@ export function useProfile(profileId: string | null) {
     queryKey: ["profile", profileId],
     queryFn: fetchProfile,
     enabled: !!profileId,
+
     staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
   });
 }

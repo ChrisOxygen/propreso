@@ -8,6 +8,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { ScrollArea } from "../ui/scroll-area";
 
 interface ProfileProjectsProps {
   projects: PrismaProject[];
@@ -19,7 +20,7 @@ export function ProfileProjects({
   onEditProject,
 }: ProfileProjectsProps) {
   return (
-    <div>
+    <div className="h-full overflow-clip">
       <div className="flex justify-between items-center mb-3">
         <h3 className="text-lg font-semibold">Projects</h3>
         <Link href="/dashboard/add-project">
@@ -33,63 +34,67 @@ export function ProfileProjects({
           </Button>
         </Link>
       </div>
-
       {projects.length > 0 ? (
-        <div className="space-y-4">
-          {projects.map((project) => (
-            <Card key={project.id} className="overflow-hidden border-gray-200">
-              <CardContent className="p-4">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h4 className="font-medium mb-1">{project.title}</h4>
-                    <p className="text-sm text-gray-700">
-                      {project.description}
-                    </p>
+        <ScrollArea className="">
+          <div className="space-y-4">
+            {projects.map((project) => (
+              <Card
+                key={project.id}
+                className="overflow-hidden border-gray-200"
+              >
+                <CardContent className="p-4">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h4 className="font-medium mb-1">{project.title}</h4>
+                      <p className="text-sm text-gray-700">
+                        {project.description}
+                      </p>
 
-                    <div className="flex gap-4 mt-2">
-                      {project.liveLink && (
-                        <a
-                          href={project.liveLink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-sm text-black font-medium hover:underline"
-                        >
-                          Live Demo
-                        </a>
-                      )}
-                      {project.githubLink && (
-                        <a
-                          href={project.githubLink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-sm text-black font-medium hover:underline"
-                        >
-                          GitHub Repo
-                        </a>
-                      )}
+                      <div className="flex gap-4 mt-2">
+                        {project.liveLink && (
+                          <a
+                            href={project.liveLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm text-black font-medium hover:underline"
+                          >
+                            Live Demo
+                          </a>
+                        )}
+                        {project.githubLink && (
+                          <a
+                            href={project.githubLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm text-black font-medium hover:underline"
+                          >
+                            GitHub Repo
+                          </a>
+                        )}
+                      </div>
                     </div>
-                  </div>
 
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <button
-                          onClick={() => onEditProject(project.id)}
-                          className="text-gray-500 hover:text-black transition-colors"
-                        >
-                          <FiEdit size={18} />
-                        </button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Edit project</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button
+                            onClick={() => onEditProject(project.id)}
+                            className="text-gray-500 hover:text-black transition-colors"
+                          >
+                            <FiEdit size={18} />
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Edit project</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </ScrollArea>
       ) : (
         <div className="text-center py-8 bg-gray-50 rounded-lg border border-dashed border-gray-300">
           <p className="text-gray-500 mb-2">No projects added yet</p>

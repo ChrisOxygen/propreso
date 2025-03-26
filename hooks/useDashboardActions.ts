@@ -1,13 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useUserProfiles } from "@/hooks/user-profile-hooks/useUserProfiles";
-import { useProfile } from "@/hooks/user-profile-hooks/useProfile";
 
 export function useDashboardActions() {
-  const [selectedProfileId, setSelectedProfileId] = useState<string | null>(
-    null
-  );
+  const [activeProfile, setActiveProfile] = useState<
+    PrismaUserProfile | undefined
+  >(undefined);
   const [expandBio, setExpandBio] = useState(false);
-  const [showSidebar, setShowSidebar] = useState(false);
 
   const {
     data: profiles,
@@ -16,13 +14,14 @@ export function useDashboardActions() {
     isSuccess: profilesFetchSuccessful,
   } = useUserProfiles();
 
-  const { data: selectedProfileDetails, isLoading: profileDetailsLoading } =
-    useProfile(selectedProfileId);
+  useEffect(() => {
+    const defaultProfile = profiles?.find((p) => p.isDefault);
+    setActiveProfile(defaultProfile);
+  }, [profiles]);
 
-  if (profilesFetchSuccessful && !selectedProfileId && profiles?.length > 0) {
-    const defaultProfile = profiles.find((p) => p.isDefault) || profiles[0];
-    setSelectedProfileId(defaultProfile.id);
-  }
+  const toggleBioExpand = () => {
+    setExpandBio(!expandBio);
+  };
 
   const handleEditTitle = () => {
     console.log("Edit title");
@@ -36,35 +35,23 @@ export function useDashboardActions() {
     console.log(`Edit project ${projectId}`);
   };
 
-  const toggleSidebar = () => {
-    setShowSidebar(!showSidebar);
-  };
-
-  const handleProfileSelect = (id: string) => {
-    setSelectedProfileId(id);
-    if (window.innerWidth < 1024) {
-      setShowSidebar(false);
-    }
-  };
-
-  const toggleBioExpand = () => {
-    setExpandBio(!expandBio);
+  const handleSetActiveProfile = (profilId: string) => {
+    const profile = profiles?.find((p) => p.id === profilId);
+    setActiveProfile(profile);
+    console.log("Set active profile", profile);
   };
 
   return {
-    selectedProfileId,
+    activeProfile,
     expandBio,
-    showSidebar,
     profiles,
-    selectedProfileDetails,
     profilesLoading,
-    profileDetailsLoading,
     error,
+    profilesFetchSuccessful,
+    toggleBioExpand,
     handleEditTitle,
     handleEditBio,
     handleEditProject,
-    toggleSidebar,
-    handleProfileSelect,
-    toggleBioExpand,
+    handleSetActiveProfile,
   };
 }

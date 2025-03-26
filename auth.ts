@@ -99,7 +99,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     sessionToken: {
       name: "next-auth.session-token",
       options: {
-        httpOnly: true,
         sameSite: "none",
         path: "/",
         secure: true,

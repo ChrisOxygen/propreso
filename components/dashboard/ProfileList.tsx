@@ -52,7 +52,7 @@ export function ProfileList({
       {profiles.map((profile) => (
         <Card
           key={profile.id}
-          className={`mb-3 cursor-pointer hover:border-gray-400 transition-colors ${
+          className={`mb-3 cursor-pointer hover:border-gray-400 w-full transition-colors ${
             profile.id === selectedProfileId ? "border-black" : ""
           }`}
           onClick={() => onProfileSelect(profile.id)}

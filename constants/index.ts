@@ -1,3 +1,13 @@
+import {
+  LayoutDashboard,
+  Target,
+  FileText,
+  Users,
+  UsersIcon,
+  LifeBuoyIcon,
+  MessageSquareIcon,
+} from "lucide-react";
+
 export const JOB_TITLES = [
   "WordPress Designer",
   "Frontend Developer",
@@ -542,4 +552,44 @@ export const AVAILABLE_PLATFORMS = [
     coverLetterSelector: "textarea.job-application-textarea",
   },
   // Add more platforms as needed
+];
+
+export const PRIMARY_NAV_ITEMS = [
+  {
+    title: "Dashboard",
+    url: "/dashboard",
+    icon: LayoutDashboard,
+  },
+  {
+    title: "Proposals",
+    url: "/proposals",
+    icon: FileText,
+  },
+  {
+    title: "Profiles",
+    url: "/profiles",
+    icon: Users,
+  },
+  {
+    title: "Goals",
+    url: "/goals",
+    icon: Target,
+  },
+];
+export const SECONDARY_NAV_ITEMS = [
+  {
+    title: "Referrals",
+    url: "/referrals",
+    icon: UsersIcon,
+  },
+  {
+    title: "Support",
+    url: "/support",
+    icon: LifeBuoyIcon,
+  },
+  {
+    title: "Feedback",
+    url: "/feedback",
+    icon: MessageSquareIcon,
+  },
 ];

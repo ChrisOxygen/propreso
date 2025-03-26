@@ -6,41 +6,18 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useDashboardActions } from "@/hooks/useDashboardActions";
 
-interface ProfileBioProps {
-  bio: string;
-  expandBio: boolean;
-  onExpandToggle: () => void;
-  onEdit: () => void;
-}
+export function ProfileBio() {
+  const { activeProfile, expandBio, toggleBioExpand } = useDashboardActions();
 
-export function ProfileBio({
-  bio,
-  expandBio,
-  onExpandToggle,
-  onEdit,
-}: ProfileBioProps) {
-  const renderBio = () => {
-    if (!bio) return <p className="text-gray-500 italic">No bio available</p>;
+  if (!activeProfile) return null;
 
-    const shortBio =
-      bio.length > 150 && !expandBio ? bio.substring(0, 150) + "..." : bio;
+  const { bio } = activeProfile;
+  if (!bio) return <p className="text-gray-500 italic">No bio available</p>;
 
-    return (
-      <div>
-        <p className="text-gray-700">{shortBio}</p>
-        {bio.length > 150 && (
-          <Button
-            variant="link"
-            onClick={onExpandToggle}
-            className="p-0 h-auto text-black mt-1"
-          >
-            {expandBio ? "Read less" : "Read more"}
-          </Button>
-        )}
-      </div>
-    );
-  };
+  const shortBio =
+    bio.length > 150 && !expandBio ? bio.substring(0, 150) + "..." : bio;
 
   return (
     <div className="mb-6">
@@ -50,7 +27,7 @@ export function ProfileBio({
           <Tooltip>
             <TooltipTrigger asChild>
               <button
-                onClick={onEdit}
+                // onClick={onEdit}
                 className="text-gray-500 hover:text-black transition-colors"
               >
                 <FiEdit size={18} />
@@ -62,7 +39,18 @@ export function ProfileBio({
           </Tooltip>
         </TooltipProvider>
       </div>
-      {renderBio()}
+      <div>
+        <p className="text-gray-700">{shortBio}</p>
+        {bio.length > 150 && (
+          <Button
+            variant="link"
+            onClick={toggleBioExpand}
+            className="p-0 h-auto text-black mt-1"
+          >
+            {expandBio ? "Read less" : "Read more"}
+          </Button>
+        )}
+      </div>
     </div>
   );
 }
