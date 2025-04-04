@@ -1,14 +1,26 @@
+import {
+  LayoutDashboard,
+  Target,
+  FileText,
+  Users,
+  UsersIcon,
+  LifeBuoyIcon,
+  MessageSquareIcon,
+} from "lucide-react";
+
+import { FiUser, FiSettings, FiAlignJustify } from "react-icons/fi";
+
 export const JOB_TITLES = [
   "WordPress Designer",
   "Frontend Developer",
   "Backend Developer",
   "Fullstack Developer",
-  "UI/UX Designer",
+  "UI UX Designer",
   "Mobile App Developer",
   "Shopify Developer",
   "Web Scraping Specialist",
   "DevOps Engineer",
-  "AI/ML Developer",
+  "AI ML Developer",
   "Blockchain Developer",
   "Content Writer",
   "SEO Specialist",
@@ -542,4 +554,62 @@ export const AVAILABLE_PLATFORMS = [
     coverLetterSelector: "textarea.job-application-textarea",
   },
   // Add more platforms as needed
+];
+
+export const PRIMARY_NAV_ITEMS = [
+  {
+    title: "Dashboard",
+    url: "/dashboard",
+    icon: LayoutDashboard,
+  },
+  {
+    title: "Proposals",
+    url: "/proposals",
+    icon: FileText,
+  },
+  {
+    title: "Profiles",
+    url: "/profile",
+    icon: Users,
+  },
+  {
+    title: "Goals",
+    url: "/goals",
+    icon: Target,
+  },
+];
+export const SECONDARY_NAV_ITEMS = [
+  {
+    title: "Referrals",
+    url: "/referrals",
+    icon: UsersIcon,
+  },
+  {
+    title: "Support",
+    url: "/support",
+    icon: LifeBuoyIcon,
+  },
+  {
+    title: "Feedback",
+    url: "/feedback",
+    icon: MessageSquareIcon,
+  },
+];
+
+export const STEPS_DATA = [
+  {
+    title: "Choose Job Title",
+    description: "Specify your professional role",
+    icon: FiUser,
+  },
+  {
+    title: "Highlight Key Expertise",
+    description: " Showcase your valuable skills",
+    icon: FiSettings,
+  },
+  {
+    title: "Craft Personal Story",
+    description: "Share your professional narrative",
+    icon: FiAlignJustify,
+  },
 ];

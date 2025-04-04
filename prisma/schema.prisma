@@ -49,6 +49,8 @@ model Profile {
   bio         String    // Professional biography
   skills      String[]  // Array of skills
   isDefault   Boolean   @default(false)  // Indicates if this is the default profile
+  profileStength Int @default(0)      // Strength of the profile (0-100)
+  profileStengthMessage Json? // Message indicating the strength of the profile
   
   
   // Relation to User
@@ -70,11 +72,14 @@ model Project {
   title       String   // Project title
   description String   // Project description, problems solved and technologies used
   liveLink    String?  // Optional live URL
-  githubLink  String?  // Optional GitHub URL
+  repoLink  String?  // Optional GitHub URL
   
   // Relation to Profile
   profileId   String   @db.ObjectId
   profile     Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  projectStrength Int @default(0) // Strength of the project (0-100)
+  projectStrengthMessage Json? // Message indicating the strength of the project
   
   // Timestamps
   createdAt   DateTime @default(now())

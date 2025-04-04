@@ -4,12 +4,14 @@ type GenerateWithOpenAIProps = {
   prompt: string;
   response_format?: string;
   max_tokens?: number;
+  temperature?: number;
 };
 
 export const generateWithOpenAI = async ({
   prompt,
   response_format = "text",
   max_tokens = 300,
+  temperature = 0.7,
 }: GenerateWithOpenAIProps) => {
   if (!process.env.RAPID_API_KEY) {
     throw new Error("RAPID_API_KEY is not defined");
@@ -39,7 +41,7 @@ export const generateWithOpenAI = async ({
         },
       ],
       model: "gpt-4o",
-      temperature: 0.7,
+      temperature: temperature,
       max_tokens: max_tokens,
       response_format: { type: response_format },
     }),
