@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useUserProfiles } from "@/hooks/user-profile-hooks/useUserProfiles";
+import { useUserProfiles } from "@/features/profiles/hooks/user-profile-hooks/useUserProfiles";
 
 export function useDashboardActions() {
   const [activeProfile, setActiveProfile] = useState<

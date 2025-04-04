@@ -3,6 +3,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { PrismaClient } from "@prisma/client";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
+// import { authConfig } from "./auth.config";
 
 const prisma = new PrismaClient();
 
@@ -16,6 +17,10 @@ interface ExtendedUser {
 }
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  session: {
+    strategy: "jwt",
+    maxAge: 30 * 60, // 30 minutes in seconds
+  },
   adapter: PrismaAdapter(prisma),
   providers: [
     Credentials({
@@ -90,24 +95,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     signOut: "/",
     error: "/auth/error",
   },
-  session: {
-    strategy: "jwt",
-    maxAge: 30 * 60, // 30 minutes in seconds
-  },
 
-  cookies: {
-    sessionToken: {
-      name: "next-auth.session-token",
-      options: {
-        sameSite: "none",
-        path: "/",
-        secure: true,
-        domain:
-          process.env.NODE_ENV === "production"
-            ? "https://propreso.vercel.app/" // Use your actual domain
-            : "localhost",
-      },
-    },
-  },
   secret: process.env.NEXTAUTH_SECRET,
 });

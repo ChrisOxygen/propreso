@@ -1,3 +1,5 @@
+import { Prisma } from "@prisma/client";
+
 declare interface SessionUser {
   id: string;
   hasCreatedProfile: boolean;
@@ -17,11 +19,6 @@ declare interface userProfileData {
   bio: string;
   projects?: ProfileProject[];
   isDefaultProfile: boolean;
-}
-
-declare interface CreateProfileAction {
-  type: string;
-  payload?: any;
 }
 
 declare interface ProfileProject {
@@ -65,6 +62,8 @@ declare interface PrismaUserProfile {
   userId: string;
   skills: string[];
   projects: PrismaProject[];
+  profileStength: number;
+  profileStengthMessage: string;
 }
 
 declare interface JobDetailsFromPlatform {
@@ -152,7 +151,36 @@ declare interface UserInformation {
   isDefaultProfile: boolean;
 }
 
-declare interface CreateProfileState {
-  currentStep: number;
-  userInformation: UserInformation;
+// declare interface CreateProfileState {
+//   currentStep: number;
+//   userInformation: UserInformation;
+// }
+
+declare interface ProjectCardProps {
+  project: Project;
+  onUpdate?: (updatedProject: Project) => void;
 }
+
+declare interface ProjectStrengthData {
+  strength: number;
+  suggestions: {
+    name: string;
+    description: string;
+    examples: string[];
+  }[];
+}
+
+declare interface ProjectStrengthProps {
+  strength: number;
+  suggestions: {
+    name: string;
+    description: string;
+    examples: string[];
+  }[];
+  isLoading: boolean;
+}
+
+// First define the utility type
+type ProfileWithProjects = Prisma.ProfileGetPayload<{
+  include: { projects: true };
+}>;
