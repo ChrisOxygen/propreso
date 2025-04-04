@@ -2,7 +2,7 @@
 import { useMutation } from "@tanstack/react-query";
 
 import { addNewProject } from "../../actions";
-import { ProjectFormValues } from "../../components/ProjectCard";
+import { ProjectFormValues } from "../../components/projects/ProjectForm";
 
 export function useAddNewProject() {
   const {

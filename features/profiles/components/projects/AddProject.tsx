@@ -7,8 +7,8 @@ import {
 } from "@/components/ui/tooltip";
 import { FiPlus } from "react-icons/fi";
 
-import AddProjectForm from "./AddProjectForm";
 import ProfileDialog from "../ProfileDialog";
+import ProjectForm from "./ProjectForm";
 
 interface AddProjectProps {
   profileId: string;
@@ -47,7 +47,11 @@ export const AddProject: React.FC<AddProjectProps> = ({ profileId }) => {
         title="Add New Project"
         description="Fill in the details below to add a new project to your portfolio."
       >
-        <AddProjectForm profileId={profileId} setDialogOpen={setIsDialogOpen} />
+        <ProjectForm
+          profileId={profileId}
+          setDialogOpen={setIsDialogOpen}
+          isEditMode={false}
+        />
       </ProfileDialog>
     </>
   );

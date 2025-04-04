@@ -13,8 +13,8 @@ import {
   RefineBioParams,
 } from "../actions";
 import { useUser } from "@/hooks/useUser";
-import useGenerateBioWithAI from "../hooks/useGenerateBioWithAI";
-import useRefineBioWithAI from "../hooks/useRefineBioWithAI";
+import useGenerateBioWithAI from "../hooks/user-profile-hooks/useGenerateBioWithAI";
+import useRefineBioWithAI from "../hooks/user-profile-hooks/useRefineBioWithAI";
 
 // Define the state interface
 export interface CreateProfileState {

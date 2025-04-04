@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { generateProjectDescWithAI } from "../actions";
+import { generateProjectDescWithAI } from "../../actions";
 
 function useGenerateProjectDesc() {
   const {

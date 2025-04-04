@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { DialogFooter } from "@/components/ui/dialog";
 import { ALL_SKILLS } from "@/constants";
 import { useState } from "react";
-import { useUpdateProfile } from "../hooks/useUpdateProfile";
+import { useUpdateProfile } from "../hooks/user-profile-hooks/useUpdateProfile";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Loader2, Save } from "lucide-react";

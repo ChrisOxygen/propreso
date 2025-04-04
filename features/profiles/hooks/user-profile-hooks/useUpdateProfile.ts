@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner"; // Optional: for notifications, install with npm install sonner
-import { updateUserProfile } from "../actions";
+import { updateUserProfile } from "../../actions";
 
 /**
  * Hook to update user profile using TanStack Query

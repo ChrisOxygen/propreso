@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/sidebar";
 import { signOut } from "next-auth/react";
 import { Skeleton } from "../ui/skeleton";
+import { User } from "@prisma/client";
 
 export function NavUser({ user }: { user: User }) {
   const { isMobile } = useSidebar();

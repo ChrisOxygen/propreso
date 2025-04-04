@@ -1,10 +1,10 @@
 "use server";
 
-import { ProjectFormValues } from "./components/ProjectCard";
 import { generateWithOpenAI } from "@/lib/actions";
 import { CreateProfileState } from "./context/CreateProfileContext";
 import { auth } from "@/auth";
 import { PrismaClient, Profile, Project } from "@prisma/client";
+import { ProjectFormValues } from "./components/projects/ProjectForm";
 
 const prisma = new PrismaClient();
 
@@ -377,6 +377,35 @@ export const createProfile = async (state: CreateProfileState) => {
   }
 };
 
+export const getUserProfiles = async (userId: string) => {
+  try {
+    // Validate required fields
+    if (!userId) {
+      throw new Error("User ID is required");
+    }
+
+    // Find all profiles associated with the user ID
+    const userProfiles = await prisma.profile.findMany({
+      where: { userId: userId },
+      include: {
+        projects: true, // Include related projects for each profile
+      },
+      orderBy: {
+        createdAt: "desc", // Get newest profiles first
+      },
+    });
+
+    // Return the profiles even if the array is empty
+    // This allows the client to know the user has no profiles yet
+    return userProfiles;
+  } catch (error) {
+    console.error("Error fetching user profiles:", error);
+    throw new Error("Failed to fetch user profiles");
+  } finally {
+    await prisma.$disconnect();
+  }
+};
+
 export const getProfileById = async (profileId: string) => {
   try {
     const profile = await prisma.profile.findUnique({
@@ -452,7 +481,7 @@ export async function addNewProject(
     const profileStrengthData = await checkProfileStrength({
       bio: profile.bio,
       skills: profile.skills,
-      projects: [...profile.projects, newProject], // Include the new project
+      projects: profile.projects, // Include the new project
     });
     if (!profileStrengthData) {
       throw new Error("Failed to analyze profile strength");
@@ -475,6 +504,105 @@ export async function addNewProject(
   } catch (error) {
     console.error("Error adding new project:", error);
     throw new Error("Failed to add new project");
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+export async function updateProject(
+  projectId: string,
+  projectData: ProjectFormValues
+) {
+  console.log("updateProject:---------------------", {
+    projectId,
+    projectData,
+  });
+  try {
+    // Validate required fields
+    if (!projectId || !projectData) {
+      throw new Error("Missing required fields");
+    }
+
+    // Fetch the existing project to make sure it exists
+    const existingProject = await prisma.project.findUnique({
+      where: { id: projectId },
+    });
+
+    if (!existingProject) {
+      throw new Error("Project not found");
+    }
+
+    // analyze project strength with updated data
+    const projectStrengthData = await analyzeProjectStrength(projectData);
+
+    if (!projectStrengthData) {
+      throw new Error("Failed to analyze project strength");
+    }
+
+    // Update the project in the database
+    const updatedProject = await prisma.project.update({
+      where: { id: projectId },
+      data: {
+        title: projectData.title,
+        description: projectData.description,
+        liveLink: projectData.liveLink || null,
+        repoLink: projectData.repoLink || null,
+        projectStrength: projectStrengthData.projectStrength,
+        projectStrengthMessage: JSON.stringify(
+          projectStrengthData.projectsStrengthMessage
+        ),
+      },
+    });
+
+    if (!updatedProject) {
+      throw new Error("Failed to update project");
+    }
+
+    // Get the profile ID from the project
+    const profileId = existingProject.profileId;
+
+    // Fetch the profile with all its projects to update profile strength
+    const profile = await prisma.profile.findUnique({
+      where: { id: profileId },
+      include: {
+        projects: true, // Include all projects
+      },
+    });
+
+    if (!profile) {
+      throw new Error("Profile not found");
+    }
+
+    // Re-analyze profile strength with updated project data
+    const profileStrengthData = await checkProfileStrength({
+      bio: profile.bio,
+      skills: profile.skills,
+      projects: profile.projects, // All projects, including the updated one
+    });
+
+    if (!profileStrengthData) {
+      throw new Error("Failed to analyze profile strength");
+    }
+
+    // Update the profile with the new strength analysis
+    await prisma.profile.update({
+      where: { id: profileId },
+      data: {
+        profileStength: profileStrengthData.profileStrength,
+        profileStengthMessage: JSON.stringify(
+          profileStrengthData.profileSuggestions
+        ),
+      },
+    });
+
+    return {
+      message: "Project updated successfully",
+      project: updatedProject,
+    };
+  } catch (error) {
+    console.error("Error updating project:", error);
+    const theError = error as Error;
+    throw new Error(`Failed to update project: ${theError.message}`);
   } finally {
     await prisma.$disconnect();
   }

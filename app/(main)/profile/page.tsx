@@ -10,7 +10,13 @@ import ProfileSkilllDisplay from "@/features/profiles/components/ProfileSkilllDi
 import ProfileStengthDisplay from "@/features/profiles/components/ProfileStengthDisplay";
 import AddProject from "@/features/profiles/components/projects/AddProject";
 import ProfilePageHeader from "@/features/profiles/components/ProfilePageHeader";
-import { ProfileWithProjects } from "@/types/types";
+
+import { Prisma, Project } from "@prisma/client";
+
+// First define the utility type
+export type ProfileWithProjects = Prisma.ProfileGetPayload<{
+  include: { projects: true };
+}>;
 
 function ProfilePage() {
   const [visibleProfile, setVisibleProfile] =
@@ -107,7 +113,10 @@ function ProfilePage() {
                 <div className="grid @max-xl:grid-cols-1 grid-cols-2 gap-6 ">
                   {projects.length < 4 && <AddProject profileId={id} />}
                   {projects.map((project) => (
-                    <ProjectCard key={project.id} project={project} />
+                    <ProjectCard
+                      key={project.id}
+                      project={project as Project}
+                    />
                   ))}
                 </div>
               </div>

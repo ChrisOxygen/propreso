@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
-import { generateBioWithAI } from "../actions";
+import { generateBioWithAI } from "../../actions";
 
 function useGenerateBioWithAI() {
   const {

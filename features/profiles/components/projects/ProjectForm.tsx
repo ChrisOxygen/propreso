@@ -16,11 +16,13 @@ import { Loader2, Save, Sparkles } from "lucide-react";
 import FormSuggestions from "../FormSuggestions";
 import { DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import useGenerateProjectDesc from "../../hooks/useGenerateProjectDesc";
+import useGenerateProjectDesc from "../../hooks/projects/useGenerateProjectDesc";
 
 import { toast } from "sonner";
 import { useAddNewProject } from "../../hooks/projects/useAddNewProject";
 import { useQueryClient } from "@tanstack/react-query";
+import { Project } from "@prisma/client";
+import { useUpdateProject } from "../../hooks/projects/useUpdateProject";
 
 // Define Zod schema for project validation
 const projectSchema = z.object({
@@ -32,20 +34,29 @@ const projectSchema = z.object({
 
 export type ProjectFormValues = z.infer<typeof projectSchema>;
 
-type AddProjectFormProps = {
+type ProjectFormProps = {
   setDialogOpen: (dialogOpen: boolean) => void;
   profileId: string;
+  project?: Project;
+  exitEditMode?: () => void;
+  isEditMode: boolean;
 };
 
-function AddProjectForm({ setDialogOpen, profileId }: AddProjectFormProps) {
+function ProjectForm({
+  setDialogOpen,
+  profileId,
+  project,
+  exitEditMode,
+  isEditMode,
+}: ProjectFormProps) {
   // React Hook Form setup with Zod validation
   const form = useForm<ProjectFormValues>({
     resolver: zodResolver(projectSchema),
     defaultValues: {
-      title: "",
-      description: "",
-      liveLink: "",
-      repoLink: "",
+      title: project ? project.title : "",
+      description: project ? project.description : "",
+      liveLink: project ? project.liveLink ?? "" : "",
+      repoLink: project ? project.repoLink ?? "" : "",
     },
   });
 
@@ -65,32 +76,80 @@ function AddProjectForm({ setDialogOpen, profileId }: AddProjectFormProps) {
     projectCreationData,
   } = useAddNewProject();
 
+  const {
+    updateExistingProject,
+    isUpdatingProject,
+    projectUpdateSuccess,
+    projectUpdateData,
+  } = useUpdateProject();
+
   // Handle form submission
   const handleSubmit = (values: ProjectFormValues): void => {
     console.log("Form submitted with values:", values);
-    createNewProject({
-      profileId,
-      formData: values,
-    });
+    if (project) {
+      // Update existing project
+      console.log("Updating project:", project.id);
+      updateExistingProject({
+        formData: values,
+        projectId: project.id,
+      });
+
+      // Call your update function here with the project ID and new values
+    } else {
+      // Create new project
+      console.log("Creating new project for profile:", profileId);
+      createNewProject({
+        profileId,
+        formData: values,
+      });
+    }
   };
 
   if (generateDescSuccessful && generatedDescData) {
     form.setValue("description", generatedDescData.description);
-
-    console.log("Generated description:---------------");
-    queryClient.invalidateQueries({
-      queryKey: ["profile", profileId],
-    });
-    queryClient.invalidateQueries({ queryKey: ["profiles"] });
-    queryClient.invalidateQueries({ queryKey: ["projects"] });
-    // If your application displays user data elsewhere, you might want to invalidate those queries too
-    queryClient.invalidateQueries({ queryKey: ["user"] });
   }
 
-  if (projectCreationSuccess && projectCreationData) {
-    toast.success("Project added successfully!");
-    setDialogOpen(false);
+  if (isEditMode) {
+    if (projectUpdateSuccess && projectUpdateData) {
+      queryClient.invalidateQueries({ queryKey: ["profiles"] });
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      queryClient.invalidateQueries({
+        queryKey: ["profile", profileId],
+      });
+      // If your application displays user data elsewhere, you might want to invalidate those queries too
+      queryClient.invalidateQueries({ queryKey: ["user"] });
+      toast.success("Project updated successfully!");
+
+      exitEditMode && exitEditMode();
+    }
+  } else {
+    if (projectCreationSuccess && projectCreationData) {
+      queryClient.invalidateQueries({ queryKey: ["profiles"] });
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      // If your application displays user data elsewhere, you might want to invalidate those queries too
+      queryClient.invalidateQueries({ queryKey: ["user"] });
+      toast.success("Project added successfully!");
+      setDialogOpen(false);
+    }
   }
+
+  const submitButtonText = project ? "Update Project" : "Create Project";
+  const submitButtonLoadingText = project
+    ? "Updating Project..."
+    : "Creating Project...";
+
+  const onCancel = () => {
+    if (isEditMode && project) {
+      form.setValue("title", project.title);
+      form.setValue("description", project.description);
+      form.setValue("liveLink", project.liveLink ?? "");
+      form.setValue("repoLink", project.repoLink ?? "");
+      exitEditMode && exitEditMode();
+    } else {
+      setDialogOpen(false);
+    }
+  };
+
   return (
     <Form {...form}>
       <form
@@ -191,23 +250,22 @@ function AddProjectForm({ setDialogOpen, profileId }: AddProjectFormProps) {
         </div>
 
         <DialogFooter className="pt-4">
-          <Button
-            variant="outline"
-            type="button"
-            onClick={() => setDialogOpen(false)}
-          >
+          <Button variant="outline" type="button" onClick={onCancel}>
             Cancel
           </Button>
-          <Button type="submit" disabled={isCreatingProject}>
-            {isCreatingProject ? (
+          <Button
+            type="submit"
+            disabled={isCreatingProject || isUpdatingProject}
+          >
+            {isCreatingProject || isUpdatingProject ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                creating project...
+                {submitButtonLoadingText}
               </>
             ) : (
               <>
                 <Save className="h-4 w-4 mr-2" />
-                Create project
+                {submitButtonText}
               </>
             )}
           </Button>
@@ -217,4 +275,4 @@ function AddProjectForm({ setDialogOpen, profileId }: AddProjectFormProps) {
   );
 }
 
-export default AddProjectForm;
+export default ProjectForm;

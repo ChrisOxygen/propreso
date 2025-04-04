@@ -1,5 +1,6 @@
 // File: app/api/parse-upwork-job/route.ts
 import { generateWithOpenAI } from "@/lib/actions";
+
 import { NextRequest, NextResponse } from "next/server";
 // import OpenAI from "openai";
 

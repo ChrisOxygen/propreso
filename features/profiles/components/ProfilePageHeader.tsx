@@ -8,8 +8,8 @@ import ProfileSelectorUI from "./ProfileSelectorUI";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
-import { useSetDefaultProfile } from "../hooks/useSetDefaultProfile";
-import { ProfileWithProjects } from "@/types/types";
+import { useSetDefaultProfile } from "../hooks/user-profile-hooks/useSetDefaultProfile";
+import { ProfileWithProjects } from "@/app/(main)/profile/page";
 
 type ProfilePageHeaderProps = {
   handleProfileChange: (profileId: string) => void;
@@ -110,7 +110,7 @@ function ProfilePageHeader({
         </Button>
 
         <Button variant="outline" asChild className=" grow">
-          <Link href="/profiles/create">Create new Profile</Link>
+          <Link href="/profile/create">Create new Profile</Link>
         </Button>
       </div>
     </div>

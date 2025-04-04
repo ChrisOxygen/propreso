@@ -1,5 +1,3 @@
-import { Prisma } from "@prisma/client";
-
 declare interface SessionUser {
   id: string;
   hasCreatedProfile: boolean;
@@ -179,8 +177,3 @@ declare interface ProjectStrengthProps {
   }[];
   isLoading: boolean;
 }
-
-// First define the utility type
-type ProfileWithProjects = Prisma.ProfileGetPayload<{
-  include: { projects: true };
-}>;

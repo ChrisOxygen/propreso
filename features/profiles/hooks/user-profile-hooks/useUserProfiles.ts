@@ -1,8 +1,9 @@
 "use client";
 
-import { ProfileWithProjects } from "@/types/types";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
+import { getUserProfiles } from "../../actions";
+import { ProfileWithProjects } from "@/app/(main)/profile/page";
 
 export function useUserProfiles() {
   const { data: session } = useSession();
@@ -10,21 +11,7 @@ export function useUserProfiles() {
 
   return useQuery<ProfileWithProjects[]>({
     queryKey: ["profiles", userId],
-    queryFn: async () => {
-      if (!userId) {
-        throw new Error("User ID not available");
-      }
-
-      const response = await fetch(`/api/profiles`);
-
-      if (!response.ok) {
-        throw new Error(`Error fetching profiles: ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      return data || [];
-    },
+    queryFn: () => getUserProfiles(userId as string),
     enabled: !!userId,
     staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
     refetchOnWindowFocus: true,

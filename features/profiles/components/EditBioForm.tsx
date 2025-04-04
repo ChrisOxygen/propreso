@@ -14,12 +14,12 @@ import { DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Loader2, RefreshCw, Save, Sparkles } from "lucide-react";
 import EditProfileTips from "./EditProfileTips";
-import { useUpdateProfile } from "../hooks/useUpdateProfile";
+import { useUpdateProfile } from "../hooks/user-profile-hooks/useUpdateProfile";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
-import useGenerateBioWithAI from "../hooks/useGenerateBioWithAI";
-import useRefineBioWithAI from "../hooks/useRefineBioWithAI";
+import useGenerateBioWithAI from "../hooks/user-profile-hooks/useGenerateBioWithAI";
+import useRefineBioWithAI from "../hooks/user-profile-hooks/useRefineBioWithAI";
 import { useUser } from "@/hooks/useUser";
 
 // Define Zod schema for project validation
