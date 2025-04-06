@@ -8,6 +8,8 @@ export async function middleware(request: NextRequest) {
     secret: process.env.AUTH_SECRET,
   });
 
+  console.log("Token:", token); // Log the token for debugging
+
   // If the user is not authenticated, redirect to the login page
   if (!token) {
     const url = new URL("/login", request.url);
