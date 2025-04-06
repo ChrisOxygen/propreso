@@ -1,4 +1,8 @@
-import { UseMutateFunction, useMutation } from "@tanstack/react-query";
+import {
+  UseMutateFunction,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import React, {
   createContext,
   useContext,
@@ -15,6 +19,8 @@ import {
 import { useUser } from "@/hooks/useUser";
 import useGenerateBioWithAI from "../hooks/user-profile-hooks/useGenerateBioWithAI";
 import useRefineBioWithAI from "../hooks/user-profile-hooks/useRefineBioWithAI";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 // Define the state interface
 export interface CreateProfileState {
@@ -148,6 +154,9 @@ export const CreateProfileProvider: React.FC<CreateProfileProviderProps> = ({
     state.userInformation.bio || ""
   );
 
+  const router = useRouter();
+  const queryClient = useQueryClient();
+
   const { data: userDetails, isPending: isUserQueryPending } = useUser();
   const {
     generateBio,
@@ -165,49 +174,35 @@ export const CreateProfileProvider: React.FC<CreateProfileProviderProps> = ({
     isRefiningBio,
   } = useRefineBioWithAI();
 
-  // const { mutate: generateBio, isPending: genrateBioPending } = useMutation({
-  //   mutationFn: async () => {
-  //     return generateBioWithAI(state);
-  //   },
-  //   onSuccess: (data) => {
-  //     if (data) {
-  //       setBioText(data.bio);
-  //       // Save generated bio to state
-  //       dispatch({ type: "SET_BIO", payload: data.bio });
-  //     }
-  //   },
-  //   onError: (error) => {
-  //     console.error("Error generating bio:", error);
-  //   },
-  // });
-  // const { mutate: refineBio, isPending: refineBioPending } = useMutation({
-  //   mutationFn: async () => {
-  //     return refineBioWithAI({ bioText, state });
-  //   },
-  //   onSuccess: (data) => {
-  //     if (data) {
-  //       setBioText(data.refinedBio);
-  //       // Save generated bio to state
-  //       dispatch({ type: "SET_BIO", payload: data.refinedBio });
-  //     }
-  //   },
-  //   onError: (error) => {
-  //     console.error("Error generating bio:", error);
-  //   },
-  // });
-
   const { mutate: createFreelanceProfile, isPending: createProfilePending } =
     useMutation({
       mutationFn: async () => {
         return createProfile(state);
       },
       onSuccess: (data) => {
-        if (data) {
-          console.log("Profile created successfully:", data);
-        }
+        // Invalidate relevant queries to refetch fresh data
+        queryClient.invalidateQueries({ queryKey: ["profiles"] });
+        queryClient.invalidateQueries({
+          queryKey: ["profile", data.profile.id],
+        });
+        queryClient.invalidateQueries({ queryKey: ["user"] });
+
+        // Redirect to the profile page with the created profile ID
+        router.push(`/profile?createdProfileId=${data.profile.id}`);
+
+        // Show success notification if needed
+        toast.success("Profile created successfully", {
+          description: "Your profile has been created and is ready to use",
+        });
       },
       onError: (error) => {
-        console.error("Error generating bio:", error);
+        console.error("Error creating profile:", error);
+        toast.error("Failed to create profile", {
+          description:
+            error instanceof Error
+              ? error.message
+              : "An unexpected error occurred",
+        });
       },
     });
 

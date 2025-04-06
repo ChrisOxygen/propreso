@@ -12,6 +12,7 @@ import AddProject from "@/features/profiles/components/projects/AddProject";
 import ProfilePageHeader from "@/features/profiles/components/ProfilePageHeader";
 
 import { Prisma, Project } from "@prisma/client";
+import { useSearchParams } from "next/navigation";
 
 // First define the utility type
 export type ProfileWithProjects = Prisma.ProfileGetPayload<{
@@ -21,6 +22,8 @@ export type ProfileWithProjects = Prisma.ProfileGetPayload<{
 function ProfilePage() {
   const [visibleProfile, setVisibleProfile] =
     useState<ProfileWithProjects | null>(null);
+  const searchParams = useSearchParams();
+  const createdProfileId = searchParams.get("createdProfileId");
 
   const { data: userProfiles, isPending: gettingUserProfiles } =
     useUserProfiles();
@@ -28,9 +31,20 @@ function ProfilePage() {
   useEffect(() => {
     if (userProfiles && userProfiles.length > 0) {
       const defaultProfile = userProfiles.find((profile) => profile.isDefault);
-      setVisibleProfile(defaultProfile || userProfiles[0]);
+      if (createdProfileId) {
+        const selectedProfile = userProfiles.find(
+          (profile) => profile.id === createdProfileId
+        );
+        if (selectedProfile) {
+          setVisibleProfile(selectedProfile);
+        } else {
+          setVisibleProfile(defaultProfile || userProfiles[0]);
+        }
+      } else {
+        setVisibleProfile(defaultProfile || userProfiles[0]);
+      }
     }
-  }, [userProfiles]);
+  }, [userProfiles, createdProfileId]);
 
   const handleProfileChange = (profileId: string) => {
     const selectedProfile = userProfiles?.find(
