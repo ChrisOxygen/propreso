@@ -65,7 +65,7 @@ function ProfilePage() {
   return (
     <div className="flex flex-col h-full @container">
       {/* First Row - Empty (min height 200px) */}
-      <div className="min-h-[110px] flex items-center lg:py-0 py-6 border-y border-gray-200">
+      <div className="min-h-[110px]  flex items-center lg:py-0 py-6 border-y border-gray-200">
         <ProfilePageHeader
           handleProfileChange={handleProfileChange}
           visibleProfile={visibleProfile}

@@ -49,10 +49,10 @@ const ProfileSelectorUI = ({
 
   return (
     <div
-      className={`flex lg:flex-row flex-col w-full max-w-[400px] lg:max-w-[500px] gap-2 items-center ${className}`}
+      className={`flex lg:flex-row flex-col w-max  gap-2 items-center ${className}`}
     >
       {label && (
-        <label className=" text-lg  font-mono lg:text-left text-center font-bold block grow shrink-0 text-gray-700 dark:text-gray-300">
+        <label className=" @[900px]:inline hidden text-lg  font-mono lg:text-left text-center font-bold  grow shrink-0 text-gray-700 dark:text-gray-300">
           {label}:
         </label>
       )}
@@ -61,7 +61,7 @@ const ProfileSelectorUI = ({
         onValueChange={handleValueChange}
         disabled={disabled}
       >
-        <SelectTrigger className="w-full bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 focus:ring-gray-400 focus:border-gray-400">
+        <SelectTrigger className="w-full max-w-[300px] bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 focus:ring-gray-400 focus:border-gray-400">
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent className="bg-white dark:bg-gray-900 w-full max-w-[400px] lg:max-w-[500px] text-gray-900 dark:text-gray-100 border-gray-200 dark:border-gray-700">

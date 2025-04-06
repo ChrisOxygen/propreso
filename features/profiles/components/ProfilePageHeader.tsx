@@ -60,7 +60,7 @@ function ProfilePageHeader({
   };
 
   return (
-    <div className=" flex lg:flex-row flex-col items-center justify-between w-full px-4">
+    <div className=" flex lg:flex-row flex-col lg:gap-6 items-center justify-between w-full px-4">
       <div className="flex lg:flex-row flex-col lg:mb-0 mb-5 items-center gap-4 md:gap-4">
         <div className="relative">
           <Avatar className="h-16 w-16 md:h-20 md:w-20 border-2 border-gray-200">
@@ -83,35 +83,37 @@ function ProfilePageHeader({
           </p>
         </div>
       </div>
-      <ProfileSelectorUI
-        label="Switch Profile"
-        placeholder="Select a profile"
-        options={profileSelectOptions}
-        value={visibleProfile!.id}
-        defaltId={defaltId}
-        onChange={(value) => handleProfileChange(value)}
-      />
-      <div className="flex items-center h-full gap-4 lg:mt-0 mt-5 w-full max-w-[400px]">
-        <Button
-          onClick={handleMarkAsDefault}
-          disabled={isSettingDefault || visibleProfile!.isDefault}
-          className=" grow"
-        >
-          {isSettingDefault ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Updating...
-            </>
-          ) : visibleProfile!.isDefault ? (
-            "Default Profile"
-          ) : (
-            "Mark as default"
-          )}
-        </Button>
+      <div className="  flex @[1170px]:flex-row flex-col items-center lg:items-end w-full justify-end @container gap-3 @[1170px]:gap-8 ">
+        <ProfileSelectorUI
+          label="Switch Profile"
+          placeholder="Select a profile"
+          options={profileSelectOptions}
+          value={visibleProfile!.id}
+          defaltId={defaltId}
+          onChange={(value) => handleProfileChange(value)}
+        />
+        <div className="flex items-center h-full gap-4 lg:mt-0 mt-5 w-full max-w-[400px]">
+          <Button
+            onClick={handleMarkAsDefault}
+            disabled={isSettingDefault || visibleProfile!.isDefault}
+            className=" grow"
+          >
+            {isSettingDefault ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Updating...
+              </>
+            ) : visibleProfile!.isDefault ? (
+              "Default Profile"
+            ) : (
+              "Mark as default"
+            )}
+          </Button>
 
-        <Button variant="outline" asChild className=" grow">
-          <Link href="/profile/create">Create new Profile</Link>
-        </Button>
+          <Button variant="outline" asChild className=" grow">
+            <Link href="/profile/create">Create new Profile</Link>
+          </Button>
+        </div>
       </div>
     </div>
   );
