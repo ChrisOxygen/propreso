@@ -613,3 +613,53 @@ export const STEPS_DATA = [
     icon: FiAlignJustify,
   },
 ];
+
+export const PROPOSAL_FORMULAS = [
+  {
+    id: "aida",
+    label: "AIDA",
+    labelFull: "Attention, Interest, Desire, Action",
+    description:
+      "Captures attention, builds interest, creates desire, and prompts action",
+  },
+  {
+    id: "pas",
+    label: "PAS",
+    labelFull: "Problem, Agitate, Solution",
+    description:
+      "Identifies a problem, amplifies its impact, and presents your solution",
+  },
+  {
+    id: "bab",
+    label: "BAB",
+    labelFull: "Before, After, Bridge",
+    description:
+      "Contrasts current state with desired state, with you as the bridge",
+  },
+  {
+    id: "star",
+    label: "STAR",
+    labelFull: "Situation, Task, Action, Result",
+    description:
+      "Describes the situation, task at hand, your action, and the results",
+  },
+  {
+    id: "fab",
+    label: "FAB",
+    labelFull: "Feature, Advantage, Benefit",
+    description: "Showcases features, their advantages, and client benefits",
+  },
+];
+
+export const TONES = [
+  {
+    id: "professional",
+    label: "Professional",
+    description: "Clear, straightforward, and business-appropriate",
+  },
+  {
+    id: "friendly",
+    label: "Friendly",
+    description: "Warm, approachable, and conversational",
+  },
+];

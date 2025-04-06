@@ -33,12 +33,12 @@ model User {
   
   
   
-    // You might want to add related models
-    // For example:
-    // proposals        Proposal[]
-    // clients          Client[]
-    profile           Profile[]
-    jobDetail JobDetail?
+  // You might want to add related models
+  // For example:
+  // clients          Client[]
+  profile           Profile[]
+  jobDetail         JobDetail?
+  proposals         Proposal[]
 
   @@map("users")
 }
@@ -91,7 +91,7 @@ model Project {
 model JobDetail {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
 
-// Relation to User (One-to-One)
+  // Relation to User (One-to-One)
   userId      String    @unique @db.ObjectId // Ensures only one job detail per user
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -101,5 +101,28 @@ model JobDetail {
   jobHtml   String    
   timestamp DateTime  @default(now())
 
- @@map("jobDetails")
+  @@map("jobDetails")
+}
+
+model Proposal {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  title         String   // Job title or proposal name
+  jobDescription String  // Original job description
+  proposal      String   // Generated proposal content
+  
+  // Proposal status
+  status        String   @default("draft") // draft | sent | opened | communication | won | lost
+  
+  // Optional amount field
+  amount        Float?   // Optional field for proposal/contract amount
+  
+  // Relation to User
+  userId        String   @db.ObjectId
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Timestamps
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@map("proposals")
 }

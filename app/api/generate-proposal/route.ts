@@ -5,12 +5,6 @@ import { auth } from "@/auth";
 import { PrismaClient } from "@prisma/client";
 import { generateWithOpenAI } from "@/lib/actions";
 
-// Initialize OpenAI client
-// const openai = new OpenAI({
-//   baseURL: "https://models.inference.ai.azure.com",
-//   apiKey: process.env.OPENAI_API_KEY,
-// });
-
 // Initialize Prisma client
 const prisma = new PrismaClient();
 
