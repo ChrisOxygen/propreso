@@ -104,6 +104,12 @@ model JobDetail {
   @@map("jobDetails")
 }
 
+enum ProposalStatus {
+  DRAFT
+  SENT
+  WON
+}
+
 model Proposal {
   id            String   @id @default(auto()) @map("_id") @db.ObjectId
   title         String   // Job title or proposal name
@@ -111,7 +117,7 @@ model Proposal {
   proposal      String   // Generated proposal content
   
   // Proposal status
-  status        String   @default("draft") // draft | sent | opened | communication | won | lost
+  status        ProposalStatus   @default(DRAFT) // draft | sent | opened | communication | won
   
   // Optional amount field
   amount        Float?   // Optional field for proposal/contract amount

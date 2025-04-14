@@ -43,7 +43,7 @@ function LoginPage() {
   useEffect(() => {
     if (status === "authenticated") {
       console.log("User is authenticated, redirecting to dashboard");
-      router.push("/dashboard");
+      router.push("/proposals");
     }
   }, [status, router]);
 
@@ -68,7 +68,7 @@ function LoginPage() {
 
       if (result?.ok) {
         console.log("Sign in successful, redirecting to dashboard");
-        router.push("/dashboard");
+        router.push("/proposals");
       }
     } catch (err) {
       console.error("Login failed:", err);

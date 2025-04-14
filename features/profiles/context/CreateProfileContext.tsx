@@ -146,9 +146,9 @@ interface CreateProfileProviderProps {
 }
 
 // Create provider component
-export const CreateProfileProvider: React.FC<CreateProfileProviderProps> = ({
+export const CreateProfileProvider = ({
   children,
-}) => {
+}: CreateProfileProviderProps) => {
   const [state, dispatch] = useReducer(formReducer, initialState);
   const [bioText, setBioText] = useState<string>(
     state.userInformation.bio || ""

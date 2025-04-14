@@ -1,25 +1,30 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { toast } from "sonner";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Copy, Send, Save, RefreshCw, Loader2 } from "lucide-react";
-import { useProposal } from "../../context/ProposalContext";
 import { useDebounce } from "@/hooks/useDebounce";
+import { usePasteInPlatform } from "../../hooks/usePasteInPlatform";
+import { useProposalForm } from "../../context/ProposalFormContext";
+import { usePathname } from "next/navigation";
 
-const ProposalEditor = () => {
+const ProposalEditor = ({ jobKey }: { jobKey?: string }) => {
+  const pathname = usePathname();
+  const isEditMode = pathname.includes("/edit");
+
   const {
     proposal,
     isRefining,
-    isProposalRefined,
     isGenerating,
     isSaving,
     setProposal,
     refineProposal,
     saveProposal,
-    proposalId,
-  } = useProposal();
+    jobDescription,
+    proposalStatus,
+  } = useProposalForm();
 
   // Track the last saved proposal content to avoid unnecessary saves
   const [lastSavedProposal, setLastSavedProposal] = useState(proposal);
@@ -27,39 +32,39 @@ const ProposalEditor = () => {
   // Create a debounced version of the proposal for auto-saving
   const debouncedProposal = useDebounce(proposal, 3000);
 
-  // Auto-save functionality
-  useEffect(() => {
-    // Only save if:
-    // 1. We have a proposal
-    // 2. It's different from the last saved version
-    // 3. We're not already in the middle of generating, refining, or saving
-    if (
+  const { sendToExtension } = usePasteInPlatform(jobKey);
+
+  // Update to handle disabled states
+  const isProposalDisabled = useMemo(() => {
+    return isGenerating || isRefining;
+  }, [isGenerating, isRefining]);
+
+  // Memoize the shouldSave condition
+  const shouldSave = useMemo(() => {
+    return (
       debouncedProposal &&
       debouncedProposal !== lastSavedProposal &&
       !isGenerating &&
       !isRefining &&
-      !isSaving
-    ) {
-      // Call the save function
-      saveProposal();
-
-      // Update the last saved state
-      setLastSavedProposal(debouncedProposal);
-
-      // Show a subtle toast notification
-      toast("Auto-saved", {
-        description: "Your proposal has been automatically saved",
-        duration: 2000,
-      });
-    }
+      !isSaving &&
+      proposalStatus !== "SENT" // Only auto-save if not already sent
+    );
   }, [
     debouncedProposal,
     lastSavedProposal,
     isGenerating,
     isRefining,
     isSaving,
-    saveProposal,
+    proposalStatus, // Add proposalStatus to dependencies
   ]);
+
+  // Effect for auto-saving
+  useEffect(() => {
+    if (shouldSave) {
+      saveProposal();
+      setLastSavedProposal(debouncedProposal);
+    }
+  }, [shouldSave, saveProposal, debouncedProposal]);
 
   const copyToClipboard = async () => {
     try {
@@ -67,6 +72,8 @@ const ProposalEditor = () => {
       toast("Copied!", {
         description: "Proposal copied to clipboard",
       });
+      saveProposal("SENT");
+      setLastSavedProposal(proposal);
     } catch (error) {
       toast("Failed to copy", {
         description: "Could not copy proposal to clipboard",
@@ -76,33 +83,46 @@ const ProposalEditor = () => {
   };
 
   const handleRefineProposal = () => {
+    if (!proposal || !jobDescription) {
+      toast.error(
+        "Both job description and proposal are required for refinement"
+      );
+      return;
+    }
     refineProposal();
   };
 
   const handlePasteInPlatform = async () => {
-    try {
-      await navigator.clipboard.writeText(proposal);
-      toast("Ready to paste!", {
-        description: "Proposal copied and ready to paste in your platform",
-      });
-    } catch (error) {
-      toast("Failed to copy", {
-        description: "Could not prepare proposal for pasting",
-        duration: 2000,
-      });
-    }
+    if (!proposal) return;
+    const url = jobKey
+      ? `https://www.upwork.com/nx/proposals/job/~${jobKey}/apply/`
+      : undefined;
+
+    saveProposal("SENT");
+    setLastSavedProposal(proposal);
+    sendToExtension({
+      proposalContent: proposal,
+      redirectUrl: url as string,
+    });
   };
 
   const handleSave = () => {
+    // This will always save regardless of status
     saveProposal();
     // Update the last saved state
     setLastSavedProposal(proposal);
-    toast("Saving proposal...", {
-      description: isProposalRefined
-        ? "Saving your refined proposal"
-        : "Saving your proposal",
-    });
   };
+
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      setProposal(e.target.value);
+    },
+    [setProposal]
+  );
+
+  const isCopyDisabled = useMemo(() => {
+    return !proposal || isGenerating || isRefining || isSaving;
+  }, [proposal, isGenerating, isRefining, isSaving]);
 
   return (
     <div className="w-full h-full flex gap-4 flex-col @container">
@@ -110,17 +130,13 @@ const ProposalEditor = () => {
         placeholder="Your generated proposal will appear here..."
         className="flex-grow min-h-40 h-full max-h-full sm:h-[650px] sm:max-h-[650px] md:h-[715px] md:max-h-[715px] w-full border border-gray-300 p-4 text-black bg-white"
         value={proposal}
-        onChange={(e) => setProposal(e.target.value)}
-        disabled={isGenerating || isRefining}
+        onChange={handleChange}
+        disabled={isProposalDisabled}
       />
 
       <div className="grid grid-cols-2 @[600px]:grid-cols-4 w-full gap-3 mt-auto">
-        <Button
-          variant="outline"
-          className="flex items-center gap-2 bg-black text-white hover:text-white border-gray-800 hover:bg-gray-800"
-          onClick={copyToClipboard}
-          disabled={!proposal || isGenerating || isRefining || isSaving}
-        >
+        {/* Copy button */}
+        <Button onClick={copyToClipboard} disabled={isCopyDisabled}>
           <Copy size={16} />
           Copy
         </Button>
@@ -162,7 +178,7 @@ const ProposalEditor = () => {
             isSaving ||
             !proposal ||
             isGenerating ||
-            lastSavedProposal === proposal
+            (proposalStatus !== "SENT" && lastSavedProposal === proposal) // Enable button if status is SENT and there are changes
           }
         >
           {isSaving ? (
@@ -170,15 +186,14 @@ const ProposalEditor = () => {
               <Loader2 size={16} className="animate-spin" />
               Saving...
             </>
-          ) : proposalId && proposal === lastSavedProposal ? (
-            <>
-              <Save size={16} />
-              Saved to draft
-            </>
           ) : (
             <>
               <Save size={16} />
-              Save
+              {proposalStatus === "SENT"
+                ? "Update"
+                : isEditMode
+                ? "Update"
+                : "Save"}
             </>
           )}
         </Button>

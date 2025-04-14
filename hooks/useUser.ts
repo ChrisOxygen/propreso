@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
 
 // Define the User type based on your Prisma schema
 
@@ -10,7 +11,7 @@ export const useUser = () => {
     queryKey: ["user", session?.user?.id],
     queryFn: async () => {
       if (!session?.user?.id) {
-        throw new Error("User ID not found in session");
+        redirect("/login");
       }
 
       const response = await fetch(`/api/users/${session.user.id}`);

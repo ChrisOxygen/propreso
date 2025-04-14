@@ -33,7 +33,7 @@ export function useLogin() {
 
       if (result?.ok) {
         // Redirect to dashboard after successful login
-        router.push("/dashboard");
+        router.push("/proposals");
         router.refresh(); // Refresh to update auth state in the UI
       }
     } catch (err) {

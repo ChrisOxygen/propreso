@@ -27,7 +27,11 @@ export function NavMain({
     <SidebarGroup>
       <SidebarMenu>
         {items.map((item) => {
-          const isActivePath = pathname?.includes(item.url);
+          const homePathActive =
+            item.url === "/proposals" && pathname === "/proposals";
+          const otherPathActive =
+            item.url !== "/proposals" && pathname?.includes(item.url);
+          const isActivePath = homePathActive || otherPathActive;
           return (
             <SidebarMenuItem key={item.title}>
               <Link href={item.url} className=" cursor-pointer">

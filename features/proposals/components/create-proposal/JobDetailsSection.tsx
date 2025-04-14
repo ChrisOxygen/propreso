@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -24,9 +24,12 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useProposal } from "../../context/ProposalContext";
+import { useProposalForm } from "../../context/ProposalFormContext";
 import { PROPOSAL_FORMULAS, TONES } from "@/constants";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useChromeExtensionData } from "../../hooks/useChromeExtensionData";
+import { useAnalizeJobDetails } from "@/hooks/cover-letter/useAnalizeJobDetails";
+import InBoxLoader from "@/components/InBoxLoader";
 
 // Define the form schema with Zod
 const formSchema = z.object({
@@ -46,7 +49,15 @@ type FormValues = z.infer<typeof formSchema>;
 // Minimum job description length for auto-generating title
 const MIN_JOB_DESC_LENGTH_FOR_AUTO_TITLE = 100;
 
-export default function JobDetailsSection() {
+export default function JobDetailsSection({ jobKey }: { jobKey?: string }) {
+  // Add local state to track initial setup
+  const [isInitialSetup, setIsInitialSetup] = useState(true);
+  const [formInitialized, setFormInitialized] = useState(false);
+
+  // Get data from Chrome extension
+  const { data: jobDataFromPlatform, loading: gettingJobDetailsFromPlatform } =
+    useChromeExtensionData(jobKey);
+
   // Get context values and methods
   const {
     jobDescription,
@@ -64,29 +75,50 @@ export default function JobDetailsSection() {
     setIncludePortfolio,
     generateProposal,
     generateJobTitle,
-  } = useProposal();
+    proposalStatus,
+  } = useProposalForm();
 
   // Set up form with default values from context
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      jobTitle: "",
-      formula: "aida",
-      tone: "professional",
-      jobDescription: "",
-      includePortfolio: false,
+      jobTitle: proposalTitle || "",
+      formula: formula || "aida",
+      tone: tone || "professional",
+      jobDescription: jobDescription || "",
+      includePortfolio: includePortfolio || false,
     },
   });
 
-  // Update form when context values change
+  const {
+    analizeJobDetails,
+    isAnalizing,
+    analizeJobDetailsApiResponse,
+    analizeJobDetailsSuccess,
+  } = useAnalizeJobDetails();
+
+  // Initialize form with context values if available
   useEffect(() => {
-    // Update all form fields from context
-    form.setValue("jobDescription", jobDescription || "");
-    form.setValue("jobTitle", proposalTitle || "");
-    form.setValue("formula", formula || "aida");
-    form.setValue("tone", tone || "professional");
-    form.setValue("includePortfolio", includePortfolio || false);
-  }, [jobDescription, proposalTitle, formula, tone, includePortfolio, form]);
+    if (
+      !formInitialized &&
+      (jobDescription || proposalTitle || formula || tone)
+    ) {
+      form.setValue("jobDescription", jobDescription || "");
+      form.setValue("jobTitle", proposalTitle || "");
+      form.setValue("formula", formula || "aida");
+      form.setValue("tone", tone || "professional");
+      form.setValue("includePortfolio", includePortfolio || false);
+      setFormInitialized(true);
+    }
+  }, [
+    formInitialized,
+    jobDescription,
+    proposalTitle,
+    formula,
+    tone,
+    includePortfolio,
+    form,
+  ]);
 
   // Create debounced version of job description for auto title generation
   const debouncedJobDescription = useDebounce(jobDescription, 1000);
@@ -108,6 +140,48 @@ export default function JobDetailsSection() {
     generateJobTitle,
   ]);
 
+  // Update form when proposalTitle changes in context
+  useEffect(() => {
+    if (proposalTitle && proposalTitle.trim() !== "") {
+      form.setValue("jobTitle", proposalTitle);
+    }
+  }, [proposalTitle, form]);
+
+  // Handle analyzed job details
+  useEffect(() => {
+    if (analizeJobDetailsSuccess && analizeJobDetailsApiResponse) {
+      // Only update if we have a successful analysis
+      const analyzedDescription =
+        analizeJobDetailsApiResponse.data.formattedDescription;
+
+      if (analyzedDescription && isInitialSetup) {
+        // Update both form and context state in one go
+        form.setValue("jobDescription", analyzedDescription);
+        setJobDescription(analyzedDescription);
+
+        setIsInitialSetup(false);
+      }
+    }
+  }, [
+    analizeJobDetailsApiResponse,
+    analizeJobDetailsSuccess,
+    form,
+    setJobDescription,
+    isInitialSetup,
+  ]);
+
+  // Handle job data from platform
+  useEffect(() => {
+    if (jobDataFromPlatform && !gettingJobDetailsFromPlatform) {
+      if (jobDataFromPlatform?.jobDescription) {
+        analizeJobDetails({
+          jobDescription: jobDataFromPlatform.jobDescription,
+          reviewSection: jobDataFromPlatform.reviewSection || undefined,
+        });
+      }
+    }
+  }, [jobDataFromPlatform, gettingJobDetailsFromPlatform, analizeJobDetails]);
+
   // Handle form submission
   const onSubmit = async (data: FormValues) => {
     // Update all context values first
@@ -128,8 +202,29 @@ export default function JobDetailsSection() {
     generateProposal();
   };
 
+  // Handle job description changes from the form
+  const handleJobDescriptionChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    const newValue = e.target.value;
+    form.setValue("jobDescription", newValue);
+
+    // Only update context if it's different to avoid loops
+    if (newValue !== jobDescription) {
+      setJobDescription(newValue);
+    }
+  };
+
   // Check if any generation process is happening
   const isProcessing = isGenerating || isRefining;
+
+  if (gettingJobDetailsFromPlatform || isAnalizing) {
+    return (
+      <div className="grid place-items-center w-full h-full">
+        <InBoxLoader />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col h-full gap-3">
@@ -150,7 +245,7 @@ export default function JobDetailsSection() {
                       field.onChange(value);
                       setFormula(value);
                     }}
-                    value={formula || field.value}
+                    value={field.value}
                     disabled={isProcessing}
                   >
                     <FormControl>
@@ -171,9 +266,8 @@ export default function JobDetailsSection() {
                   </Select>
                   <FormDescription className="text-xs">
                     {
-                      PROPOSAL_FORMULAS.find(
-                        (f) => f.id === (formula || field.value)
-                      )?.description
+                      PROPOSAL_FORMULAS.find((f) => f.id === field.value)
+                        ?.description
                     }
                   </FormDescription>
                   <FormMessage />
@@ -192,7 +286,7 @@ export default function JobDetailsSection() {
                       field.onChange(value);
                       setTone(value);
                     }}
-                    value={tone || field.value}
+                    value={field.value}
                     disabled={isProcessing}
                   >
                     <FormControl>
@@ -209,10 +303,7 @@ export default function JobDetailsSection() {
                     </SelectContent>
                   </Select>
                   <FormDescription className="text-xs">
-                    {
-                      TONES.find((t) => t.id === (tone || field.value))
-                        ?.description
-                    }
+                    {TONES.find((t) => t.id === field.value)?.description}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -234,7 +325,6 @@ export default function JobDetailsSection() {
                       placeholder="Enter the job title..."
                       className="bg-white"
                       {...field}
-                      value={proposalTitle || field.value}
                       onChange={(e) => {
                         field.onChange(e);
                         setProposalTitle(e.target.value);
@@ -264,12 +354,8 @@ export default function JobDetailsSection() {
                     placeholder="Paste the job description here..."
                     className="min-h-40 h-full md:h-[440px] max-h-full md:max-h-[440px] overflow-y-auto resize-none bg-white"
                     {...field}
-                    value={jobDescription || field.value}
-                    onChange={(e) => {
-                      field.onChange(e);
-                      setJobDescription(e.target.value);
-                    }}
-                    disabled={isProcessing}
+                    onChange={handleJobDescriptionChange}
+                    disabled={isProcessing || proposalStatus === "SENT"}
                   />
                 </FormControl>
                 <FormDescription className="text-xs">
@@ -287,7 +373,7 @@ export default function JobDetailsSection() {
               <FormItem className="flex items-start space-x-2 pt-1">
                 <FormControl>
                   <Checkbox
-                    checked={includePortfolio || field.value}
+                    checked={field.value}
                     onCheckedChange={(checked) => {
                       field.onChange(checked);
                       setIncludePortfolio(!!checked);
@@ -308,7 +394,10 @@ export default function JobDetailsSection() {
           <Button
             type="submit"
             disabled={
-              isGenerating || isRefining || isGeneratingTitle || !jobDescription
+              isGenerating ||
+              isRefining ||
+              isGeneratingTitle ||
+              !form.getValues("jobDescription")
             }
             className="w-full mt-4"
             size="sm"

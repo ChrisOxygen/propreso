@@ -165,7 +165,7 @@ export interface BreadcrumbItem {
 export function generateBreadcrumbs(
   pathname: string,
   homeLabel: string = "Dashboard",
-  homeHref: string = "/dashboard"
+  homeHref: string = "/proposals"
 ): BreadcrumbItem[] {
   // Skip the first empty string after splitting
   const pathSegments = pathname.split("/").filter((segment) => segment);
@@ -177,17 +177,20 @@ export function generateBreadcrumbs(
   breadcrumbs.push({
     label: homeLabel,
     href: homeHref,
-    isCurrentPage: pathSegments.length === 1 && pathSegments[0] === "dashboard",
+    isCurrentPage: pathSegments.length === 1 && pathSegments[0] === "proposals",
   });
 
-  if (pathSegments.length === 1 && pathSegments[0] === "dashboard") {
+  if (pathSegments.length === 1 && pathSegments[0] === "proposals") {
     return breadcrumbs;
   }
 
   // Build the rest of the breadcrumbs
   let currentPath = "";
 
-  pathSegments.forEach((segment, index) => {
+  const pathSegmentsWOroot = pathSegments.filter(
+    (path) => !homeHref.includes(path)
+  );
+  pathSegmentsWOroot.forEach((segment, index) => {
     currentPath += `/${segment}`;
 
     // Format the segment for display (capitalize, replace hyphens, etc.)
@@ -199,7 +202,7 @@ export function generateBreadcrumbs(
     breadcrumbs.push({
       label: formattedLabel,
       href: currentPath,
-      isCurrentPage: index === pathSegments.length - 1,
+      isCurrentPage: index === pathSegmentsWOroot.length - 1,
     });
   });
 

@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { generateProjectDescWithAI } from "../../actions";
+import { ProjectFormValues } from "./useProjectForm"; // Fix import to avoid circular dependencies
 
 function useGenerateProjectDesc() {
   const {
@@ -10,15 +11,17 @@ function useGenerateProjectDesc() {
     isError: generateDescError,
     data: generatedDescData,
   } = useMutation({
-    mutationFn: generateProjectDescWithAI,
+    mutationFn: (formData: ProjectFormValues) =>
+      generateProjectDescWithAI(formData),
   });
+
   return {
     generateDesc,
     isGeneratingDesc,
     generateDescSuccessful,
-    resetGenerateDescState, // Uncomment if you have a reset function
-    generateDescError, // Uncomment if you have an error state
-    generatedDescData, // Uncomment if you have a data state
+    resetGenerateDescState,
+    generateDescError,
+    generatedDescData,
   };
 }
 

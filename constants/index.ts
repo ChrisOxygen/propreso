@@ -1,6 +1,5 @@
 import {
   LayoutDashboard,
-  Target,
   FileText,
   Users,
   UsersIcon,
@@ -559,23 +558,18 @@ export const AVAILABLE_PLATFORMS = [
 export const PRIMARY_NAV_ITEMS = [
   {
     title: "Dashboard",
-    url: "/dashboard",
+    url: "/proposals",
     icon: LayoutDashboard,
   },
   {
     title: "Proposals",
-    url: "/proposals",
+    url: "/proposals/all",
     icon: FileText,
   },
   {
     title: "Profiles",
     url: "/profile",
     icon: Users,
-  },
-  {
-    title: "Goals",
-    url: "/goals",
-    icon: Target,
   },
 ];
 export const SECONDARY_NAV_ITEMS = [

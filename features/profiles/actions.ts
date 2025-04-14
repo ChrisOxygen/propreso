@@ -4,163 +4,9 @@ import { generateWithOpenAI } from "@/lib/actions";
 import { CreateProfileState } from "./context/CreateProfileContext";
 import { auth } from "@/auth";
 import { PrismaClient, Profile, Project } from "@prisma/client";
-import { ProjectFormValues } from "./components/projects/ProjectForm";
+import { ProjectFormValues } from "./schemas/projectSchema";
 
 const prisma = new PrismaClient();
-
-// Mock API function to check project strength
-// export const checkProjectStrength = async (projectData: ProjectFormValues) => {
-//   // Simulating API call
-
-//   try {
-//     if (!projectData) {
-//       throw new Error("Project data is required");
-//     }
-
-//     // Create analysis for each project
-
-//     // Create prompt for OpenAI
-//     const prompt = `
-
-// You are an expert portfolio evaluator. Your task is to analyze a profile project based on specific criteria and provide a standardized evaluation score with actionable feedback.
-
-// ## Input Format
-
-// You will be given project details in the following format:
-// - Project Title
-// - Project Description
-// - Live Link (may be empty)
-// - GitHub Link (may be empty)
-
-// Project Title: "${projectData.title || ""}"
-//        Project Description: "${projectData.description || ""}"
-//        Live Link: "${projectData.liveLink || ""}"
-//        GitHub Link: "${projectData.repoLink || ""}"
-
-// ## Evaluation Criteria
-
-// Evaluate the project based on these three components:
-
-// 1. **Title Quality (20 marks):**
-//    - Award full marks (20) if the title is descriptive, concise, and contains at least 5 characters
-//     - Award zero marks if the title is missing or less than 5 characters, or if it is too generic
-//    - Example of good title: "Weatherly: Real-time Weather Forecasting App"
-//    - Example of poor title: "My Project" or "App"
-
-// 2. **Description Quality (50 marks):**
-//    - Award full marks (50) if the description clearly mentions AT LEAST TWO specific problems solved using PARTICULAR technologies, libraries, or tools
-
-//    - Evaluate based on specificity, clarity, and technical detail
-//    - Example of good description element: "Implemented a Redis caching layer to reduce API response times by 40% for frequently accessed weather data"
-//    - Example of poor description element: "Used React to build the site"
-
-// 3. **Project Accessibility (30 marks):**
-//    - Award full marks (30) if either or BOTH Live Link AND Repository Link are available and valid
-
-//    - Award zero marks if NEITHER link is available
-
-// ## Output Format
-
-// You must return ONLY a JSON object with the following structure:
-
-// json
-// {
-//   "strength": number, // Total score (0-100)
-//   "suggestions": [
-//     {
-//       "name": "Component Name", // E.g., "Descriptive Title", "Technical Description", "Project Links"
-//       "description": "Description of what's missing",
-//       "examples": ["Example 1", "Example 2"] // Two specific, actionable examples
-//     }
-//   ]
-// }
-
-// ## Example Evaluation Process
-
-// For each component:
-// 1. Check if it meets the criteria completely, partially, or not at all
-// 2. Calculate the score accordingly
-// 3. For any deficient component, document:
-//    - What specifically is missing
-//    - Two concrete examples of how to improve it
-
-// If a component scores full marks, do not include it in the "missingComponents" array.
-
-// ## Important Notes
-
-// - Be precise and objective in your evaluation
-// - Do not provide any additional text, explanation, or markdown outside the JSON object
-// - Ensure the JSON is properly formatted and valid
-// - Base your evaluation solely on the provided project information
-// - For missing components, provide specific, actionable feedback that could realistically improve the project presentation
-//        `;
-
-//     const content = await generateWithOpenAI({
-//       prompt,
-//       response_format: "json_object",
-//     });
-
-//     if (!content) {
-//       throw new Error("Failed to analyze projects");
-//     }
-
-//     // Parse the JSON response
-//     const analysisData = JSON.parse(content) as ProjectStrengthData;
-
-//     return analysisData;
-//   } catch (error) {
-//     console.error("Error checking projects:", error);
-//     throw new Error("Failed to analyze projects");
-//   }
-//   // setTimeout(() => {
-//   //   // Calculate strength based on project data
-//   //   let strength = 0;
-//   //   let suggestions: string[] = [];
-
-//   //   // Title check (20%)
-//   //   if (projectData.title && projectData.title.length > 5) {
-//   //     strength += 20;
-//   //   } else {
-//   //     suggestions.push(
-//   //       "Use a more descriptive title (at least 5 characters)"
-//   //     );
-//   //   }
-
-//   //   // Description check (40%)
-//   //   if (projectData.description) {
-//   //     if (projectData.description.length > 100) {
-//   //       strength += 40;
-//   //     } else if (projectData.description.length > 50) {
-//   //       strength += 20;
-//   //       suggestions.push("Add more details to your description");
-//   //     } else {
-//   //       suggestions.push(
-//   //         "Your description should be more comprehensive (aim for 100+ characters)"
-//   //       );
-//   //     }
-//   //   } else {
-//   //     suggestions.push("Add a description to your project");
-//   //   }
-
-//   //   // Links check (40% - 20% each)
-//   //   if (projectData.liveLink) {
-//   //     strength += 20;
-//   //   } else {
-//   //     suggestions.push("Add a live link to showcase your project");
-//   //   }
-
-//   //   if (projectData.repoLink) {
-//   //     strength += 20;
-//   //   } else {
-//   //     suggestions.push("Add a repository link to show your code");
-//   //   }
-
-//   //   resolve({
-//   //     strength,
-//   //     suggestions,
-//   //   });
-//   // }, 500); // Simulate API delay
-// };
 
 export interface generateBioWithAIParams {
   jobTitle: string;
@@ -966,7 +812,7 @@ export async function analyzeProjectStrength(
   const descWordCount = safeProject.description
     .trim()
     .split(/\s+/)
-    .filter((word) => word.length > 0).length;
+    .filter((word: string) => word.length > 0).length;
 
   if (descWordCount >= 70 && descWordCount <= 100) {
     descScore = 50;

@@ -1,12 +1,11 @@
 // hooks/useUpdateProject.ts
 import { useMutation } from "@tanstack/react-query";
-
 import { updateProject } from "../../actions";
-import { ProjectFormValues } from "../../components/projects/ProjectForm";
+import { ProjectFormValues } from "./useProjectForm"; // Fix import to avoid circular dependencies
 
 export function useUpdateProject() {
   const {
-    mutate: updateExistingProject,
+    mutate,
     isPending: isUpdatingProject,
     isSuccess: projectUpdateSuccess,
     reset: resetProjectUpdateState,
@@ -14,13 +13,16 @@ export function useUpdateProject() {
     data: projectUpdateData,
   } = useMutation({
     mutationFn: ({
-      formData,
       projectId,
+      formData,
     }: {
-      formData: ProjectFormValues;
       projectId: string;
+      formData: ProjectFormValues;
     }) => updateProject(projectId, formData),
   });
+
+  // Rename to match what's being used in useProjectForm
+  const updateExistingProject = mutate;
 
   return {
     updateExistingProject,

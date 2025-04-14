@@ -28,7 +28,7 @@ export const config = {
     /*
      * Protected routes that require authentication
      */
-    "/dashboard/:path*",
+
     "/settings/:path*",
     "/account/:path*",
     "/proposals/:path*",
