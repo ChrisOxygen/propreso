@@ -17,18 +17,15 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { loginFormSchema } from "@/formSchemas";
-import { useRouter } from "next/navigation";
 import InBoxLoader from "@/components/InBoxLoader";
-import { signIn, useSession } from "next-auth/react";
+import { useLogin } from "@/hooks/useLogin";
 
 function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
-  const { status } = useSession();
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
+
+  const { onSubmit, isLoading, error } = useLogin();
 
   // Initialize form
   const form = useForm<z.infer<typeof loginFormSchema>>({
@@ -39,47 +36,8 @@ function LoginPage() {
     },
   });
 
-  // Redirect if already authenticated
-  useEffect(() => {
-    if (status === "authenticated") {
-      console.log("User is authenticated, redirecting to dashboard");
-      router.push("/proposals");
-    }
-  }, [status, router]);
-
-  // Handle form submission
-  const onSubmit = async (values: z.infer<typeof loginFormSchema>) => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      console.log("Attempting to sign in");
-      const result = await signIn("credentials", {
-        redirect: false,
-        email: values.email,
-        password: values.password,
-      });
-
-      if (result?.error) {
-        console.error("Sign in error:", result.error);
-        setError(result.error);
-        return;
-      }
-
-      if (result?.ok) {
-        console.log("Sign in successful, redirecting to dashboard");
-        router.push("/proposals");
-      }
-    } catch (err) {
-      console.error("Login failed:", err);
-      setError("An unexpected error occurred. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   // Show loading state while checking session
-  if (status === "loading") {
+  if (isLoading) {
     return <InBoxLoader />;
   }
 

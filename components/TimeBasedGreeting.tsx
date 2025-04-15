@@ -4,7 +4,7 @@ import { useUser } from "@/hooks/useUser";
 import { Skeleton } from "./ui/skeleton";
 
 function TimeBasedGreeting() {
-  const { data: user, isLoading, error } = useUser();
+  const { data: user, isPending, error } = useUser();
 
   // Function to determine the appropriate greeting based on time of day
   const getGreeting = () => {
@@ -20,7 +20,7 @@ function TimeBasedGreeting() {
   };
 
   // Handle loading state
-  if (isLoading) {
+  if (isPending) {
     return <Skeleton className="w-[200px] h-6" />;
   }
 
