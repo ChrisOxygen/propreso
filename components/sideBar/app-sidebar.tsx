@@ -31,7 +31,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem className="p-0">
             <SidebarMenuButton className="!m-0 !p-0" size="lg" asChild>
               <Link
-                href="/"
+                href="/proposals"
                 className="flex w-full items-center justify-start gap-[5px] !p-0 sm:gap-3"
               >
                 <div className="relative grid size-[17px] place-items-center rounded-lg bg-[#BF4008] p-2.5 sm:size-[35px]">
