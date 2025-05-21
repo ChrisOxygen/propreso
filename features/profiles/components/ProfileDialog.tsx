@@ -24,13 +24,17 @@ function ProfileDialog({
 }: ProfileDialogProps) {
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-      <DialogContent className="sm:max-w-[700px] max-h-[90vh] p-0 overflow-hidden">
-        <div className="max-h-[calc(90vh-40px)] overflow-hidden flex flex-col">
+      <DialogContent className="max-h-[90vh] overflow-hidden p-0 sm:max-w-[700px]">
+        <div className="flex max-h-[calc(90vh-40px)] flex-col overflow-hidden">
           <ScrollArea className="h-full">
             <div className="p-5">
               <DialogHeader>
-                <DialogTitle>{title}</DialogTitle>
-                <DialogDescription>{description}</DialogDescription>
+                <DialogTitle className="font-[Poppins] text-lg font-semibold tracking-[-0.4px] text-[#2C2C2C]">
+                  {title}
+                </DialogTitle>
+                <DialogDescription className="font-[Lato] text-sm tracking-[0.08px] text-[#404040]">
+                  {description}
+                </DialogDescription>
               </DialogHeader>
               {children}
             </div>

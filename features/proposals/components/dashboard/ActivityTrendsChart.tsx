@@ -25,22 +25,22 @@ const ActivityTrendsChart = () => {
     },
     DRAFT: {
       label: "Draft",
-      color: "#000",
+      color: "#BF4008", // Primary brand color
     },
     SENT: {
       label: "Sent",
-      color: "#89987",
+      color: "#D5754C", // Medium shade of brand color
     },
     WON: {
       label: "Won",
-      color: "#ececec",
+      color: "#F8E5DB", // Light brand color
     },
   } satisfies ChartConfig;
 
   const totalSentProposals = useMemo(() => {
     return formattedChartData.reduce(
       (acc, curr) => acc + curr.numOfProposals,
-      0
+      0,
     );
   }, [formattedChartData]);
 
@@ -54,23 +54,23 @@ const ActivityTrendsChart = () => {
   }, [formattedChartData]);
 
   return (
-    <Card className="bg-white hover:shadow-md px-5 transition-all">
-      <CardHeader className="flex flex-row border-b items-center justify-between space-y-0 pb-5">
+    <Card className="bg-white px-5 transition-all hover:shadow-md">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b pb-5">
         <div>
-          <CardTitle className="text-sm font-semibold flex items-center gap-2 text-zinc-800 uppercase tracking-wider">
+          <CardTitle className="flex items-center gap-2 font-[Poppins] text-sm font-semibold tracking-[-0.4px] text-[#2C2C2C] uppercase">
             <ChartPie className="h-4 w-4" />
-            Proposal Comparison
+            Proposal Distribution
           </CardTitle>
         </div>
       </CardHeader>
 
       <CardContent className="p-0 pt-3">
         {isLoading ? (
-          <div className="p-6 space-y-2">
+          <div className="space-y-2 p-6">
             <Skeleton className="h-[180px] w-full" />
           </div>
         ) : hasNoData ? (
-          <div className="flex items-center justify-center h-[200px] text-zinc-400 text-sm font-medium">
+          <div className="flex h-[200px] items-center justify-center font-[Lato] text-sm font-medium text-[#404040]">
             No data available
           </div>
         ) : (
@@ -96,20 +96,21 @@ const ActivityTrendsChart = () => {
                           y={viewBox.cy}
                           textAnchor="middle"
                           dominantBaseline="middle"
+                          className="font-[Lato]"
                         >
                           <tspan
                             x={viewBox.cx}
                             y={viewBox.cy}
-                            className="fill-foreground text-3xl font-bold"
+                            className="fill-[#2C2C2C] text-3xl font-bold"
                           >
                             {totalSentProposals.toLocaleString()}
                           </tspan>
                           <tspan
                             x={viewBox.cx}
                             y={(viewBox.cy || 0) + 24}
-                            className="fill-muted-foreground"
+                            className="fill-[#404040] text-sm"
                           >
-                            Sent Proposals
+                            Total Proposals
                           </tspan>
                         </text>
                       );

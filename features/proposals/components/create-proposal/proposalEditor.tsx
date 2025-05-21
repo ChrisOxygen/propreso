@@ -55,7 +55,7 @@ const ProposalEditor = ({ jobKey }: { jobKey?: string }) => {
     isGenerating,
     isRefining,
     isSaving,
-    proposalStatus, // Add proposalStatus to dependencies
+    proposalStatus,
   ]);
 
   // Effect for auto-saving
@@ -85,7 +85,7 @@ const ProposalEditor = ({ jobKey }: { jobKey?: string }) => {
   const handleRefineProposal = () => {
     if (!proposal || !jobDescription) {
       toast.error(
-        "Both job description and proposal are required for refinement"
+        "Both job description and proposal are required for refinement",
       );
       return;
     }
@@ -117,7 +117,7 @@ const ProposalEditor = ({ jobKey }: { jobKey?: string }) => {
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       setProposal(e.target.value);
     },
-    [setProposal]
+    [setProposal],
   );
 
   const isCopyDisabled = useMemo(() => {
@@ -125,25 +125,29 @@ const ProposalEditor = ({ jobKey }: { jobKey?: string }) => {
   }, [proposal, isGenerating, isRefining, isSaving]);
 
   return (
-    <div className="w-full h-full flex gap-4 flex-col @container">
+    <div className="@container flex h-full w-full flex-col gap-4">
       <Textarea
         placeholder="Your generated proposal will appear here..."
-        className="flex-grow min-h-40 h-full max-h-full sm:h-[650px] sm:max-h-[650px] md:h-[715px] md:max-h-[715px] w-full border border-gray-300 p-4 text-black bg-white"
+        className="h-full max-h-full min-h-40 w-full flex-grow border border-gray-200 bg-white p-4 font-[Lato] tracking-[0.08px] text-[#2C2C2C] sm:h-[650px] sm:max-h-[650px] md:h-[715px] md:max-h-[715px]"
         value={proposal}
         onChange={handleChange}
         disabled={isProposalDisabled}
       />
 
-      <div className="grid grid-cols-2 @[600px]:grid-cols-4 w-full gap-3 mt-auto">
+      <div className="mt-auto grid w-full grid-cols-2 gap-3 @[600px]:grid-cols-4">
         {/* Copy button */}
-        <Button onClick={copyToClipboard} disabled={isCopyDisabled}>
-          <Copy size={16} />
+        <Button
+          onClick={copyToClipboard}
+          disabled={isCopyDisabled}
+          className="bg-[#BF4008] font-[Lato] font-medium text-white transition-colors duration-200 hover:bg-[#BF4008]/80"
+        >
+          <Copy size={16} className="mr-2" />
           Copy
         </Button>
 
         <Button
           variant="outline"
-          className="flex items-center gap-2 bg-white text-black border-gray-300 hover:bg-gray-100"
+          className="flex items-center gap-2 border-gray-200 bg-white font-[Lato] font-medium text-[#2C2C2C] transition-colors duration-200 hover:bg-gray-50"
           onClick={handleRefineProposal}
           disabled={isRefining || !proposal || isGenerating || isSaving}
         >
@@ -162,7 +166,7 @@ const ProposalEditor = ({ jobKey }: { jobKey?: string }) => {
 
         <Button
           variant="outline"
-          className="flex items-center gap-2 bg-white text-black border-gray-300 hover:bg-gray-100"
+          className="flex items-center gap-2 border-gray-200 bg-white font-[Lato] font-medium text-[#2C2C2C] transition-colors duration-200 hover:bg-gray-50"
           onClick={handlePasteInPlatform}
           disabled={!proposal || isGenerating || isRefining || isSaving}
         >
@@ -172,7 +176,7 @@ const ProposalEditor = ({ jobKey }: { jobKey?: string }) => {
 
         <Button
           variant="outline"
-          className="flex items-center gap-2 bg-white text-black border-gray-300 hover:bg-gray-100"
+          className="flex items-center gap-2 border-gray-200 bg-white font-[Lato] font-medium text-[#2C2C2C] transition-colors duration-200 hover:bg-gray-50"
           onClick={handleSave}
           disabled={
             isSaving ||
@@ -188,12 +192,12 @@ const ProposalEditor = ({ jobKey }: { jobKey?: string }) => {
             </>
           ) : (
             <>
-              <Save size={16} />
+              <Save size={16} className="mr-2" />
               {proposalStatus === "SENT"
                 ? "Update"
                 : isEditMode
-                ? "Update"
-                : "Save"}
+                  ? "Update"
+                  : "Save"}
             </>
           )}
         </Button>

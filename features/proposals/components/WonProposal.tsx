@@ -37,22 +37,31 @@ function WonProposal() {
 
   if (isPendingProposal) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-[#BF4008]" />
       </div>
     );
   }
 
   if (!proposal && isProposalSuccess) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6">
-        <h2 className="text-2xl font-bold">Proposal not found</h2>
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-6">
+        <h2 className="font-[Poppins] text-2xl font-bold tracking-[-0.72px] text-[#2C2C2C]">
+          Proposal not found
+        </h2>
         <div className="flex gap-4">
-          <Button onClick={handleViewAllProposals}>
+          <Button
+            onClick={handleViewAllProposals}
+            variant="outline"
+            className="font-[Lato] font-medium"
+          >
             <List className="mr-2 h-4 w-4" />
             View All Proposals
           </Button>
-          <Button onClick={handleCreateNewProposal}>
+          <Button
+            onClick={handleCreateNewProposal}
+            className="bg-[#BF4008] font-[Lato] font-medium text-white transition-colors duration-200 hover:bg-[#BF4008]/80"
+          >
             <Plus className="mr-2 h-4 w-4" />
             Create New Proposal
           </Button>
@@ -62,49 +71,53 @@ function WonProposal() {
   }
 
   return (
-    <div className="flex flex-col gap-6 py-6 @container  w-full mx-auto ">
+    <div className="@container mx-auto flex w-full flex-col gap-6 py-6">
       {/* Job Title */}
-      <div className="flex gap-5  px-5 w-full @[800px]:flex-row flex-col-reverse items-start @container @[800px]:items-center justify-between">
-        <h3 className="text-2xl  font-bold">
+      <div className="@container flex w-full flex-col-reverse items-start justify-between gap-5 px-5 @[800px]:flex-row @[800px]:items-center">
+        <h3 className="font-[Poppins] text-2xl font-bold tracking-[-0.72px] text-[#2C2C2C]">
           {proposal?.title || "Untitled Proposal"}
         </h3>
         {/* Action Buttons */}
-        <div className="flex gap-4 mt-4">
-          <Button onClick={handleViewAllProposals} variant="outline">
+        <div className="mt-4 flex gap-4">
+          <Button
+            onClick={handleViewAllProposals}
+            variant="outline"
+            className="font-[Lato] font-medium"
+          >
             <List className="mr-2 h-4 w-4" />
             View All Proposals
           </Button>
           <Button
             onClick={handleCreateNewProposal}
-            className=" flex gap-2 item-center"
+            className="flex items-center gap-2 bg-[#BF4008] font-[Lato] font-medium text-white transition-colors duration-200 hover:bg-[#BF4008]/80"
           >
-            <Plus className=" h-4 w-4" />
-            <span className=" hidden @[1000px]:block">Create New Proposal</span>
+            <Plus className="h-4 w-4" />
+            <span className="hidden @[1000px]:block">Create New Proposal</span>
           </Button>
         </div>
       </div>
 
       {/* Job Description */}
-      <Card className="border-none shadow-none relative bg-gray-100">
-        <CardHeader className="pb-2 flex flex-row w-full items-center justify-between">
-          <CardTitle className="text-lg font-semibold">
-            <h3> Job Description</h3>
+      <Card className="relative rounded-xl border-none bg-black/4 shadow-none">
+        <CardHeader className="flex w-full flex-row items-center justify-between pb-2">
+          <CardTitle className="font-[Poppins] text-lg font-semibold tracking-[-0.4px] text-[#2C2C2C]">
+            <h3>Job Description</h3>
           </CardTitle>
           {proposal?.jobDescription && proposal.jobDescription.length > 200 && (
             <Button
               variant="ghost"
               size="sm"
-              className=""
+              className="font-[Lato] text-[#404040] transition-colors duration-200 hover:text-[#BF4008]"
               onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
             >
               {isDescriptionExpanded ? (
                 <>
-                  <ChevronUp className="h-4 w-4 mr-1" />
+                  <ChevronUp className="mr-1 h-4 w-4" />
                   Show Less
                 </>
               ) : (
                 <>
-                  <ChevronDown className="h-4 w-4 mr-1" />
+                  <ChevronDown className="mr-1 h-4 w-4" />
                   View More
                 </>
               )}
@@ -112,7 +125,7 @@ function WonProposal() {
           )}
         </CardHeader>
         <CardContent>
-          <div className="text-gray-700">
+          <div className="font-[Lato] tracking-[0.08px] text-[#404040]">
             {isDescriptionExpanded
               ? proposal?.jobDescription
               : truncatedDescription}
@@ -123,12 +136,12 @@ function WonProposal() {
       {/* Proposal Content */}
       <Card className="border-none shadow-none">
         <CardHeader className="pb-2">
-          <CardTitle className="text-lg font-semibold">
+          <CardTitle className="font-[Poppins] text-lg font-semibold tracking-[-0.4px] text-[#2C2C2C]">
             <h3>Proposal</h3>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-gray-700 whitespace-pre-wrap">
+          <div className="font-[Lato] tracking-[0.08px] whitespace-pre-wrap text-[#404040]">
             {proposal?.proposal || "No proposal content available."}
           </div>
         </CardContent>

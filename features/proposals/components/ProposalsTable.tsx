@@ -51,16 +51,16 @@ const ProposalsTable = ({
           .map((_, index) => (
             <div
               key={`mobile-skeleton-${index}`}
-              className="bg-white border border-zinc-100 rounded-lg p-4 shadow-sm"
+              className="rounded-lg border border-zinc-100 bg-white p-4 shadow-sm"
             >
-              <div className="flex justify-between items-start mb-3">
+              <div className="mb-3 flex items-start justify-between">
                 <div className="w-3/4">
                   <Skeleton className="h-5 w-full" />
                 </div>
                 <Skeleton className="h-6 w-20" />
               </div>
 
-              <div className="flex w-full items-center gap-5 text-sm text-zinc-500 mb-4">
+              <div className="mb-4 flex w-full items-center gap-5 text-sm text-[#404040]">
                 <Skeleton className="h-4 w-28" />
                 <Separator className="shrink" />
               </div>
@@ -75,20 +75,20 @@ const ProposalsTable = ({
   // Desktop/tablet skeleton loader
   const renderDesktopSkeletons = () => {
     return (
-      <div className="hidden md:block overflow-hidden rounded-md">
+      <div className="hidden overflow-hidden rounded-md md:block">
         <Table>
           <TableHeader className="bg-zinc-50">
             <TableRow>
-              <TableHead className="font-medium text-xs uppercase tracking-wider text-zinc-500">
+              <TableHead className="font-[Poppins] text-xs font-medium tracking-wider text-[#404040] uppercase">
                 Job title
               </TableHead>
-              <TableHead className="font-medium text-xs uppercase tracking-wider text-zinc-500">
+              <TableHead className="font-[Poppins] text-xs font-medium tracking-wider text-[#404040] uppercase">
                 Date
               </TableHead>
-              <TableHead className="font-medium text-xs uppercase tracking-wider text-zinc-500">
+              <TableHead className="font-[Poppins] text-xs font-medium tracking-wider text-[#404040] uppercase">
                 Status
               </TableHead>
-              <TableHead className="font-medium text-xs uppercase tracking-wider text-zinc-500 text-right">
+              <TableHead className="text-right font-[Poppins] text-xs font-medium tracking-wider text-[#404040] uppercase">
                 Action
               </TableHead>
             </TableRow>
@@ -99,7 +99,7 @@ const ProposalsTable = ({
               .map((_, index) => (
                 <TableRow
                   key={`desktop-skeleton-${index}`}
-                  className="hover:bg-zinc-50 border-b border-zinc-100"
+                  className="border-b border-zinc-100 hover:bg-zinc-50"
                 >
                   <TableCell>
                     <Skeleton className="h-5 w-48" />
@@ -111,7 +111,7 @@ const ProposalsTable = ({
                     <Skeleton className="h-6 w-20" />
                   </TableCell>
                   <TableCell className="text-right">
-                    <Skeleton className="h-8 w-16 ml-auto" />
+                    <Skeleton className="ml-auto h-8 w-16" />
                   </TableCell>
                 </TableRow>
               ))}
@@ -128,25 +128,27 @@ const ProposalsTable = ({
         {displayProposals.map((proposal) => (
           <div
             key={`mobile-${proposal.id}`}
-            className="bg-white border border-zinc-100 rounded-lg p-4 shadow-sm"
+            className="rounded-lg border border-zinc-100 bg-white p-4 shadow-sm"
           >
-            <div className="flex justify-between items-start mb-3">
+            <div className="mb-3 flex items-start justify-between">
               <div>
-                <h3 className="font-medium">{proposal.title}</h3>
+                <h3 className="font-[Poppins] font-medium text-[#2C2C2C]">
+                  {proposal.title}
+                </h3>
               </div>
               <Badge
                 className={`${getStatusColor(
-                  proposal.status
-                )} flex items-center gap-1.5`}
+                  proposal.status,
+                )} flex items-center gap-1.5 font-[Lato]`}
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-white opacity-70"></span>
+                <span className="h-1.5 w-1.5 rounded-full bg-white opacity-70"></span>
                 {proposal.status}
               </Badge>
             </div>
 
-            <div className="flex w-full items-center gap-5 text-sm text-zinc-500 mb-4">
-              <div className="flex items-center shrink-0">
-                <Calendar className="w-3.5 block h-3.5 mr-1.5" />
+            <div className="mb-4 flex w-full items-center gap-5 font-[Lato] text-sm tracking-[0.08px] text-[#404040]">
+              <div className="flex shrink-0 items-center">
+                <Calendar className="mr-1.5 block h-3.5 w-3.5" />
                 <span className="block">
                   {formatProposalDate(proposal.createdAt)}
                 </span>
@@ -157,7 +159,7 @@ const ProposalsTable = ({
             <Button
               variant="outline"
               size="sm"
-              className="w-full border-zinc-200 hover:border-black hover:text-white hover:bg-black transition-all"
+              className="w-full border-zinc-200 font-[Lato] transition-colors duration-200 hover:border-[#BF4008] hover:bg-[#BF4008] hover:text-white"
               asChild
             >
               <Link href={`/proposals/${proposal.id}`}>
@@ -174,20 +176,20 @@ const ProposalsTable = ({
   // Desktop/tablet table view renderer
   const renderDesktopTable = () => {
     return (
-      <div className="hidden md:block overflow-hidden rounded-md">
+      <div className="hidden overflow-hidden rounded-md md:block">
         <Table>
           <TableHeader className="bg-zinc-50">
             <TableRow className="border-y">
-              <TableHead className="font-medium text-xs uppercase tracking-wider text-zinc-500">
+              <TableHead className="font-[Poppins] text-xs font-medium tracking-wider text-[#404040] uppercase">
                 Job title
               </TableHead>
-              <TableHead className="font-medium text-xs uppercase tracking-wider text-zinc-500">
+              <TableHead className="font-[Poppins] text-xs font-medium tracking-wider text-[#404040] uppercase">
                 Date
               </TableHead>
-              <TableHead className="font-medium text-xs uppercase tracking-wider text-zinc-500">
+              <TableHead className="font-[Poppins] text-xs font-medium tracking-wider text-[#404040] uppercase">
                 Status
               </TableHead>
-              <TableHead className="font-medium text-xs uppercase tracking-wider text-zinc-500 text-right">
+              <TableHead className="text-right font-[Poppins] text-xs font-medium tracking-wider text-[#404040] uppercase">
                 Action
               </TableHead>
             </TableRow>
@@ -196,19 +198,21 @@ const ProposalsTable = ({
             {displayProposals.map((proposal) => (
               <TableRow
                 key={proposal.id}
-                className="hover:bg-zinc-50 border-b border-zinc-100"
+                className="border-b border-zinc-100 hover:bg-zinc-50"
               >
-                <TableCell className="text-sm">{proposal.title}</TableCell>
-                <TableCell className="text-sm">
+                <TableCell className="font-[Lato] text-sm text-[#2C2C2C]">
+                  {proposal.title}
+                </TableCell>
+                <TableCell className="font-[Lato] text-sm tracking-[0.08px] text-[#404040]">
                   {formatProposalDate(proposal.createdAt)}
                 </TableCell>
                 <TableCell>
                   <Badge
                     className={`${getStatusColor(
-                      proposal.status
-                    )} flex w-fit items-center gap-1.5`}
+                      proposal.status,
+                    )} flex w-fit items-center gap-1.5 font-[Lato]`}
                   >
-                    <span className="w-1.5 h-1.5 rounded-full bg-white opacity-70"></span>
+                    <span className="h-1.5 w-1.5 rounded-full bg-white opacity-70"></span>
                     {proposal.status}
                   </Badge>
                 </TableCell>
@@ -216,7 +220,7 @@ const ProposalsTable = ({
                   <Button
                     variant="outline"
                     size="sm"
-                    className="h-8 border-zinc-200 hover:border-black hover:text-white hover:bg-black transition-all"
+                    className="h-8 border-zinc-200 font-[Lato] transition-colors duration-200 hover:border-[#BF4008] hover:bg-[#BF4008] hover:text-white"
                     asChild
                   >
                     <Link href={`/proposals/${proposal.id}`}>View</Link>
@@ -233,9 +237,9 @@ const ProposalsTable = ({
   // Display empty state
   if (!isLoading && displayProposals.length === 0) {
     return (
-      <Card className={`bg-white hover:shadow-md transition-all  ${className}`}>
-        <CardHeader className="pb-3 flex flex-row items-center justify-between space-y-0">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2 text-zinc-800 uppercase tracking-wider">
+      <Card className={`bg-white transition-all hover:shadow-md ${className}`}>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+          <CardTitle className="flex items-center gap-2 font-[Poppins] text-sm font-semibold tracking-wider text-[#2C2C2C] uppercase">
             {icon}
             {title}
           </CardTitle>
@@ -244,16 +248,16 @@ const ProposalsTable = ({
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-black hover:text-zinc-700 h-8"
+                className="h-8 font-[Lato] text-[#2C2C2C] transition-colors duration-200 hover:text-[#BF4008]"
               >
                 {viewAllLabel}
-                <ArrowRight className="h-3.5 w-3.5 ml-1" />
+                <ArrowRight className="ml-1 h-3.5 w-3.5" />
               </Button>
             </Link>
           )}
         </CardHeader>
         <CardContent>
-          <div className="h-24 flex items-center justify-center text-zinc-500">
+          <div className="flex h-24 items-center justify-center font-[Lato] tracking-[0.08px] text-[#404040]">
             {emptyMessage}
           </div>
         </CardContent>
@@ -263,7 +267,7 @@ const ProposalsTable = ({
 
   return (
     <Card
-      className={`bg-white p-0 m-0 border-none shadow-none transition-all ${className}`}
+      className={`m-0 border-none bg-white p-0 shadow-none transition-all ${className}`}
     >
       <CardContent className="">
         {/* Loading state or content */}

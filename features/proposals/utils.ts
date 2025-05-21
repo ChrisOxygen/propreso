@@ -26,7 +26,7 @@ export interface FormattedChartItem {
  * @returns A new array with name, value, and color properties
  */
 export function formatChartDataWithColors(
-  chartData: ProposalChartItem[]
+  chartData: ProposalChartItem[],
 ): FormattedChartItem[] {
   if (!chartData || chartData.length === 0) {
     return [];
@@ -104,7 +104,7 @@ export const formatPieChartData = (
     DRAFT: number;
     SENT: number;
     WON: number;
-  }[]
+  }[],
 ) => {
   // Initialize counters for each status
   let draftTotal = 0;
@@ -142,13 +142,13 @@ export const getStatusColor = (status: string) => {
   switch (status) {
     case "Won":
     case "WON":
-      return "bg-black text-white hover:bg-black/90";
+      return "bg-[#BF4008] text-white hover:bg-[#BF4008]/90"; // Primary brand color
     case "Sent":
     case "SENT":
-      return "bg-zinc-600 text-white hover:bg-zinc-600/90";
+      return "bg-[#D5754C] text-white hover:bg-[#D5754C]/90"; // Lighter shade
     case "Draft":
     case "DRAFT":
     default:
-      return "bg-zinc-200 text-zinc-800 hover:bg-zinc-300/90";
+      return "bg-[#F8E5DB] text-[#BF4008] hover:bg-[#F8E5DB]/90"; // Very light shade with brand text
   }
 };

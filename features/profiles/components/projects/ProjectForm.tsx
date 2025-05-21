@@ -58,7 +58,12 @@ export function ProjectForm({
         <FormSuggestions />
 
         <DialogFooter className="pt-4">
-          <Button variant="outline" type="button" onClick={onCancel}>
+          <Button
+            variant="outline"
+            type="button"
+            onClick={onCancel}
+            className="border-zinc-200 bg-white font-[Lato] text-[#2C2C2C] transition-colors duration-200 hover:bg-zinc-50"
+          >
             Cancel
           </Button>
           <SubmitButton

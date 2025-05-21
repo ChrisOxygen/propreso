@@ -6,7 +6,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { FiArrowRight } from "react-icons/fi";
+import { ArrowRight } from "lucide-react";
 import { JOB_TITLES } from "@/constants";
 import { CreateProfileContextType } from "../../context/CreateProfileContext";
 
@@ -14,8 +14,10 @@ function Step1({ state, setJobTitle, nextStep }: CreateProfileContextType) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold">Select Your Field</h2>
-        <p className="text-gray-600 mt-2">
+        <h2 className="font-[Poppins] text-2xl font-semibold tracking-[-0.4px] text-[#2C2C2C]">
+          Select Your Field
+        </h2>
+        <p className="mt-2 font-[Lato] tracking-[0.08px] text-[#404040]">
           Please select your professional field from the options below.
         </p>
       </div>
@@ -25,12 +27,16 @@ function Step1({ state, setJobTitle, nextStep }: CreateProfileContextType) {
           onValueChange={(value) => setJobTitle(value as string)}
           value={state.userInformation.jobTitle}
         >
-          <SelectTrigger className="w-full border-black">
+          <SelectTrigger className="w-full border-zinc-200 font-[Lato] text-[#404040] focus:border-[#BF4008] focus:ring-[#BF4008]">
             <SelectValue placeholder="Select your field" />
           </SelectTrigger>
-          <SelectContent className="bg-white border-black">
+          <SelectContent className="border-zinc-200 bg-white">
             {JOB_TITLES.map((jobTitle) => (
-              <SelectItem key={jobTitle} value={jobTitle}>
+              <SelectItem
+                key={jobTitle}
+                value={jobTitle}
+                className="font-[Lato] text-[#404040]"
+              >
                 {jobTitle}
               </SelectItem>
             ))}
@@ -40,12 +46,12 @@ function Step1({ state, setJobTitle, nextStep }: CreateProfileContextType) {
 
       <div className="mt-6">
         <Button
-          className="w-full bg-black text-white hover:bg-gray-800 flex items-center justify-center gap-2"
+          className="flex w-full items-center justify-center gap-2 bg-[#BF4008] font-[Lato] text-white transition-colors duration-200 hover:bg-[#BF4008]/80"
           disabled={!state.userInformation.jobTitle}
           onClick={() => nextStep()}
         >
           Next
-          <FiArrowRight />
+          <ArrowRight className="h-4 w-4" />
         </Button>
       </div>
     </div>

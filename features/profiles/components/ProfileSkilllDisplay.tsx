@@ -27,10 +27,13 @@ function ProfileSkillDisplay({
   const onEdit = () => {
     setIsDialogOpen(true);
   };
+
   if (!skills || skills.length === 0) {
     return (
       <div className="relative">
-        <p>No skills available</p>
+        <p className="font-[Lato] tracking-[0.08px] text-[#404040]">
+          No skills available
+        </p>
         {renderEditButton(onEdit)}
       </div>
     );
@@ -41,7 +44,11 @@ function ProfileSkillDisplay({
       <div className="relative">
         <div className="flex flex-wrap gap-2 pr-10">
           {skills.map((skill, index) => (
-            <Badge key={index} variant="outline" className="bg-gray-100">
+            <Badge
+              key={index}
+              variant="outline"
+              className="border-[#F8E5DB] bg-[#F8E5DB] font-[Lato] text-[#BF4008]"
+            >
               {skill}
             </Badge>
           ))}
@@ -76,13 +83,13 @@ function renderEditButton(onEdit?: () => void) {
               variant="ghost"
               size="icon"
               onClick={onEdit}
-              className="h-8 w-8 text-gray-500 hover:text-gray-900"
+              className="h-8 w-8 text-[#404040] transition-colors duration-200 hover:text-[#BF4008]"
               aria-label="Edit skills"
             >
               <Pencil className="h-4 w-4" />
             </Button>
           </TooltipTrigger>
-          <TooltipContent>
+          <TooltipContent className="font-[Lato]">
             <p>Edit skills</p>
           </TooltipContent>
         </Tooltip>

@@ -23,14 +23,20 @@ export function ProjectFormFields({ form }: ProjectFormFieldsProps) {
         name="title"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Project Title</FormLabel>
+            <FormLabel className="font-[Poppins] tracking-[-0.4px] text-[#2C2C2C]">
+              Project Title
+            </FormLabel>
             <FormControl>
-              <Input placeholder="Enter project title" {...field} />
+              <Input
+                placeholder="Enter project title"
+                className="border-zinc-200 font-[Lato] focus:border-[#BF4008] focus:ring-[#BF4008]"
+                {...field}
+              />
             </FormControl>
-            <FormDescription>
+            <FormDescription className="font-[Lato] tracking-[0.08px] text-[#404040]">
               The name of your project or application
             </FormDescription>
-            <FormMessage />
+            <FormMessage className="font-[Lato] text-[#BF4008]" />
           </FormItem>
         )}
       />
@@ -40,36 +46,44 @@ export function ProjectFormFields({ form }: ProjectFormFieldsProps) {
         name="description"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Description</FormLabel>
+            <FormLabel className="font-[Poppins] tracking-[-0.4px] text-[#2C2C2C]">
+              Description
+            </FormLabel>
             <FormControl>
               <Textarea
                 placeholder="Describe your project, technologies used, and its purpose"
-                className="resize-none min-h-[120px]"
+                className="min-h-[120px] resize-none border-zinc-200 font-[Lato] focus:border-[#BF4008] focus:ring-[#BF4008]"
                 {...field}
               />
             </FormControl>
-            <FormDescription>
+            <FormDescription className="font-[Lato] tracking-[0.08px] text-[#404040]">
               A detailed explanation of what your project does and how it works
             </FormDescription>
-            <FormMessage />
+            <FormMessage className="font-[Lato] text-[#BF4008]" />
           </FormItem>
         )}
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <FormField
           control={form.control}
           name="liveLink"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Live Demo URL</FormLabel>
+              <FormLabel className="font-[Poppins] tracking-[-0.4px] text-[#2C2C2C]">
+                Live Demo URL
+              </FormLabel>
               <FormControl>
-                <Input placeholder="https://yourdemo.com" {...field} />
+                <Input
+                  placeholder="https://yourdemo.com"
+                  className="border-zinc-200 font-[Lato] focus:border-[#BF4008] focus:ring-[#BF4008]"
+                  {...field}
+                />
               </FormControl>
-              <FormDescription>
+              <FormDescription className="font-[Lato] tracking-[0.08px] text-[#404040]">
                 Link to a working version of your project (optional)
               </FormDescription>
-              <FormMessage />
+              <FormMessage className="font-[Lato] text-[#BF4008]" />
             </FormItem>
           )}
         />
@@ -79,14 +93,20 @@ export function ProjectFormFields({ form }: ProjectFormFieldsProps) {
           name="repoLink"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Repository URL</FormLabel>
+              <FormLabel className="font-[Poppins] tracking-[-0.4px] text-[#2C2C2C]">
+                Repository URL
+              </FormLabel>
               <FormControl>
-                <Input placeholder="https://github.com/your/repo" {...field} />
+                <Input
+                  placeholder="https://github.com/your/repo"
+                  className="border-zinc-200 font-[Lato] focus:border-[#BF4008] focus:ring-[#BF4008]"
+                  {...field}
+                />
               </FormControl>
-              <FormDescription>
+              <FormDescription className="font-[Lato] tracking-[0.08px] text-[#404040]">
                 Link to your project&apos;s source code (optional)
               </FormDescription>
-              <FormMessage />
+              <FormMessage className="font-[Lato] text-[#BF4008]" />
             </FormItem>
           )}
         />

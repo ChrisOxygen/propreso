@@ -39,18 +39,25 @@ function AllProposals() {
         <PaginationLink
           onClick={() => actions.handlePageChange(1)}
           isActive={page === 1}
+          className={
+            page === 1
+              ? "bg-[#BF4008] text-white hover:bg-[#BF4008]/90"
+              : "font-[Lato]"
+          }
         >
           1
         </PaginationLink>
-      </PaginationItem>
+      </PaginationItem>,
     );
 
     // If we're not at the beginning, add ellipsis
     if (page > 3) {
       items.push(
         <PaginationItem key="ellipsis1">
-          <span className="flex h-9 w-9 items-center justify-center">...</span>
-        </PaginationItem>
+          <span className="flex h-9 w-9 items-center justify-center font-[Lato] text-[#404040]">
+            ...
+          </span>
+        </PaginationItem>,
       );
     }
 
@@ -66,10 +73,15 @@ function AllProposals() {
             <PaginationLink
               onClick={() => actions.handlePageChange(i)}
               isActive={page === i}
+              className={
+                page === i
+                  ? "bg-[#BF4008] text-white hover:bg-[#BF4008]/90"
+                  : "font-[Lato]"
+              }
             >
               {i}
             </PaginationLink>
-          </PaginationItem>
+          </PaginationItem>,
         );
       }
     }
@@ -78,8 +90,10 @@ function AllProposals() {
     if (page < pageCount - 2 && pageCount > 3) {
       items.push(
         <PaginationItem key="ellipsis2">
-          <span className="flex h-9 w-9 items-center justify-center">...</span>
-        </PaginationItem>
+          <span className="flex h-9 w-9 items-center justify-center font-[Lato] text-[#404040]">
+            ...
+          </span>
+        </PaginationItem>,
       );
     }
 
@@ -90,10 +104,15 @@ function AllProposals() {
           <PaginationLink
             onClick={() => actions.handlePageChange(pageCount)}
             isActive={page === pageCount}
+            className={
+              page === pageCount
+                ? "bg-[#BF4008] text-white hover:bg-[#BF4008]/90"
+                : "font-[Lato]"
+            }
           >
             {pageCount}
           </PaginationLink>
-        </PaginationItem>
+        </PaginationItem>,
       );
     }
 
@@ -104,99 +123,106 @@ function AllProposals() {
   const getStatusBadgeClass = (status: ProposalStatus) => {
     const isActive = filters.statuses.includes(status);
     return isActive
-      ? "bg-black text-white"
-      : "bg-zinc-200 text-zinc-800 hover:bg-zinc-300";
+      ? "bg-[#BF4008] text-white"
+      : "bg-zinc-200 text-[#404040] hover:bg-zinc-300 font-[Lato]";
   };
 
   return (
-    <div className="container w-full mx-auto py-8 ">
+    <div className="container mx-auto w-full py-8">
       {/* Filters and search */}
-      <Card className="mb-6 shadow-none px-6 flex lg:flex-row justify-between gap-5 border-x-0 border-t-0 rounded-none border-zinc-200">
-        <h3 className="font-bold text-xl">All Proposals</h3>
+      <Card className="mb-6 flex justify-between gap-5 rounded-none border-x-0 border-t-0 border-zinc-200 px-6 shadow-none lg:flex-row">
+        <h3 className="font-[Poppins] text-xl font-semibold tracking-[-0.4px] text-[#2C2C2C]">
+          All Proposals
+        </h3>
         <CardContent className="px-0">
-          <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex flex-col gap-4 md:flex-row">
             <div className="relative flex-1">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-zinc-500" />
+              <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-zinc-500" />
               <Input
                 placeholder="Search proposals..."
-                className="pl-8 bg-white"
+                className="bg-white pl-8 font-[Lato]"
                 value={filters.search}
                 onChange={(e) => actions.handleSearch(e.target.value)}
               />
             </div>
-            <div className="flex flex-col sm:flex-row gap-2">
+            <div className="flex flex-col gap-2 sm:flex-row">
               {/* Status filter badges */}
               <div className="flex w-full flex-wrap gap-2">
                 <Badge
-                  className={`cursor-pointer grow ${
+                  className={`grow cursor-pointer font-[Lato] font-normal transition-colors duration-200 ${
                     filters.statuses.length === 0
-                      ? "bg-black text-white"
-                      : "bg-zinc-200 text-zinc-800 hover:bg-zinc-300"
+                      ? "bg-[#BF4008] text-white"
+                      : "bg-zinc-200 text-[#404040] hover:bg-zinc-300"
                   }`}
                   onClick={() => actions.handleMultipleStatusFilter([])}
                 >
                   All
                 </Badge>
                 <Badge
-                  className={`cursor-pointer grow ${getStatusBadgeClass(
-                    "DRAFT"
+                  className={`grow cursor-pointer font-[Lato] font-normal transition-colors duration-200 ${getStatusBadgeClass(
+                    "DRAFT",
                   )}`}
                   onClick={() => actions.toggleStatusFilter("DRAFT")}
                 >
                   Draft
                 </Badge>
                 <Badge
-                  className={`cursor-pointer grow ${getStatusBadgeClass(
-                    "SENT"
+                  className={`grow cursor-pointer font-[Lato] font-normal transition-colors duration-200 ${getStatusBadgeClass(
+                    "SENT",
                   )}`}
                   onClick={() => actions.toggleStatusFilter("SENT")}
                 >
                   Sent
                 </Badge>
                 <Badge
-                  className={`cursor-pointer grow ${getStatusBadgeClass(
-                    "WON"
+                  className={`grow cursor-pointer font-[Lato] font-normal transition-colors duration-200 ${getStatusBadgeClass(
+                    "WON",
                   )}`}
                   onClick={() => actions.toggleStatusFilter("WON")}
                 >
                   Won
                 </Badge>
               </div>
-
-              {/* Removed More Filters dropdown and Export button */}
             </div>
           </div>
         </CardContent>
       </Card>
 
       {/* Results info and sorting */}
-      <div className="flex px-6 flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
-        <p className="text-sm text-zinc-500">
+      <div className="mb-4 flex flex-col items-start justify-between gap-2 px-6 sm:flex-row sm:items-center">
+        <p className="font-[Lato] text-sm tracking-[0.08px] text-[#404040]">
           Showing{" "}
           {pagination.total > 0
             ? `${(pagination.page - 1) * pagination.pageSize + 1}-${Math.min(
                 pagination.page * pagination.pageSize,
-                pagination.total
+                pagination.total,
               )}`
             : "0"}{" "}
           of {pagination.total} proposals
         </p>
 
         <div className="flex items-center gap-2">
-          <p className="text-sm text-zinc-500">Sort by:</p>
+          <p className="font-[Lato] text-sm tracking-[0.08px] text-[#404040]">
+            Sort by:
+          </p>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="h-8 bg-white">
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-8 bg-white font-[Lato] text-[#2C2C2C]"
+              >
                 Date {filters.sortDirection === "desc" ? "Newest" : "Oldest"}
                 <ChevronDown className="ml-1 h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="font-[Lato]">
               <DropdownMenuItem
                 onClick={() => {
                   actions.handleSort("updatedAt");
                   actions.setSortOrder("desc");
                 }}
+                className="font-[Lato] text-[#404040]"
               >
                 Newest First
                 {filters.sortField === "updatedAt" &&
@@ -209,6 +235,7 @@ function AllProposals() {
                   actions.handleSort("updatedAt");
                   actions.setSortOrder("asc");
                 }}
+                className="font-[Lato] text-[#404040]"
               >
                 Oldest First
                 {filters.sortField === "updatedAt" &&
@@ -234,16 +261,16 @@ function AllProposals() {
 
       {/* Pagination */}
       {pagination && pagination.total > 0 && (
-        <Pagination className="justify-start mt-6">
+        <Pagination className="mt-6 justify-start">
           <PaginationContent>
             <PaginationItem>
               <PaginationPrevious
                 onClick={() =>
                   actions.handlePageChange(Math.max(pagination.page - 1, 1))
                 }
-                className={
+                className={`font-[Lato] ${
                   pagination.page === 1 ? "pointer-events-none opacity-50" : ""
-                }
+                }`}
               />
             </PaginationItem>
 
@@ -253,14 +280,14 @@ function AllProposals() {
               <PaginationNext
                 onClick={() =>
                   actions.handlePageChange(
-                    Math.min(pagination.page + 1, pagination.pageCount)
+                    Math.min(pagination.page + 1, pagination.pageCount),
                   )
                 }
-                className={
+                className={`font-[Lato] ${
                   pagination.page === pagination.pageCount
                     ? "pointer-events-none opacity-50"
                     : ""
-                }
+                }`}
               />
             </PaginationItem>
           </PaginationContent>
@@ -274,7 +301,7 @@ function AllProposals() {
             variant="outline"
             size="sm"
             onClick={actions.clearFilters}
-            className="text-zinc-600"
+            className="font-[Lato] text-[#404040] transition-colors duration-200 hover:text-[#BF4008]"
           >
             Clear all filters
           </Button>

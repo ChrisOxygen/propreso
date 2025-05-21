@@ -1,9 +1,7 @@
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
 import { useUser } from "@/hooks/useUser";
-
 import ProfileSelectorUI from "./ProfileSelectorUI";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -35,7 +33,7 @@ function ProfilePageHeader({
 
   if (isPending) {
     return (
-      <div className="h-10 w-10 bg-gray-200 rounded-full animate-pulse"></div>
+      <div className="h-10 w-10 animate-pulse rounded-full bg-[#F8E5DB]"></div>
     );
   }
 
@@ -60,30 +58,30 @@ function ProfilePageHeader({
   };
 
   return (
-    <div className=" flex lg:flex-row flex-col lg:gap-6 items-center justify-between w-full px-4">
-      <div className="flex lg:flex-row flex-col lg:mb-0 mb-5 items-center gap-4 md:gap-4">
+    <div className="flex w-full flex-col items-center justify-between px-4 lg:flex-row lg:gap-6">
+      <div className="mb-5 flex flex-col items-center gap-4 md:gap-4 lg:mb-0 lg:flex-row">
         <div className="relative">
-          <Avatar className="h-16 w-16 md:h-20 md:w-20 border-2 border-gray-200">
+          <Avatar className="h-16 w-16 border-2 border-[#F8E5DB] md:h-20 md:w-20">
             <AvatarImage src={image!} alt={fullName} />
-            <AvatarFallback className="text-base md:text-xl bg-black text-white">
+            <AvatarFallback className="bg-[#BF4008] font-[Poppins] text-base text-white md:text-xl">
               {getInitials(fullName)}
             </AvatarFallback>
           </Avatar>
         </div>
 
-        <div className="flex lg:items-start items-center flex-col">
-          <h1 className="hidden sm:block text-xl md:text-2xl font-bold text-black truncate max-w-[400px] md:max-w-md">
+        <div className="flex flex-col items-center lg:items-start">
+          <h1 className="hidden max-w-[400px] truncate font-[Poppins] text-xl font-bold tracking-[-0.4px] text-[#2C2C2C] sm:block md:max-w-md md:text-2xl">
             {fullName}
           </h1>
-          <h1 className="sm:hidden text-xl md:text-2xl font-bold text-black truncate max-w-[200px] md:max-w-md">
+          <h1 className="max-w-[200px] truncate font-[Poppins] text-xl font-bold tracking-[-0.4px] text-[#2C2C2C] sm:hidden md:max-w-md md:text-2xl">
             {fullName.split(" ")[0]}
           </h1>
-          <p className="text-sm md:text-base text-gray-600 mt-0.5 md:mt-1 truncate max-w-[200px] md:max-w-md">
+          <p className="mt-0.5 max-w-[200px] truncate font-[Lato] text-sm tracking-[0.08px] text-[#404040] md:mt-1 md:max-w-md md:text-base">
             {email}
           </p>
         </div>
       </div>
-      <div className="  flex @[1170px]:flex-row flex-col items-center lg:items-end w-full justify-end @container gap-3 @[1170px]:gap-8 ">
+      <div className="@container flex w-full flex-col items-center justify-end gap-3 lg:items-end @[1170px]:flex-row @[1170px]:gap-8">
         <ProfileSelectorUI
           label="Switch Profile"
           placeholder="Select a profile"
@@ -92,11 +90,11 @@ function ProfilePageHeader({
           defaltId={defaltId}
           onChange={(value) => handleProfileChange(value)}
         />
-        <div className="flex items-center h-full gap-4 lg:mt-0 mt-5 w-full max-w-[400px]">
+        <div className="mt-5 flex h-full w-full max-w-[400px] items-center gap-4 lg:mt-0">
           <Button
             onClick={handleMarkAsDefault}
             disabled={isSettingDefault || visibleProfile!.isDefault}
-            className=" grow"
+            className="grow bg-[#BF4008] font-[Lato] font-medium text-white transition-colors duration-200 hover:bg-[#BF4008]/80"
           >
             {isSettingDefault ? (
               <>
@@ -110,7 +108,11 @@ function ProfilePageHeader({
             )}
           </Button>
 
-          <Button variant="outline" asChild className=" grow">
+          <Button
+            variant="outline"
+            asChild
+            className="grow border-zinc-200 bg-white font-[Lato] text-[#2C2C2C] transition-colors duration-200 hover:bg-zinc-50"
+          >
             <Link href="/profile/create">Create new Profile</Link>
           </Button>
         </div>

@@ -20,7 +20,7 @@ import { Separator } from "@/components/ui/separator";
 import { useState, useEffect } from "react";
 import { useSignup } from "@/hooks/useSignup";
 import { signupFormSchema } from "@/formSchemas";
-import { useSession } from "next-auth/react"; // Auth.js still uses this client hook
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import InBoxLoader from "@/components/InBoxLoader";
 
@@ -29,7 +29,6 @@ function SignupPage() {
   const { status } = useSession();
   const router = useRouter();
 
-  // Initialize form
   const form = useForm<z.infer<typeof signupFormSchema>>({
     resolver: zodResolver(signupFormSchema),
     defaultValues: {
@@ -43,7 +42,6 @@ function SignupPage() {
 
   const { onSubmit, isLoading, error } = useSignup();
 
-  // Redirect if already authenticated
   useEffect(() => {
     if (status === "authenticated") {
       router.push("/dashboard");
@@ -65,32 +63,39 @@ function SignupPage() {
     setShowPassword(!showPassword);
   };
 
-  // Only show the signup form if not authenticated
   if (status === "unauthenticated") {
     return (
-      <div className="max-w-lg mx-auto w-full">
-        <div className="text-center mb-10">
-          <h1 className="text-3xl font-bold text-black mb-2">
+      <div className="mx-auto w-full max-w-lg">
+        <div className="mb-10 text-center">
+          <h1 className="mb-2 font-[Poppins] text-3xl font-semibold tracking-[-0.72px] text-[#2C2C2C]">
             Create your account
           </h1>
-          <p className="text-gray-600">Start crafting better proposals today</p>
+          <p className="font-[Lato] text-base font-normal tracking-[0.08px] text-[#404040]">
+            Start crafting better proposals today
+          </p>
         </div>
 
         {/* Social Sign Up Options */}
-        <div className="flex flex-col gap-3 mb-8">
-          <Button variant="outline" className="w-full h-11 flex gap-2">
+        <div className="mb-8 flex flex-col gap-3">
+          <Button
+            variant="outline"
+            className="flex h-11 w-full gap-2 font-[Lato] font-medium"
+          >
             <FaGoogle className="text-lg" />
             <span>Sign up with Google</span>
           </Button>
-          <Button variant="outline" className="w-full h-11 flex gap-2">
+          <Button
+            variant="outline"
+            className="flex h-11 w-full gap-2 font-[Lato] font-medium"
+          >
             <FaGithub className="text-lg" />
             <span>Sign up with GitHub</span>
           </Button>
         </div>
 
-        <div className="grid grid-cols-3 w-full items-center my-8">
+        <div className="my-8 grid w-full grid-cols-3 items-center">
           <Separator className="w-full" />
-          <span className="text-center text-gray-500 text-sm px-2">
+          <span className="px-2 text-center font-[Lato] text-sm text-[#404040]">
             or sign up with email
           </span>
           <Separator className="w-full" />
@@ -105,11 +110,17 @@ function SignupPage() {
                 name="firstName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>First Name</FormLabel>
+                    <FormLabel className="font-[Lato] text-[#2C2C2C]">
+                      First Name
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter your first name" {...field} />
+                      <Input
+                        placeholder="Enter your first name"
+                        {...field}
+                        className="font-[Lato]"
+                      />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="font-[Lato]" />
                   </FormItem>
                 )}
               />
@@ -118,11 +129,17 @@ function SignupPage() {
                 name="lastName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Last Name</FormLabel>
+                    <FormLabel className="font-[Lato] text-[#2C2C2C]">
+                      Last Name
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter your last name" {...field} />
+                      <Input
+                        placeholder="Enter your last name"
+                        {...field}
+                        className="font-[Lato]"
+                      />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="font-[Lato]" />
                   </FormItem>
                 )}
               />
@@ -132,15 +149,18 @@ function SignupPage() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel className="font-[Lato] text-[#2C2C2C]">
+                    Email
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="email"
                       placeholder="Enter your email"
                       {...field}
+                      className="font-[Lato]"
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="font-[Lato]" />
                 </FormItem>
               )}
             />
@@ -149,19 +169,22 @@ function SignupPage() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel className="font-[Lato] text-[#2C2C2C]">
+                    Password
+                  </FormLabel>
                   <div className="relative">
                     <FormControl>
                       <Input
                         type={showPassword ? "text" : "password"}
                         placeholder="Create a password"
                         {...field}
+                        className="font-[Lato]"
                       />
                     </FormControl>
                     <button
                       type="button"
                       onClick={togglePasswordVisibility}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                      className="absolute top-1/2 right-3 -translate-y-1/2 transform text-[#404040] hover:text-[#2C2C2C]"
                       tabIndex={-1}
                     >
                       {showPassword ? (
@@ -171,7 +194,7 @@ function SignupPage() {
                       )}
                     </button>
                   </div>
-                  <FormMessage />
+                  <FormMessage className="font-[Lato]" />
                 </FormItem>
               )}
             />
@@ -180,19 +203,22 @@ function SignupPage() {
               name="confirmPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Confirm Password</FormLabel>
+                  <FormLabel className="font-[Lato] text-[#2C2C2C]">
+                    Confirm Password
+                  </FormLabel>
                   <div className="relative">
                     <FormControl>
                       <Input
                         type={showPassword ? "text" : "password"}
                         placeholder="Confirm your password"
                         {...field}
+                        className="font-[Lato]"
                       />
                     </FormControl>
                     <button
                       type="button"
                       onClick={togglePasswordVisibility}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                      className="absolute top-1/2 right-3 -translate-y-1/2 transform text-[#404040] hover:text-[#2C2C2C]"
                       tabIndex={-1}
                     >
                       {showPassword ? (
@@ -202,13 +228,13 @@ function SignupPage() {
                       )}
                     </button>
                   </div>
-                  <FormMessage />
+                  <FormMessage className="font-[Lato]" />
                 </FormItem>
               )}
             />
             <Button
               type="submit"
-              className="w-full h-11 bg-black hover:bg-gray-800"
+              className="h-11 w-full bg-[#BF4008] font-[Lato] text-lg font-medium tracking-[0.28px] text-white transition-colors duration-200 hover:bg-[#BF4008]/80"
               disabled={isLoading}
             >
               {isLoading ? "Loading..." : "Create Account"}
@@ -216,9 +242,9 @@ function SignupPage() {
           </form>
         </Form>
 
-        <p className="mt-8 text-center text-gray-600">
+        <p className="mt-8 text-center font-[Lato] text-base font-normal tracking-[0.08px] text-[#404040]">
           Already have an account?{" "}
-          <Link href="/login" className="text-black font-medium">
+          <Link href="/login" className="font-medium text-[#2C2C2C]">
             Sign in
           </Link>
         </p>

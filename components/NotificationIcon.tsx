@@ -7,15 +7,13 @@ import {
 } from "@/components/ui/popover";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { useNotifications } from "@/hooks/useNotifications"; // Assuming this custom hook exists
+import { useNotifications } from "@/hooks/useNotifications";
 
-// Interface for the component props (if needed)
 interface NotificationIconProps {
   className?: string;
 }
 
 const NotificationIcon = ({ className }: NotificationIconProps) => {
-  // Use the custom hook to get notifications
   const { notifications, markAsRead, loading, error } = useNotifications();
 
   // Count unread notifications
@@ -27,7 +25,7 @@ const NotificationIcon = ({ className }: NotificationIconProps) => {
     const now = new Date();
     const notificationTime = new Date(timestamp);
     const diffInMinutes = Math.floor(
-      (now.getTime() - notificationTime.getTime()) / (1000 * 60)
+      (now.getTime() - notificationTime.getTime()) / (1000 * 60),
     );
 
     if (diffInMinutes < 1) return "Just now";
@@ -53,25 +51,27 @@ const NotificationIcon = ({ className }: NotificationIconProps) => {
     <Popover>
       <PopoverTrigger asChild>
         <button
-          className={`relative p-2 rounded-full hover:bg-gray-100 focus:outline-none ${
+          className={`relative rounded-full p-2 transition-colors duration-200 hover:bg-[#FDF9F6] focus:outline-none ${
             className || ""
           }`}
         >
-          <Bell className="h-6 w-6" />
+          <Bell className="h-6 w-6 text-[#404040]" />
           {unreadCount > 0 && (
-            <Badge className="absolute -top-1 -right-1 px-2 py-1 text-xs bg-red-500 text-white rounded-full">
+            <Badge className="absolute -top-1 -right-1 rounded-full bg-[#BF4008] px-2 py-1 font-[Lato] text-xs text-white">
               {unreadCount > 99 ? "99+" : unreadCount}
             </Badge>
           )}
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-80 p-0" align="end">
-        <div className="flex items-center justify-between p-4 border-b">
-          <h3 className="font-medium">Notifications</h3>
+      <PopoverContent className="w-80 border-zinc-200 p-0" align="end">
+        <div className="flex items-center justify-between border-b border-zinc-200 p-4">
+          <h3 className="font-[Poppins] font-medium tracking-[-0.4px] text-[#2C2C2C]">
+            Notifications
+          </h3>
           {unreadCount > 0 && (
             <button
               onClick={handleMarkAllAsRead}
-              className="text-xs text-blue-500 hover:text-blue-700"
+              className="font-[Lato] text-xs text-[#BF4008] transition-colors duration-200 hover:text-[#BF4008]/80"
             >
               Mark all as read
             </button>
@@ -80,19 +80,21 @@ const NotificationIcon = ({ className }: NotificationIconProps) => {
 
         <div className="max-h-96 overflow-y-auto">
           {loading && (
-            <p className="p-4 text-center text-gray-500">
+            <p className="p-4 text-center font-[Lato] tracking-[0.08px] text-[#404040]">
               Loading notifications...
             </p>
           )}
 
           {error && (
-            <p className="p-4 text-center text-red-500">
+            <p className="p-4 text-center font-[Lato] text-[#BF4008]">
               Error loading notifications
             </p>
           )}
 
           {!loading && !error && notifications?.length === 0 && (
-            <p className="p-4 text-center text-gray-500">No notifications</p>
+            <p className="p-4 text-center font-[Lato] tracking-[0.08px] text-[#404040]">
+              No notifications
+            </p>
           )}
 
           {!loading &&
@@ -100,27 +102,29 @@ const NotificationIcon = ({ className }: NotificationIconProps) => {
             notifications?.map((notification) => (
               <Card
                 key={notification.id}
-                className={`border-0 border-b rounded-none ${
-                  !notification.read ? "bg-blue-50" : ""
+                className={`rounded-none border-0 border-b border-zinc-200 ${
+                  !notification.read ? "bg-[#FDF9F6]" : ""
                 }`}
               >
-                <CardContent className="px-4 flex flex-col gap-2">
+                <CardContent className="flex flex-col gap-2 px-4">
                   <div className="flex flex-col">
-                    <p className="font-medium">{notification.title}</p>
-                    <p className="text-sm text-gray-600">
+                    <p className="font-[Poppins] font-medium tracking-[-0.4px] text-[#2C2C2C]">
+                      {notification.title}
+                    </p>
+                    <p className="font-[Lato] text-sm tracking-[0.08px] text-[#404040]">
                       {notification.message}
                     </p>
                   </div>
-                  <div className="flex w-full justify-between item-center items-end">
+                  <div className="flex w-full items-end justify-between">
                     {!notification.read && (
                       <button
                         onClick={() => markAsRead(notification.id)}
-                        className="text-xs text-blue-500 hover:text-blue-700 "
+                        className="font-[Lato] text-xs text-[#BF4008] transition-colors duration-200 hover:text-[#BF4008]/80"
                       >
                         Mark as read
                       </button>
                     )}
-                    <span className="text-xs text-gray-400">
+                    <span className="font-[Lato] text-xs text-[#404040]">
                       {formatTime(notification.timestamp)}
                     </span>
                   </div>

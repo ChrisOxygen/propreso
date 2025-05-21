@@ -9,24 +9,24 @@ import { CreateProfileProvider } from "@/features/profiles/context/CreateProfile
 function CreateProfilePage() {
   return (
     <CreateProfileProvider>
-      <main className="h-full justify-items-center   grid-rows-[200px_1fr] md:grid-rows-none grid grid-cols-1 p-4 md:grid-cols-[450px_1fr] gap-4">
-        <div className=" flex flex-col max-w-[600px] md:items-start items-center w-full rounded-2xl p-6 bg-gray-50">
-          <h3 className=" font-bold text-xl sm:text-2xl mb-[24px] sm:mb-[40px] md:mb-[90px]">
+      <main className="grid h-full grid-cols-1 grid-rows-[200px_1fr] justify-items-center gap-4 p-4 md:grid-cols-[450px_1fr] md:grid-rows-none">
+        <div className="flex w-full max-w-[600px] flex-col items-center rounded-2xl bg-[#FDF9F6] p-6 md:items-start">
+          <h3 className="mb-[24px] font-[Poppins] text-xl font-semibold tracking-[-0.4px] text-[#2C2C2C] sm:mb-[40px] sm:text-2xl md:mb-[90px]">
             Create your profile
           </h3>
           <Steps />
-          <div className="md:block hidden mt-auto">
+          <div className="mt-auto hidden md:block">
             <CreateProfileTips />
           </div>
         </div>
-        <div className=" grid justify-stretch grid-rows-[1fr_30px] h-full w-full justify-items-center md:p-6">
-          <div className=" max-w-[600px] ">
-            <div className="md:hidden block">
+        <div className="grid h-full w-full grid-rows-[1fr_30px] justify-stretch justify-items-center md:p-6">
+          <div className="max-w-[600px]">
+            <div className="block md:hidden">
               <CreateProfileTips />
             </div>
             <MultiStepForm />
           </div>
-          <div className=" w-full justify-center max-w-[600px] hidden md:flex">
+          <div className="hidden w-full max-w-[600px] justify-center md:flex">
             <StepIndicator />
           </div>
         </div>

@@ -19,6 +19,7 @@ import ProfileDialog from "./ProfileDialog";
 import ViewProjectUI from "./projects/ViewProjectUI";
 import { Project } from "@prisma/client";
 import ProjectForm from "./projects/ProjectForm";
+import Link from "next/link";
 
 type ProjectCardProps = {
   project: Project;
@@ -52,49 +53,76 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
 
   return (
     <>
-      <Card className="h-full flex flex-col shadow-none">
-        <div className="relative h-48 w-full overflow-hidden">
+      <Card className="flex h-full flex-col border-zinc-200 shadow-none">
+        <div className="relative h-48 w-full overflow-hidden rounded-t-lg">
           <Image
             src={generateSvgImage(project.title)}
             alt={project.title}
-            className="w-full h-full object-cover"
+            className="h-full w-full object-cover"
             width={300}
             height={500}
           />
         </div>
         <CardHeader className="pb-2">
-          <CardTitle className="text-lg">{project.title}</CardTitle>
+          <CardTitle className="font-[Poppins] text-lg font-semibold tracking-[-0.4px] text-[#2C2C2C]">
+            {project.title}
+          </CardTitle>
         </CardHeader>
-        <CardContent className="pb-2 flex-grow">
-          <CardDescription>{descriptionSnippet}</CardDescription>
+        <CardContent className="flex-grow pb-2">
+          <CardDescription className="font-[Lato] tracking-[0.08px] text-[#404040]">
+            {descriptionSnippet}
+          </CardDescription>
         </CardContent>
-        <CardFooter className="pt-0 flex gap-2">
+        <CardFooter className="flex gap-2 pt-0">
           <Button
             variant="outline"
             size="sm"
-            className="h-8"
+            className="h-8 border-zinc-200 bg-white font-[Lato] text-[#2C2C2C] transition-colors duration-200 hover:border-[#BF4008] hover:bg-[#BF4008] hover:text-white"
             onClick={handleOpenModal}
           >
-            <Eye className="h-4 w-4 mr-1" />
+            <Eye className="mr-1 h-4 w-4" />
             View
           </Button>
           {project.liveLink && (
-            <Button variant="outline" size="sm" className="h-8">
-              <ExternalLink className="h-4 w-4 mr-1" />
-              Live
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 border-zinc-200 bg-white font-[Lato] text-[#2C2C2C] transition-colors duration-200 hover:border-[#BF4008] hover:bg-[#BF4008] hover:text-white"
+              asChild
+            >
+              <Link
+                href={project.liveLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center"
+              >
+                <ExternalLink className="mr-1 h-4 w-4" />
+                Live
+              </Link>
             </Button>
           )}
           {project.repoLink && (
-            <Button variant="outline" size="sm" className="h-8">
-              <Github className="h-4 w-4 mr-1" />
-              Repo
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 border-zinc-200 bg-white font-[Lato] text-[#2C2C2C] transition-colors duration-200 hover:border-[#BF4008] hover:bg-[#BF4008] hover:text-white"
+              asChild
+            >
+              <Link
+                href={project.repoLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center"
+              >
+                <Github className="mr-1 h-4 w-4" />
+                Repo
+              </Link>
             </Button>
           )}
         </CardFooter>
       </Card>
 
       {/* Project View/Edit Modal */}
-
       <ProfileDialog
         dialogOpen={isModalOpen}
         setDialogOpen={setIsModalOpen}

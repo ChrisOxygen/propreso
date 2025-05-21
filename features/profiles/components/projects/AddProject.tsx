@@ -20,20 +20,18 @@ export const AddProject: React.FC<AddProjectProps> = ({ profileId }) => {
   return (
     <>
       <div
-        className={`border border-gray-200 rounded-lg bg-white hover:bg-gray-50 
-        transition-colors flex items-center justify-center p-8 cursor-pointer
-        shadow-sm hover:shadow w-full h-full`}
+        className={`flex h-full w-full cursor-pointer items-center justify-center rounded-lg border border-gray-200 bg-white p-8 shadow-sm transition-colors duration-200 hover:border-[#F8E5DB] hover:bg-[#FDF9F6] hover:shadow`}
         onClick={() => setIsDialogOpen(true)}
       >
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <div className="flex items-center justify-center w-full h-full">
-                <FiPlus className="w-56 h-56 text-gray-200" />
+              <div className="flex h-full w-full items-center justify-center">
+                <FiPlus className="h-56 w-56 text-[#F8E5DB]" />
                 <span className="sr-only">Add new project</span>
               </div>
             </TooltipTrigger>
-            <TooltipContent className="text-lg p-3">
+            <TooltipContent className="p-3 font-[Lato] text-lg tracking-[0.08px] text-[#2C2C2C]">
               <p>Add new project</p>
             </TooltipContent>
           </Tooltip>

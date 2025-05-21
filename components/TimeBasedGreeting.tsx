@@ -21,25 +21,36 @@ function TimeBasedGreeting() {
 
   // Handle loading state
   if (isPending) {
-    return <Skeleton className="w-[200px] h-6" />;
+    return <Skeleton className="h-6 w-[200px]" />;
   }
 
   // Handle error state
   if (error) {
-    return <div>Error loading user details: {error.message}</div>;
+    return (
+      <div className="font-[Lato] text-[#BF4008]">
+        Error loading user details: {error.message}
+      </div>
+    );
   }
 
   // If no user data is available
   if (!user || !user.fullName) {
-    return <div>Welcome, guest!</div>;
+    return (
+      <div className="font-[Lato] tracking-[0.08px] text-[#404040]">
+        Welcome, guest!
+      </div>
+    );
   }
 
   // Return the greeting with the user's name
   return (
-    <div className=" hidden md:flex items-center gap-2">
-      <p className=" font-semibold text-gray-500">
+    <div className="hidden items-center gap-2 md:flex">
+      <p className="font-[Lato] text-[#404040]">
         {getGreeting()},
-        <span className=" text-black capitalize"> {user.fullName}!</span>
+        <span className="font-[Poppins] font-semibold tracking-[-0.4px] text-[#2C2C2C] capitalize">
+          {" "}
+          {user.fullName}!
+        </span>
       </p>
     </div>
   );

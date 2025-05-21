@@ -5,18 +5,18 @@ import Link from "next/link";
 
 const DashboardHeader = () => {
   return (
-    <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+    <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold text-black mb-1 md:mb-2">
+        <h1 className="mb-1 font-[Poppins] text-2xl font-semibold tracking-[-0.72px] text-[#2C2C2C] md:mb-2 md:text-3xl">
           Proposals
         </h1>
-        <p className="text-zinc-500 text-sm tracking-wide">
+        <p className="font-[Lato] text-sm font-normal tracking-[0.08px] text-[#404040]">
           Track, analyze and optimize your proposal performance
         </p>
       </div>
       <Link href="/proposals/create">
-        <Button className="bg-black text-white hover:bg-zinc-800 shadow cursor-pointer hover:shadow-md w-full md:w-auto">
-          <Plus className="h-4 w-4 mr-2" />
+        <Button className="w-full bg-[#BF4008] font-[Lato] text-base font-medium tracking-[0.28px] text-white shadow transition-colors duration-200 hover:bg-[#BF4008]/80 md:w-auto">
+          <Plus className="mr-2 h-4 w-4" />
           Create Proposal
         </Button>
       </Link>

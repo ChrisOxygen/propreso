@@ -2,8 +2,8 @@ import Link from "next/link";
 
 import { BiLogoLinkedinSquare } from "react-icons/bi";
 import { FaXTwitter } from "react-icons/fa6";
-import { EXTERNAL_NAV_LINKS } from "../constants";
 import FooterLogo from "@/components/FooterLogo";
+import FooterMenu from "./FooterMenu";
 
 function Footer() {
   return (
@@ -12,17 +12,7 @@ function Footer() {
         <div className="flex flex-col items-center justify-between gap-10 md:flex-row md:items-end">
           <div className="flex flex-col items-center gap-3 sm:gap-5 md:items-start">
             <FooterLogo />
-            <menu className="flex items-center justify-start gap-5 sm:gap-6">
-              {EXTERNAL_NAV_LINKS.map((link) => (
-                <Link
-                  key={link.title}
-                  href={link.href}
-                  className="font-[Lato] text-[14px] leading-[28.822px] font-semibold tracking-[0.07px] text-[#ffffff]/40 transition-colors duration-200 hover:text-white sm:text-xl sm:leading-relaxed sm:tracking-wide sm:text-gray-200"
-                >
-                  {link.title}
-                </Link>
-              ))}
-            </menu>
+            <FooterMenu />
           </div>
           <p className="w-full max-w-[340.602px] text-center font-[Lato] text-[14px] leading-[20px] font-normal tracking-[0.07px] text-[#F8F8F8] sm:text-base sm:leading-6 sm:tracking-wide md:text-left">
             Propreso was born out of frustration with the time-consuming,

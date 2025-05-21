@@ -48,29 +48,37 @@ function LoginPage() {
 
   // Only show the login form if not authenticated
   return (
-    <div className="max-w-lg mx-auto w-full">
-      <div className="text-center mb-10">
-        <h1 className="text-3xl font-bold text-black mb-2">
+    <div className="mx-auto w-full max-w-lg">
+      <div className="mb-10 text-center">
+        <h1 className="mb-2 font-[Poppins] text-3xl font-semibold tracking-[-0.72px] text-[#2C2C2C]">
           Log in to your account
         </h1>
-        <p className="text-gray-600">Welcome back to your proposal workspace</p>
+        <p className="font-[Lato] text-base font-normal tracking-[0.08px] text-[#404040]">
+          Welcome back to your proposal workspace
+        </p>
       </div>
 
       {/* Social Login Options */}
-      <div className="flex flex-col gap-3 mb-8">
-        <Button variant="outline" className="w-full h-11 flex gap-2">
+      <div className="mb-8 flex flex-col gap-3">
+        <Button
+          variant="outline"
+          className="flex h-11 w-full gap-2 font-[Lato] font-medium"
+        >
           <FaGoogle className="text-lg" />
           <span>Log in with Google</span>
         </Button>
-        <Button variant="outline" className="w-full h-11 flex gap-2">
+        <Button
+          variant="outline"
+          className="flex h-11 w-full gap-2 font-[Lato] font-medium"
+        >
           <FaGithub className="text-lg" />
           <span>Log in with GitHub</span>
         </Button>
       </div>
 
-      <div className="grid grid-cols-3 w-full items-center my-8">
+      <div className="my-8 grid w-full grid-cols-3 items-center">
         <Separator className="w-full" />
-        <span className="text-center text-gray-500 text-sm px-2">
+        <span className="px-2 text-center font-[Lato] text-sm text-[#404040]">
           or log in with email
         </span>
         <Separator className="w-full" />
@@ -80,7 +88,7 @@ function LoginPage() {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+            <div className="rounded border border-red-200 bg-red-50 px-4 py-3 font-[Lato] text-red-700">
               {error}
             </div>
           )}
@@ -90,15 +98,18 @@ function LoginPage() {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel className="font-[Lato] text-[#2C2C2C]">
+                  Email
+                </FormLabel>
                 <FormControl>
                   <Input
                     type="email"
                     placeholder="Enter your email"
                     {...field}
+                    className="font-[Lato]"
                   />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="font-[Lato]" />
               </FormItem>
             )}
           />
@@ -107,19 +118,22 @@ function LoginPage() {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <FormLabel className="font-[Lato] text-[#2C2C2C]">
+                  Password
+                </FormLabel>
                 <div className="relative">
                   <FormControl>
                     <Input
                       type={showPassword ? "text" : "password"}
                       placeholder="Enter your password"
                       {...field}
+                      className="font-[Lato]"
                     />
                   </FormControl>
                   <button
                     type="button"
                     onClick={togglePasswordVisibility}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                    className="absolute top-1/2 right-3 -translate-y-1/2 transform text-[#404040] hover:text-[#2C2C2C]"
                     tabIndex={-1}
                   >
                     {showPassword ? (
@@ -129,31 +143,34 @@ function LoginPage() {
                     )}
                   </button>
                 </div>
-                <div className="flex justify-end mt-1">
+                <div className="mt-1 flex justify-end">
                   <Link
                     href="/forgot-password"
-                    className="text-sm text-black hover:underline"
+                    className="font-[Lato] text-sm font-medium text-[#2C2C2C] transition-colors duration-200 hover:text-[#BF4008]"
                   >
                     Forgot password?
                   </Link>
                 </div>
-                <FormMessage />
+                <FormMessage className="font-[Lato]" />
               </FormItem>
             )}
           />
           <Button
             type="submit"
             disabled={isLoading}
-            className="w-full h-11 bg-black hover:bg-gray-800"
+            className="h-11 w-full bg-[#BF4008] font-[Lato] text-lg font-medium tracking-[0.28px] text-white transition-colors duration-200 hover:bg-[#BF4008]/80"
           >
             {isLoading ? "Loading..." : "Log in"}
           </Button>
         </form>
       </Form>
 
-      <p className="mt-8 text-center text-gray-600">
+      <p className="mt-8 text-center font-[Lato] text-base font-normal tracking-[0.08px] text-[#404040]">
         Don&apos;t have an account?{" "}
-        <Link href="/signup" className="text-black font-medium">
+        <Link
+          href="/signup"
+          className="font-medium text-[#2C2C2C] transition-colors duration-200 hover:text-[#BF4008]"
+        >
           Sign up
         </Link>
       </p>

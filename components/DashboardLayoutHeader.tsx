@@ -23,13 +23,13 @@ function DashboardLayoutHeader() {
 
   return (
     <header className="flex h-16 shrink-0 items-center gap-2">
-      <div className="flex items-center gap-2 px-4 w-full">
-        <SidebarTrigger className="-ml-1" />
+      <div className="flex w-full items-center gap-2 px-4">
+        <SidebarTrigger className="-ml-1 text-[#404040] transition-colors duration-200 hover:bg-[#FDF9F6] hover:text-[#BF4008]" />
         <Separator
           orientation="vertical"
-          className="mr-2 data-[orientation=vertical]:h-4"
+          className="mr-2 bg-zinc-200 data-[orientation=vertical]:h-4"
         />
-        <div className="w-full flex items-center justify-between">
+        <div className="flex w-full items-center justify-between">
           <Breadcrumb>
             <BreadcrumbList>
               {breadcrumbs.map((breadcrumb, index) => (
@@ -38,16 +38,21 @@ function DashboardLayoutHeader() {
                     className={index === 0 ? "hidden md:block" : ""}
                   >
                     {breadcrumb.isCurrentPage ? (
-                      <BreadcrumbPage>{breadcrumb.label}</BreadcrumbPage>
+                      <BreadcrumbPage className="font-[Lato] text-[#2C2C2C]">
+                        {breadcrumb.label}
+                      </BreadcrumbPage>
                     ) : (
-                      <BreadcrumbLink href={breadcrumb.href}>
+                      <BreadcrumbLink
+                        href={breadcrumb.href}
+                        className="font-[Lato] text-[#404040] transition-colors duration-200 hover:text-[#BF4008]"
+                      >
                         {breadcrumb.label}
                       </BreadcrumbLink>
                     )}
                   </BreadcrumbItem>
                   {index < breadcrumbs.length - 1 && (
                     <BreadcrumbSeparator
-                      className={index === 0 ? "hidden md:block" : ""}
+                      className={`text-[#404040] ${index === 0 ? "hidden md:block" : ""}`}
                     />
                   )}
                 </Fragment>

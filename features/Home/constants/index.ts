@@ -9,12 +9,12 @@ export const EXTERNAL_NAV_LINKS = [
   },
   {
     title: "Pricing",
-    href: "/pricing",
+    href: "/#pricing",
   },
 
   {
     title: "Contact",
-    href: "/contact",
+    href: "mailto:chrisoxygen1234@gmail.com",
   },
 ];
 

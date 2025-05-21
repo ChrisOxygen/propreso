@@ -204,7 +204,7 @@ export default function JobDetailsSection({ jobKey }: { jobKey?: string }) {
 
   // Handle job description changes from the form
   const handleJobDescriptionChange = (
-    e: React.ChangeEvent<HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLTextAreaElement>,
   ) => {
     const newValue = e.target.value;
     form.setValue("jobDescription", newValue);
@@ -220,18 +220,18 @@ export default function JobDetailsSection({ jobKey }: { jobKey?: string }) {
 
   if (gettingJobDetailsFromPlatform || isAnalizing) {
     return (
-      <div className="grid place-items-center w-full h-full">
+      <div className="grid h-full w-full place-items-center">
         <InBoxLoader />
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-full gap-3">
+    <div className="flex h-full flex-col gap-3">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="gap-5 flex flex-col h-full"
+          className="flex h-full flex-col gap-5"
         >
           <div className="flex flex-col gap-4">
             <FormField
@@ -239,7 +239,9 @@ export default function JobDetailsSection({ jobKey }: { jobKey?: string }) {
               name="formula"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Proposal Formula</FormLabel>
+                  <FormLabel className="font-[Poppins] font-medium text-[#2C2C2C]">
+                    Proposal Formula
+                  </FormLabel>
                   <Select
                     onValueChange={(value) => {
                       field.onChange(value);
@@ -249,11 +251,11 @@ export default function JobDetailsSection({ jobKey }: { jobKey?: string }) {
                     disabled={isProcessing}
                   >
                     <FormControl>
-                      <SelectTrigger className="w-full">
+                      <SelectTrigger className="w-full bg-white font-[Lato]">
                         <SelectValue placeholder="Select a formula" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent>
+                    <SelectContent className="font-[Lato]">
                       {PROPOSAL_FORMULAS.map((formula) => (
                         <SelectItem key={formula.id} value={formula.id}>
                           {formula.label}
@@ -264,13 +266,13 @@ export default function JobDetailsSection({ jobKey }: { jobKey?: string }) {
                       ))}
                     </SelectContent>
                   </Select>
-                  <FormDescription className="text-xs">
+                  <FormDescription className="font-[Lato] text-xs tracking-[0.08px] text-[#404040]">
                     {
                       PROPOSAL_FORMULAS.find((f) => f.id === field.value)
                         ?.description
                     }
                   </FormDescription>
-                  <FormMessage />
+                  <FormMessage className="font-[Lato]" />
                 </FormItem>
               )}
             />
@@ -280,7 +282,9 @@ export default function JobDetailsSection({ jobKey }: { jobKey?: string }) {
               name="tone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tone of Voice</FormLabel>
+                  <FormLabel className="font-[Poppins] font-medium text-[#2C2C2C]">
+                    Tone of Voice
+                  </FormLabel>
                   <Select
                     onValueChange={(value) => {
                       field.onChange(value);
@@ -290,11 +294,11 @@ export default function JobDetailsSection({ jobKey }: { jobKey?: string }) {
                     disabled={isProcessing}
                   >
                     <FormControl>
-                      <SelectTrigger className="w-full">
+                      <SelectTrigger className="w-full bg-white font-[Lato]">
                         <SelectValue placeholder="Select a tone" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent>
+                    <SelectContent className="font-[Lato]">
                       {TONES.map((tone) => (
                         <SelectItem key={tone.id} value={tone.id}>
                           {tone.label}
@@ -302,10 +306,10 @@ export default function JobDetailsSection({ jobKey }: { jobKey?: string }) {
                       ))}
                     </SelectContent>
                   </Select>
-                  <FormDescription className="text-xs">
+                  <FormDescription className="font-[Lato] text-xs tracking-[0.08px] text-[#404040]">
                     {TONES.find((t) => t.id === field.value)?.description}
                   </FormDescription>
-                  <FormMessage />
+                  <FormMessage className="font-[Lato]" />
                 </FormItem>
               )}
             />
@@ -316,14 +320,16 @@ export default function JobDetailsSection({ jobKey }: { jobKey?: string }) {
             name="jobTitle"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Job Title</FormLabel>
+                <FormLabel className="font-[Poppins] font-medium text-[#2C2C2C]">
+                  Job Title
+                </FormLabel>
                 <FormControl>
                   {isGeneratingTitle ? (
-                    <Skeleton className="w-full h-10" />
+                    <Skeleton className="h-10 w-full" />
                   ) : (
                     <Input
                       placeholder="Enter the job title..."
-                      className="bg-white"
+                      className="bg-white font-[Lato]"
                       {...field}
                       onChange={(e) => {
                         field.onChange(e);
@@ -333,12 +339,12 @@ export default function JobDetailsSection({ jobKey }: { jobKey?: string }) {
                     />
                   )}
                 </FormControl>
-                <FormDescription className="text-xs">
+                <FormDescription className="font-[Lato] text-xs tracking-[0.08px] text-[#404040]">
                   {isGeneratingTitle
                     ? "Generating title based on job description..."
                     : "Title will auto-generate once you add job description"}
                 </FormDescription>
-                <FormMessage />
+                <FormMessage className="font-[Lato]" />
               </FormItem>
             )}
           />
@@ -347,21 +353,23 @@ export default function JobDetailsSection({ jobKey }: { jobKey?: string }) {
             control={form.control}
             name="jobDescription"
             render={({ field }) => (
-              <FormItem className="space-y-1.5 flex-1 flex flex-col">
-                <FormLabel>Job Description</FormLabel>
-                <FormControl className="flex-1 flex flex-col">
+              <FormItem className="flex flex-1 flex-col space-y-1.5">
+                <FormLabel className="font-[Poppins] font-medium text-[#2C2C2C]">
+                  Job Description
+                </FormLabel>
+                <FormControl className="flex flex-1 flex-col">
                   <Textarea
                     placeholder="Paste the job description here..."
-                    className="min-h-40 h-full md:h-[440px] max-h-full md:max-h-[440px] overflow-y-auto resize-none bg-white"
+                    className="h-full max-h-full min-h-40 resize-none overflow-y-auto bg-white font-[Lato] text-[#404040] md:h-[440px] md:max-h-[440px]"
                     {...field}
                     onChange={handleJobDescriptionChange}
                     disabled={isProcessing || proposalStatus === "SENT"}
                   />
                 </FormControl>
-                <FormDescription className="text-xs">
+                <FormDescription className="font-[Lato] text-xs tracking-[0.08px] text-[#404040]">
                   Paste the complete job listing for a more targeted proposal
                 </FormDescription>
-                <FormMessage />
+                <FormMessage className="font-[Lato]" />
               </FormItem>
             )}
           />
@@ -378,12 +386,12 @@ export default function JobDetailsSection({ jobKey }: { jobKey?: string }) {
                       field.onChange(checked);
                       setIncludePortfolio(!!checked);
                     }}
-                    className="mt-0.5"
+                    className="mt-0.5 data-[state=checked]:border-[#BF4008] data-[state=checked]:bg-[#BF4008]"
                     disabled={isProcessing}
                   />
                 </FormControl>
                 <div>
-                  <FormLabel className="text-sm font-medium">
+                  <FormLabel className="font-[Poppins] text-sm font-medium text-[#2C2C2C]">
                     Add portfolio samples
                   </FormLabel>
                 </div>
@@ -399,22 +407,22 @@ export default function JobDetailsSection({ jobKey }: { jobKey?: string }) {
               isGeneratingTitle ||
               !form.getValues("jobDescription")
             }
-            className="w-full mt-4"
+            className="mt-4 w-full bg-[#BF4008] font-[Lato] font-medium text-white transition-colors duration-200 hover:bg-[#BF4008]/80"
             size="sm"
           >
             {isGenerating ? (
               <>
-                <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
+                <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
                 Generating...
               </>
             ) : isGeneratingTitle ? (
               <>
-                <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
+                <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
                 Generating Title...
               </>
             ) : (
               <>
-                <Sparkles className="h-3.5 w-3.5 mr-1.5" />
+                <Sparkles className="mr-1.5 h-3.5 w-3.5" />
                 Generate Proposal
               </>
             )}

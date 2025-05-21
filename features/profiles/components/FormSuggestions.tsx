@@ -1,25 +1,26 @@
 const FormSuggestions = () => {
   return (
-    <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-      <h3 className="text-sm font-medium text-gray-900 mb-2">
+    <div className="rounded-lg border border-[#F8E5DB] bg-[#FDF9F6] p-4">
+      <h3 className="mb-2 font-[Poppins] text-sm font-medium tracking-[-0.4px] text-[#2C2C2C]">
         Tips for a Great Project
       </h3>
-      <ul className="text-xs text-gray-600 space-y-2">
+      <ul className="space-y-2 font-[Lato] text-xs tracking-[0.08px] text-[#404040]">
         <li className="flex items-start">
-          <span className="font-medium mr-1">Title:</span> Use a clear, concise
-          name that describes what your project does.
+          <span className="mr-1 font-medium text-[#2C2C2C]">Title:</span> Use a
+          clear, concise name that describes what your project does.
         </li>
         <li className="flex items-start">
-          <span className="font-medium mr-1">Description:</span> Include the
-          problem it solves, technologies used, and any notable features.
+          <span className="mr-1 font-medium text-[#2C2C2C]">Description:</span>{" "}
+          Include the problem it solves, technologies used, and any notable
+          features.
         </li>
         <li className="flex items-start">
-          <span className="font-medium mr-1">Links:</span> Add both repository
-          and live demo links when possible.
+          <span className="mr-1 font-medium text-[#2C2C2C]">Links:</span> Add
+          both repository and live demo links when possible.
         </li>
         <li className="flex items-start">
-          <span className="font-medium mr-1">Image:</span> Use a screenshot that
-          clearly shows your project interface.
+          <span className="mr-1 font-medium text-[#2C2C2C]">Image:</span> Use a
+          screenshot that clearly shows your project interface.
         </li>
       </ul>
     </div>

@@ -33,7 +33,7 @@ function ProfilePage() {
       const defaultProfile = userProfiles.find((profile) => profile.isDefault);
       if (createdProfileId) {
         const selectedProfile = userProfiles.find(
-          (profile) => profile.id === createdProfileId
+          (profile) => profile.id === createdProfileId,
         );
         if (selectedProfile) {
           setVisibleProfile(selectedProfile);
@@ -48,7 +48,7 @@ function ProfilePage() {
 
   const handleProfileChange = (profileId: string) => {
     const selectedProfile = userProfiles?.find(
-      (profile) => profile.id === profileId
+      (profile) => profile.id === profileId,
     );
 
     if (!selectedProfile) {
@@ -63,7 +63,13 @@ function ProfilePage() {
   }
 
   if (!visibleProfile) {
-    return <div>No profiles available</div>;
+    return (
+      <div className="grid h-[50vh] place-items-center">
+        <p className="font-[Lato] text-lg tracking-[0.08px] text-[#404040]">
+          No profiles available
+        </p>
+      </div>
+    );
   }
 
   const {
@@ -77,9 +83,9 @@ function ProfilePage() {
   } = visibleProfile;
 
   return (
-    <div className="flex flex-col h-full @container">
-      {/* First Row - Empty (min height 200px) */}
-      <div className="min-h-[110px]  flex items-center lg:py-0 py-6 border-y border-gray-200">
+    <div className="@container flex h-full flex-col">
+      {/* First Row - Header */}
+      <div className="flex min-h-[110px] items-center border-y border-gray-200 py-6 lg:py-0">
         <ProfilePageHeader
           handleProfileChange={handleProfileChange}
           visibleProfile={visibleProfile}
@@ -88,10 +94,10 @@ function ProfilePage() {
       </div>
 
       {/* Second Row - Freelancer Profile */}
-      <div className="flex-grow flex @[800px]:flex-row flex-col overflow-auto">
+      <div className="flex flex-grow flex-col overflow-auto @[800px]:flex-row">
         {/* Left Column */}
-        <div className="@[800px]:w-1/3 w-full  @[800px]:border-r border-gray-200">
-          <ScrollArea className="h-full p-6 max-h-[calc(100vh-200px)]">
+        <div className="w-full border-gray-200 @[800px]:w-1/3 @[800px]:border-r">
+          <ScrollArea className="h-full max-h-[calc(100vh-200px)] p-6">
             {/* Section 1: Title and Bio */}
             <ProfileTitleAndBio
               jobTitle={jobTitle}
@@ -102,7 +108,9 @@ function ProfilePage() {
 
             {/* Section 2: Skills */}
             <div className="mb-8">
-              <h2 className="text-xl font-semibold mb-3">Skills</h2>
+              <h2 className="mb-3 font-[Poppins] text-xl font-semibold tracking-[-0.4px] text-[#2C2C2C]">
+                Skills
+              </h2>
               <ProfileSkilllDisplay
                 skills={skills}
                 profileId={id}
@@ -122,9 +130,11 @@ function ProfilePage() {
         <div className="w-full @[800px]:w-2/3">
           {projects.length !== 0 && (
             <ScrollArea className="h-full max-h-full sm:max-h-[calc(100vh-220px)]">
-              <div className="p-6 h-full @container">
-                <h2 className="text-xl font-semibold mb-4">Projects</h2>
-                <div className="grid @max-xl:grid-cols-1 grid-cols-2 gap-6 ">
+              <div className="@container h-full p-6">
+                <h2 className="mb-4 font-[Poppins] text-xl font-semibold tracking-[-0.4px] text-[#2C2C2C]">
+                  Projects
+                </h2>
+                <div className="grid grid-cols-2 gap-6 @max-xl:grid-cols-1">
                   {projects.length < 4 && <AddProject profileId={id} />}
                   {projects.map((project) => (
                     <ProjectCard
@@ -137,13 +147,13 @@ function ProfilePage() {
             </ScrollArea>
           )}
           {projects.length === 0 && (
-            <div className="grid h-full min-h-[600px] px-8 place-items-center bg-gray-50 ">
-              <div className="flex flex-col gap-5 item-center max-w-[500px]">
-                <h2 className="text-xl font-semibold text-center mb-4">
+            <div className="grid h-full min-h-[600px] place-items-center bg-[#FDF9F6] px-8">
+              <div className="item-center flex max-w-[500px] flex-col gap-5">
+                <h2 className="mb-4 text-center font-[Poppins] text-xl font-semibold tracking-[-0.4px] text-[#2C2C2C]">
                   Add Projects
                 </h2>
                 <AddProject profileId={id} />
-                <p className="text-center text-gray-500">
+                <p className="text-center font-[Lato] tracking-[0.08px] text-[#404040]">
                   Projects boost your profile strength and help AI create
                   detailed, personalized proposals.
                 </p>

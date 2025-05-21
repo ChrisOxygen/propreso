@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { FiArrowRight, FiArrowLeft } from "react-icons/fi";
+import { ArrowRight, ArrowLeft } from "lucide-react";
 import { ALL_SKILLS } from "@/constants";
 import { CreateProfileContextType } from "../../context/CreateProfileContext";
 
@@ -13,7 +13,7 @@ const Step2 = ({
 }: CreateProfileContextType) => {
   // Local state to track selected skills
   const [selectedSkills, setSelectedSkills] = useState<string[]>(
-    state.userInformation.skills || []
+    state.userInformation.skills || [],
   );
 
   // Get skills for the selected field
@@ -22,10 +22,7 @@ const Step2 = ({
     .join("-")
     .toLowerCase() as keyof typeof ALL_SKILLS;
 
-  console.log(key);
   const fieldSkills = ALL_SKILLS[key as keyof typeof ALL_SKILLS];
-
-  console.log(fieldSkills);
 
   // Toggle skill selection
   const toggleSkill = (skill: string) => {
@@ -59,8 +56,10 @@ const Step2 = ({
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold">Select Your Skills</h2>
-        <p className="text-gray-600 mt-2">
+        <h2 className="font-[Poppins] text-2xl font-semibold tracking-[-0.4px] text-[#2C2C2C]">
+          Select Your Skills
+        </h2>
+        <p className="mt-2 font-[Lato] tracking-[0.08px] text-[#404040]">
           Choose the skills that best represent your expertise as a {fieldName}.
         </p>
       </div>
@@ -72,10 +71,10 @@ const Step2 = ({
               <button
                 key={skill}
                 type="button"
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                className={`rounded-full px-4 py-2 font-[Lato] text-sm font-medium transition-colors duration-200 ${
                   selectedSkills.includes(skill)
-                    ? "bg-black text-white"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    ? "bg-[#BF4008] text-white"
+                    : "bg-[#FDF9F6] text-[#404040] hover:bg-[#F8E5DB]"
                 }`}
                 onClick={() => toggleSkill(skill)}
               >
@@ -84,28 +83,28 @@ const Step2 = ({
             ))}
         </div>
         {selectedSkills.length > 0 && (
-          <p className="text-gray-500 mt-4 text-sm">
+          <p className="mt-4 font-[Lato] text-sm tracking-[0.08px] text-[#404040]">
             Selected: {selectedSkills.length}{" "}
             {selectedSkills.length === 1 ? "skill" : "skills"}
           </p>
         )}
       </div>
 
-      <div className="flex justify-between mt-10">
+      <div className="mt-10 flex justify-between">
         <Button
           variant="outline"
           onClick={handleBack}
-          className="flex items-center justify-center gap-2"
+          className="flex items-center justify-center gap-2 border-zinc-200 bg-white font-[Lato] text-[#404040] transition-colors duration-200 hover:border-[#BF4008] hover:bg-[#BF4008] hover:text-white"
         >
-          <FiArrowLeft />
+          <ArrowLeft className="h-4 w-4" />
           Back
         </Button>
         <Button
-          className="bg-black text-white hover:bg-gray-800 flex items-center justify-center gap-2"
+          className="flex items-center justify-center gap-2 bg-[#BF4008] font-[Lato] text-white transition-colors duration-200 hover:bg-[#BF4008]/80"
           onClick={handleNext}
         >
           Next
-          <FiArrowRight />
+          <ArrowRight className="h-4 w-4" />
         </Button>
       </div>
     </div>

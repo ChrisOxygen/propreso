@@ -24,7 +24,7 @@ function MainCTASection() {
                 Get started for free
               </Link>
               <Link
-                href="/"
+                href="mailto:chrisoxygen1234@gmail.com"
                 className="flex items-center justify-center gap-2.5 rounded-lg border border-[#BF4008] px-3.5 py-2.5 font-[Lato] text-sm font-medium tracking-[0.28px] text-[#BF4008] transition-colors duration-200 hover:bg-[#BF4008]/10 sm:px-6 sm:py-3.5 sm:text-xl sm:tracking-normal"
               >
                 Learn more

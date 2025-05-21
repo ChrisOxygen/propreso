@@ -23,7 +23,7 @@ function NavBar() {
               Create Account
             </Link>
             <Link
-              href="/signup"
+              href="/login"
               className="inline-flex items-center justify-center gap-2.5 rounded-2xl bg-[#BF4008] px-6 py-3.5 font-['Lato'] text-lg font-medium text-white"
             >
               Log In

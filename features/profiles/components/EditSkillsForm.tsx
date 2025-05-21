@@ -39,10 +39,7 @@ function EditSkillsForm({
     .join("-")
     .toLowerCase() as keyof typeof ALL_SKILLS;
 
-  console.log(key);
   const fieldSkills = ALL_SKILLS[key as keyof typeof ALL_SKILLS];
-
-  console.log(fieldSkills);
 
   // Toggle skill selection
   const toggleSkill = (skill: string) => {
@@ -54,11 +51,6 @@ function EditSkillsForm({
   };
 
   if (profileUpdateSuccessfull) {
-    // Refresh the page to reflect the updated profile
-    // Reset the form and close the dialog
-
-    //Show success message
-
     // Invalidate all profile-related queries to refetch fresh data
     queryClient.invalidateQueries({
       queryKey: ["profile", profileId],
@@ -70,10 +62,7 @@ function EditSkillsForm({
     toast.success("Profile updated successfully");
 
     resetUpdateProfileState();
-    console.log("Profile updated successfully");
   }
-
-  // Save skills
 
   return (
     <div className="mt-4">
@@ -83,10 +72,10 @@ function EditSkillsForm({
             <button
               key={skill}
               type="button"
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+              className={`rounded-full px-4 py-2 font-[Lato] text-sm font-medium transition-colors duration-200 ${
                 selectedSkills.includes(skill)
-                  ? "bg-black text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  ? "bg-[#BF4008] text-white hover:bg-[#BF4008]/90"
+                  : "bg-[#F8E5DB] text-[#404040] hover:bg-[#F8E5DB]/80"
               }`}
               onClick={() => toggleSkill(skill)}
             >
@@ -95,7 +84,7 @@ function EditSkillsForm({
           ))}
       </div>
       {selectedSkills.length > 0 && (
-        <p className="text-gray-500 mt-4 text-sm">
+        <p className="mt-4 font-[Lato] text-sm tracking-[0.08px] text-[#404040]">
           Selected: {selectedSkills.length}{" "}
           {selectedSkills.length === 1 ? "skill" : "skills"}
         </p>
@@ -107,6 +96,7 @@ function EditSkillsForm({
           disabled={isUpdatingProfile}
           type="button"
           onClick={() => setDialogOpen(false)}
+          className="border-zinc-200 bg-white font-[Lato] text-[#2C2C2C] transition-colors duration-200 hover:bg-zinc-50"
         >
           Cancel
         </Button>
@@ -118,15 +108,16 @@ function EditSkillsForm({
             });
           }}
           disabled={isUpdatingProfile}
+          className="bg-[#BF4008] font-[Lato] font-medium text-white transition-colors duration-200 hover:bg-[#BF4008]/80"
         >
           {isUpdatingProfile ? (
             <>
-              <Loader2 className="h-4 w-4 animate-spin" />
-              updating...
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Updating...
             </>
           ) : (
             <>
-              <Save className="h-4 w-4 mr-2" />
+              <Save className="mr-2 h-4 w-4" />
               Update Skills
             </>
           )}

@@ -26,18 +26,18 @@ const StatCards = () => {
       return (
         <Badge
           variant="outline"
-          className="text-green-600 border-green-200 bg-green-50 ml-2 mb-1"
+          className="mb-1 ml-2 border-green-200 bg-green-50 font-[Lato] text-green-600"
         >
-          <ArrowUpRight className="h-3 w-3 mr-1" /> {value}%
+          <ArrowUpRight className="mr-1 h-3 w-3" /> {value}%
         </Badge>
       );
     } else {
       return (
         <Badge
           variant="outline"
-          className="text-red-600 border-red-200 bg-red-50 ml-2 mb-1"
+          className="mb-1 ml-2 border-red-200 bg-red-50 font-[Lato] text-red-600"
         >
-          <ArrowDownRight className="h-3 w-3 mr-1" /> {value}%
+          <ArrowDownRight className="mr-1 h-3 w-3" /> {value}%
         </Badge>
       );
     }
@@ -47,10 +47,10 @@ const StatCards = () => {
   const WinRateSkeleton = () => (
     <Card className="bg-white shadow-none">
       <CardHeader className="pb-2">
-        <Skeleton className="h-4 w-20 mb-2" />
+        <Skeleton className="mb-2 h-4 w-20" />
         <div className="flex items-end">
           <Skeleton className="h-8 w-24" />
-          <Skeleton className="h-5 w-16 ml-2" />
+          <Skeleton className="ml-2 h-5 w-16" />
         </div>
       </CardHeader>
     </Card>
@@ -59,21 +59,21 @@ const StatCards = () => {
   const ProposalsSentSkeleton = () => (
     <Card className="bg-white shadow-none">
       <CardHeader className="pb-2">
-        <Skeleton className="h-4 w-24 mb-2" />
+        <Skeleton className="mb-2 h-4 w-24" />
         <div className="flex items-end">
           <Skeleton className="h-8 w-36" />
-          <Skeleton className="h-5 w-16 ml-2" />
+          <Skeleton className="ml-2 h-5 w-16" />
         </div>
       </CardHeader>
     </Card>
   );
 
   const StreakSkeleton = () => (
-    <Card className="bg-black text-white">
+    <Card className="bg-[#2C2C2C] text-white">
       <CardHeader className="pb-4">
         <div className="flex items-start justify-between">
           <div>
-            <Skeleton className="h-4 w-28 mb-2 bg-zinc-700" />
+            <Skeleton className="mb-2 h-4 w-28 bg-zinc-700" />
             <div className="flex items-end gap-1">
               <Skeleton className="h-8 w-16 bg-zinc-700" />
               <Skeleton className="h-4 w-10 bg-zinc-700" />
@@ -86,17 +86,19 @@ const StatCards = () => {
   );
 
   return (
-    <div className="sm:grid flex flex-col grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
+    <div className="flex flex-col gap-4 sm:grid sm:grid-cols-2 sm:gap-6 md:gap-6 lg:grid-cols-3 lg:gap-8">
       {isLoading ? (
         <WinRateSkeleton />
       ) : (
-        <Card className="bg-white shadow-none hover:shadow-md transition-all">
+        <Card className="bg-white transition-all hover:shadow-md">
           <CardHeader className="pb-2">
-            <CardDescription className="text-xs uppercase tracking-wider text-zinc-400 font-medium">
+            <CardDescription className="font-[Lato] text-xs font-medium tracking-wider text-[#404040] uppercase">
               Win Rate
             </CardDescription>
             <div className="flex items-end">
-              <CardTitle className="text-2xl font-bold">{winRate}</CardTitle>
+              <CardTitle className="font-[Poppins] text-2xl font-bold tracking-[-0.4px] text-[#2C2C2C]">
+                {winRate}
+              </CardTitle>
               {getTrendBadge(winRateTrend.direction, winRateTrend.percentage)}
             </div>
           </CardHeader>
@@ -106,21 +108,21 @@ const StatCards = () => {
       {isLoading ? (
         <ProposalsSentSkeleton />
       ) : (
-        <Card className="bg-white shadow-none hover:shadow-md transition-all">
+        <Card className="bg-white transition-all hover:shadow-md">
           <CardHeader className="pb-2">
-            <CardDescription className="text-xs uppercase tracking-wider text-zinc-400 font-medium">
+            <CardDescription className="font-[Lato] text-xs font-medium tracking-wider text-[#404040] uppercase">
               this {period}
             </CardDescription>
             <div className="flex items-end">
-              <CardTitle className="text-2xl font-bold">
+              <CardTitle className="font-[Poppins] text-2xl font-bold tracking-[-0.4px] text-[#2C2C2C]">
                 {proposalsSent}{" "}
-                <span className="text-xs uppercase tracking-wider text-zinc-400 font-medium">
+                <span className="font-[Lato] text-xs font-medium tracking-wider text-[#404040] uppercase">
                   Jobs won
                 </span>
               </CardTitle>
               {getTrendBadge(
                 sentProposalsTrend.direction,
-                sentProposalsTrend.percentage
+                sentProposalsTrend.percentage,
               )}
             </div>
           </CardHeader>
@@ -130,21 +132,23 @@ const StatCards = () => {
       {isLoading ? (
         <StreakSkeleton />
       ) : (
-        <Card className="bg-black text-white lg:col-span-1 col-span-2">
+        <Card className="col-span-2 bg-[#2C2C2C] text-white lg:col-span-1">
           <CardHeader className="pb-4">
             <div className="flex items-start justify-between">
               <div>
-                <CardDescription className="text-xs uppercase tracking-wider text-zinc-400 mb-2 font-medium">
+                <CardDescription className="mb-2 font-[Lato] text-xs font-medium tracking-wider text-zinc-400 uppercase">
                   Current Streak
                 </CardDescription>
                 <div className="flex items-end gap-1">
-                  <CardTitle className="text-3xl font-bold">
+                  <CardTitle className="font-[Poppins] text-3xl font-bold tracking-[-0.6px]">
                     {currentStreak}
                   </CardTitle>
-                  <span className="text-zinc-400 mb-1 text-sm">days</span>
+                  <span className="mb-1 font-[Lato] text-sm text-zinc-400">
+                    days
+                  </span>
                 </div>
               </div>
-              <div className="bg-zinc-800 p-2 rounded-lg">
+              <div className="rounded-lg bg-[#404040] p-2">
                 <MapPin className="h-5 w-5" />
               </div>
             </div>
