@@ -146,3 +146,94 @@ export async function updateUserAccount(data: {
     };
   }
 }
+
+// Validation schema
+const SocialUserSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  name: z.string().optional(),
+  image: z.string().url().optional().nullable(),
+  provider: z.string(),
+  providerAccountId: z.string(),
+});
+
+type SocialUserInput = z.infer<typeof SocialUserSchema>;
+
+/**
+ * Creates a new user from social authentication data and sends welcome email
+ */
+export async function createSocialUser(input: SocialUserInput) {
+  try {
+    // Validate input
+    const validatedData = SocialUserSchema.parse(input);
+
+    // Create new user
+    const newUser = await prisma.user.create({
+      data: {
+        email: validatedData.email,
+        fullName: validatedData.name || `User-${Date.now()}`,
+        image: validatedData.image,
+        hasCreatedProfile: false,
+        accounts: {
+          create: {
+            type: "oauth",
+            provider: validatedData.provider,
+            providerAccountId: validatedData.providerAccountId,
+          },
+        },
+      },
+    });
+
+    // Send welcome email
+    await sendWelcomeEmail(newUser.fullName || "there", newUser.email);
+
+    return {
+      success: true,
+      userId: newUser.id,
+      isNewUser: true,
+      message: "User created successfully",
+    };
+  } catch (error) {
+    console.error("Error creating social user:", error);
+
+    if (error instanceof z.ZodError) {
+      return {
+        success: false,
+        message: error.errors.map((e) => e.message).join(", "),
+      };
+    }
+
+    return {
+      success: false,
+      message: "Failed to create user. Please try again.",
+    };
+  }
+}
+
+/**
+ * Helper function to send welcome email
+ */
+async function sendWelcomeEmail(name: string, email: string) {
+  try {
+    const response = await fetch(`/api/email/welcome`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ name, email }),
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(
+        `Failed to send welcome email: ${errorData.error || response.statusText}`,
+      );
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error sending welcome email:", error);
+    // We don't want to fail user creation if email sending fails
+    // Just log the error and continue
+  }
+}

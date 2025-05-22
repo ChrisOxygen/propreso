@@ -9,7 +9,7 @@ import { useUser } from "@/hooks/useUser";
 import { useUserProfiles } from "@/features/profiles/hooks/user-profile-hooks/useUserProfiles";
 import { useState } from "react";
 import Link from "next/link";
-import { User, Pencil, Check } from "lucide-react";
+import { User, Check } from "lucide-react";
 import InBoxLoader from "@/components/InBoxLoader";
 import useUpdateAccount from "@/hooks/useUpdateAccount";
 import { Skeleton } from "@/components/ui/skeleton";

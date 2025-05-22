@@ -139,6 +139,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             return true;
           } else {
             // If user doesn't exist, create a new one
+
             const newUser = await prisma.user.create({
               data: {
                 email: user.email,
