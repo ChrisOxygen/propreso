@@ -21,11 +21,14 @@ import { useState } from "react";
 import { loginFormSchema } from "@/formSchemas";
 import InBoxLoader from "@/components/InBoxLoader";
 import { useLogin } from "@/hooks/useLogin";
+import useSocialSignIn from "@/hooks/useSocialSignIn";
 
 function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
 
   const { onSubmit, isLoading, error } = useLogin();
+  const { mutate: signInWithProvider, isPending: isSocialSignInPending } =
+    useSocialSignIn();
 
   // Initialize form
   const form = useForm<z.infer<typeof loginFormSchema>>({
@@ -37,7 +40,7 @@ function LoginPage() {
   });
 
   // Show loading state while checking session
-  if (isLoading) {
+  if (isLoading || isSocialSignInPending) {
     return <InBoxLoader />;
   }
 
@@ -61,6 +64,8 @@ function LoginPage() {
       {/* Social Login Options */}
       <div className="mb-8 flex flex-col gap-3">
         <Button
+          onClick={() => signInWithProvider("google")}
+          disabled={isSocialSignInPending}
           variant="outline"
           className="flex h-11 w-full gap-2 font-[Lato] font-medium"
         >
@@ -68,6 +73,8 @@ function LoginPage() {
           <span>Log in with Google</span>
         </Button>
         <Button
+          onClick={() => signInWithProvider("github")}
+          disabled={isSocialSignInPending}
           variant="outline"
           className="flex h-11 w-full gap-2 font-[Lato] font-medium"
         >

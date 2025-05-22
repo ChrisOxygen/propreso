@@ -28,6 +28,7 @@ import {
 import { signOut } from "next-auth/react";
 import { Skeleton } from "../ui/skeleton";
 import { User } from "@prisma/client";
+import Link from "next/link";
 
 export function NavUser({ user }: { user: User }) {
   const { isMobile } = useSidebar();
@@ -103,9 +104,14 @@ export function NavUser({ user }: { user: User }) {
             </DropdownMenuGroup>
             <DropdownMenuSeparator className="bg-zinc-200" />
             <DropdownMenuGroup>
-              <DropdownMenuItem className="font-[Lato] text-[#404040] transition-colors duration-200 hover:bg-[#FDF9F6] hover:text-[#BF4008]">
-                <BadgeCheck className="mr-2 h-4 w-4" />
-                Account
+              <DropdownMenuItem
+                asChild
+                className="font-[Lato] text-[#404040] transition-colors duration-200 hover:bg-[#FDF9F6] hover:text-[#BF4008]"
+              >
+                <Link href="/account" className="flex items-center gap-2">
+                  <BadgeCheck className="mr-2 h-4 w-4" />
+                  Account
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem className="font-[Lato] text-[#404040] transition-colors duration-200 hover:bg-[#FDF9F6] hover:text-[#BF4008]">
                 <CreditCard className="mr-2 h-4 w-4" />
