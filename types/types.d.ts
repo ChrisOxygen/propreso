@@ -33,6 +33,7 @@ declare interface User {
   email: string;
   password: string | null;
   hasCreatedProfile: boolean;
+  isVerified: boolean;
   provider: string | null;
   providerId: string | null;
   createdAt: Date;

@@ -4,6 +4,8 @@ import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
+import { generateVerificationCode } from "@/lib/actions";
+import { sendWelcomeEmail } from "@/lib/email-actions";
 
 const prisma = new PrismaClient();
 
@@ -28,7 +30,7 @@ export async function POST(request: Request) {
           message: "Invalid input",
           errors: result.error.flatten().fieldErrors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -42,7 +44,7 @@ export async function POST(request: Request) {
     if (existingUser) {
       return NextResponse.json(
         { message: "User with this email already exists" },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
@@ -50,28 +52,34 @@ export async function POST(request: Request) {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create new user
-    await prisma.user.create({
+    const newUser = await prisma.user.create({
       data: {
         email,
         password: hashedPassword,
         fullName: `${firstName} ${lastName}`,
-
         hasCreatedProfile: false,
-        provider: "credentials",
+        isVerified: false,
       },
     });
+
+    // Generate verification code for the new user
+    await generateVerificationCode(newUser.id);
+
+    // Send welcome email (non-blocking)
+    await sendWelcomeEmail(newUser.fullName, email);
 
     return NextResponse.json(
       {
         message: "User created successfully",
+        userId: newUser.id,
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     console.error("Signup error:", error);
     return NextResponse.json(
       { message: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   } finally {
     // Disconnect Prisma client to prevent open handles

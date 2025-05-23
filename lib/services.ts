@@ -34,7 +34,7 @@ export function toSnakeCase(str: string): string {
  * Flattens the job data object into an array of key-value pairs with snake_case keys
  */
 export function flattenJobData(
-  jobData: AnalizedUpworkJobData
+  jobData: AnalizedUpworkJobData,
 ): FlattenedItem[] {
   // Initialize result array
   const flattened: FlattenedItem[] = [];
@@ -125,7 +125,7 @@ export function parseJobUrl(url: string): {
  */
 export function getPlatformData(platformName: string) {
   return AVAILABLE_PLATFORMS.find(
-    (p) => p.name.toLowerCase() === platformName.toLowerCase()
+    (p) => p.name.toLowerCase() === platformName.toLowerCase(),
   );
 }
 
@@ -137,7 +137,7 @@ export function getPlatformData(platformName: string) {
  */
 export function formatPlatformUrl(
   platformName: string,
-  jobId: string
+  jobId: string,
 ): string | null {
   const platformData = getPlatformData(platformName);
   if (!platformData) return null;
@@ -165,7 +165,7 @@ export interface BreadcrumbItem {
 export function generateBreadcrumbs(
   pathname: string,
   homeLabel: string = "Dashboard",
-  homeHref: string = "/proposals"
+  homeHref: string = "/proposals",
 ): BreadcrumbItem[] {
   // Skip the first empty string after splitting
   const pathSegments = pathname.split("/").filter((segment) => segment);
@@ -188,7 +188,7 @@ export function generateBreadcrumbs(
   let currentPath = "";
 
   const pathSegmentsWOroot = pathSegments.filter(
-    (path) => !homeHref.includes(path)
+    (path) => !homeHref.includes(path),
   );
   pathSegmentsWOroot.forEach((segment, index) => {
     currentPath += `/${segment}`;
@@ -208,3 +208,11 @@ export function generateBreadcrumbs(
 
   return breadcrumbs;
 }
+
+export const maskEmail = (email: string) => {
+  if (!email) return "";
+  const [username, domain] = email.split("@");
+  const maskedUsername =
+    username.substring(0, 1) + "***" + username.substring(username.length - 1);
+  return `${maskedUsername}@${domain}`;
+};

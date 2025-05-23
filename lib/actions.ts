@@ -4,6 +4,10 @@ import { auth } from "@/auth";
 import { PrismaClient } from "@prisma/client";
 import { z } from "zod";
 
+import { randomInt } from "crypto";
+import { VerifyCodeSchema } from "@/formSchemas";
+import { sendVerificationEmail } from "./email-actions";
+
 type GenerateWithOpenAIProps = {
   prompt: string;
   response_format?: string;
@@ -147,53 +151,138 @@ export async function updateUserAccount(data: {
   }
 }
 
-// Validation schema
-const SocialUserSchema = z.object({
-  email: z.string().email("Invalid email address"),
-  name: z.string().optional(),
-  image: z.string().url().optional().nullable(),
-  provider: z.string(),
-  providerAccountId: z.string(),
-});
+/**
+ * Generates a 6-digit verification code and stores it in the database
+ */
+export async function generateVerificationCode(userId: string) {
+  try {
+    // check if user exists
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
 
-type SocialUserInput = z.infer<typeof SocialUserSchema>;
+    if (!user) {
+      return {
+        success: false,
+        message: "User not found",
+      };
+    }
+
+    // Generate a 6-digit code
+    const verificationCode = randomInt(100000, 999999).toString();
+
+    // Calculate expiration (30 minutes from now)
+    const expiresAt = new Date();
+    expiresAt.setMinutes(expiresAt.getMinutes() + 30);
+
+    // Check if user already has a verification token
+    const existingToken = await prisma.verificationToken.findFirst({
+      where: {
+        identifier: user.email,
+      },
+    });
+
+    // If there's an existing token, update it; otherwise, create a new one
+    if (existingToken) {
+      await prisma.verificationToken.update({
+        where: { id: existingToken.id },
+        data: {
+          token: verificationCode,
+          expires: expiresAt,
+        },
+      });
+    } else {
+      await prisma.verificationToken.create({
+        data: {
+          identifier: user.email,
+          token: verificationCode,
+          expires: expiresAt,
+        },
+      });
+    }
+
+    // Send email with verification code
+    await sendVerificationEmail(
+      user.email,
+      user.fullName || "there",
+      verificationCode,
+    );
+
+    return {
+      success: true,
+      message: "Verification code sent to your email",
+    };
+  } catch (error) {
+    console.error("Error generating verification code:", error);
+    return {
+      success: false,
+      message: "Failed to generate verification code",
+    };
+  }
+}
 
 /**
- * Creates a new user from social authentication data and sends welcome email
+ * Verifies the entered code against the stored token
  */
-export async function createSocialUser(input: SocialUserInput) {
+export async function verifyEmailCode(code: string) {
   try {
     // Validate input
-    const validatedData = SocialUserSchema.parse(input);
+    const validatedData = VerifyCodeSchema.parse({ code });
 
-    // Create new user
-    const newUser = await prisma.user.create({
-      data: {
-        email: validatedData.email,
-        fullName: validatedData.name || `User-${Date.now()}`,
-        image: validatedData.image,
-        hasCreatedProfile: false,
-        accounts: {
-          create: {
-            type: "oauth",
-            provider: validatedData.provider,
-            providerAccountId: validatedData.providerAccountId,
-          },
+    // Get the current user's session
+    const session = await auth();
+
+    if (!session?.user?.email) {
+      return {
+        success: false,
+        message: "User not authenticated",
+      };
+    }
+
+    // Look up the verification token
+    const verificationToken = await prisma.verificationToken.findFirst({
+      where: {
+        identifier: session.user.email,
+        token: validatedData.code,
+        expires: {
+          gt: new Date(),
         },
       },
     });
 
-    // Send welcome email
-    await sendWelcomeEmail(newUser.fullName || "there", newUser.email);
+    // If no valid token found
+    if (!verificationToken) {
+      return {
+        success: false,
+        message: "Invalid or expired verification code",
+      };
+    }
+
+    // Update user as verified
+    await prisma.user.update({
+      where: {
+        email: session.user.email,
+      },
+      data: {
+        isVerified: true,
+      },
+    });
+
+    // Delete the used token
+    await prisma.verificationToken.delete({
+      where: {
+        id: verificationToken.id,
+      },
+    });
 
     return {
       success: true,
-      userId: newUser.id,
-      isNewUser: true,
-      message: "User created successfully",
+      message: "Email verified successfully",
     };
   } catch (error) {
-    console.error("Error creating social user:", error);
+    console.error("Error verifying email:", error);
 
     if (error instanceof z.ZodError) {
       return {
@@ -204,36 +293,7 @@ export async function createSocialUser(input: SocialUserInput) {
 
     return {
       success: false,
-      message: "Failed to create user. Please try again.",
+      message: "Failed to verify email",
     };
-  }
-}
-
-/**
- * Helper function to send welcome email
- */
-async function sendWelcomeEmail(name: string, email: string) {
-  try {
-    const response = await fetch(`/api/email/welcome`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ name, email }),
-      cache: "no-store",
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(
-        `Failed to send welcome email: ${errorData.error || response.statusText}`,
-      );
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("Error sending welcome email:", error);
-    // We don't want to fail user creation if email sending fails
-    // Just log the error and continue
   }
 }

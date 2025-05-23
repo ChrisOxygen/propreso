@@ -5,6 +5,8 @@ import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
 import bcrypt from "bcryptjs";
+import { generateVerificationCode } from "./lib/actions";
+import { sendWelcomeEmail } from "./lib/email-actions";
 
 const prisma = new PrismaClient();
 
@@ -15,6 +17,7 @@ interface ExtendedUser {
   name: string | null;
   image: string | null;
   hasCreatedProfile: boolean;
+  isVerified: boolean;
 }
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -70,95 +73,127 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-      authorization: {
-        params: {
-          prompt: "consent",
-          access_type: "offline",
-          response_type: "code",
-        },
-      },
     }),
     GitHubProvider({
       clientId: process.env.GITHUB_CLIENT_ID as string,
       clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
-      authorization: {
-        params: {
-          prompt: "consent",
-          access_type: "offline",
-          response_type: "code",
-        },
-      },
     }),
   ],
   callbacks: {
     async signIn({ user, account }) {
-      // Only run this logic for social logins
-      console.log("signIn callback:----------------------------------------", {
-        user,
-      });
-      if (account && account.provider !== "credentials" && user.email) {
-        try {
-          // Check if a user with this email already exists
-          const existingUser = await prisma.user.findUnique({
-            where: {
+      // Only process social provider logins (Google, GitHub)
+      if (!account || account.provider === "credentials" || !user.email) {
+        // For credential-based login, use default behavior
+        return true;
+      }
+
+      try {
+        console.log("Social auth login attempt:", {
+          provider: account.provider,
+          email: user.email,
+        });
+
+        // STEP 1: Check if a user with this email already exists
+        const existingUser = await prisma.user.findUnique({
+          where: {
+            email: user.email,
+          },
+          include: {
+            accounts: true,
+          },
+        });
+
+        // STEP 2: Handle existing user case
+        if (existingUser) {
+          console.log("Existing user found:", existingUser.id);
+
+          // Check if this specific provider is already linked to this user
+          const linkedAccount = existingUser.accounts.find(
+            (acc) => acc.provider === account.provider,
+          );
+
+          // If this provider isn't linked yet, create the link
+          if (!linkedAccount) {
+            console.log(
+              `Linking new provider (${account.provider}) to existing user`,
+            );
+
+            // Create a new account connection for this provider
+            await prisma.account.create({
+              data: {
+                userId: existingUser.id,
+                type: account.type,
+                provider: account.provider,
+                providerAccountId: account.providerAccountId,
+                access_token: account.access_token || null,
+                refresh_token: account.refresh_token || null,
+                expires_at: account.expires_at || null,
+                token_type: account.token_type || null,
+                scope: account.scope || null,
+                id_token: account.id_token || null,
+                session_state: account.session_state
+                  ? String(account.session_state)
+                  : null,
+              },
+            });
+          }
+
+          // Use the existing user's ID for this session
+          user.id = existingUser.id;
+          return true;
+        }
+
+        // STEP 3: Handle new user case
+        else {
+          console.log("Creating new user from social auth");
+
+          // Create user directly with Prisma instead of using helper function
+          // This ensures atomic transaction and prevents orphaned accounts
+          const newUser = await prisma.user.create({
+            data: {
+              fullName: user.name || `User-${Date.now().toString().slice(-4)}`,
               email: user.email,
+              image: user.image || null,
+              hasCreatedProfile: false,
+              isVerified: false, // Social logins can be considered verified
+              accounts: {
+                create: {
+                  type: account.type,
+                  provider: account.provider,
+                  providerAccountId: account.providerAccountId,
+                  access_token: account.access_token || null,
+                  refresh_token: account.refresh_token || null,
+                  expires_at: account.expires_at || null,
+                  token_type: account.token_type || null,
+                  scope: account.scope || null,
+                  id_token: account.id_token || null,
+                  session_state: account.session_state
+                    ? String(account.session_state)
+                    : null,
+                },
+              },
             },
             include: {
               accounts: true,
             },
           });
 
-          // If user exists but doesn't have an account with this provider
-          if (existingUser) {
-            // Check if this provider is already linked
-            const linkedAccount = existingUser.accounts.find(
-              (acc) => acc.provider === account.provider,
-            );
+          console.log("New user created:", newUser.id);
 
-            // If not linked, create the link now
-            if (!linkedAccount) {
-              await prisma.account.create({
-                data: {
-                  userId: existingUser.id,
-                  type: account.type,
-                  provider: account.provider,
-                  providerAccountId: account.providerAccountId,
-                  access_token: account.access_token,
-                  refresh_token: account.refresh_token,
-                  expires_at: account.expires_at,
-                  token_type: account.token_type,
-                  scope: account.scope,
-                  id_token: account.id_token,
-                  session_state: account.session_state as string,
-                },
-              });
-            }
+          // Set the user ID for the session
+          user.id = newUser.id;
 
-            // Use the existing user's ID for this session
-            user.id = existingUser.id;
-            return true;
-          } else {
-            // If user doesn't exist, create a new one
+          // Optionally send welcome email (non-blocking)
+          await sendWelcomeEmail(newUser.fullName || "there", newUser.email);
 
-            const newUser = await prisma.user.create({
-              data: {
-                email: user.email,
-                fullName: user.name || `User-${Date.now()}`,
-                image: user.image,
-                hasCreatedProfile: false,
-              },
-            });
+          await generateVerificationCode(newUser.id);
 
-            // Use the new user's ID for this session
-            user.id = newUser.id;
-            return true;
-          }
-        } catch (error) {
-          console.error("Error during social auth sign in:", error);
-          return false;
+          return true;
         }
+      } catch (error) {
+        console.error("Fatal error during social authentication:", error);
+        return false;
       }
-      return true;
     },
 
     async jwt({ token, user, account }) {
@@ -171,6 +206,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           ...token,
           id: typedUser.id,
           hasCreatedProfile: typedUser.hasCreatedProfile,
+          isVerified: typedUser.isVerified,
         };
       }
 
@@ -185,6 +221,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         if (currentUser) {
           token.id = currentUser.id;
           token.hasCreatedProfile = currentUser.hasCreatedProfile;
+          token.isVerified = currentUser.isVerified;
           token.name = currentUser.fullName;
           token.picture = currentUser.image;
         }
@@ -199,6 +236,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (session.user) {
         session.user.id = token.id as string;
         session.user.hasCreatedProfile = token.hasCreatedProfile as boolean;
+        session.user.isVerified = token.isVerified as boolean;
       }
       return session;
     },

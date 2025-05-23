@@ -6,21 +6,35 @@ import {
   Hr,
   Html,
   Img,
-  Link,
   Preview,
   Section,
   Text,
   Row,
   Column,
 } from "@react-email/components";
+import { Link as EmailLink } from "@react-email/components";
 
-const baseURL = process.env.NODE_ENV === "production" ? "https://cdn.com" : "";
+interface WelcomeEmailProps {
+  name?: string;
+}
+
+const baseURL =
+  process.env.NODE_ENV === "production" ? "https://propreso.com" : "";
+
+// Create a wrapper component to fix type issues
+interface SafeLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+  href: string;
+  style?: React.CSSProperties;
+  children?: React.ReactNode;
+}
+
+const SafeLink = (props: SafeLinkProps) => <EmailLink {...props} />;
 
 // Email Logo Component
 const EmailLogo = () => {
   return (
     <div style={{ textAlign: "center", margin: "0 auto 20px" }}>
-      <Link href="https://propreso.com" style={linkStyle}>
+      <SafeLink href="https://propreso.com" style={linkStyle}>
         <Row>
           <Column style={logoContainerStyle}>
             <div style={iconContainerStyle}>
@@ -37,115 +51,159 @@ const EmailLogo = () => {
             <Text style={logoTextStyle}>Propreso</Text>
           </Column>
         </Row>
-      </Link>
+      </SafeLink>
     </div>
   );
 };
 
-export const WelcomeEmail = ({ name = "there" }) => (
-  <Html>
-    <Head />
-    <Preview>
-      Welcome to Propreso - Start creating winning proposals today!
-    </Preview>
-    <Body style={main}>
-      <Container style={container}>
-        <Section style={box}>
-          {/* Replaced image with EmailLogo component */}
-          <EmailLogo />
+export default function WelcomeEmail({ name = "there" }: WelcomeEmailProps) {
+  return (
+    <Html>
+      <Head>
+        <style>{`
+          @media only screen and (max-width: 600px) {
+            .container {
+              width: 100% !important;
+              margin: 0 auto !important;
+            }
+            .content {
+              padding: 0 16px !important;
+            }
+            .header {
+              font-size: 26px !important;
+              line-height: 1.3 !important;
+            }
+            .greeting {
+              font-size: 20px !important;
+              margin: 25px 0 12px !important;
+            }
+            .paragraph {
+              font-size: 15px !important;
+            }
+            .list-item {
+              font-size: 15px !important;
+            }
+            .founder-box {
+              padding: 20px 15px !important;
+            }
+            .founder-message {
+              font-size: 15px !important;
+            }
+            .button {
+              padding: 10px !important;
+            }
+          }
+        `}</style>
+      </Head>
+      <Preview>
+        Welcome to Propreso - Start creating winning proposals today!
+      </Preview>
+      <Body style={main}>
+        <Container style={container} className="container">
+          <Section style={box} className="content">
+            <EmailLogo />
 
-          <Text style={greeting}>Hi {name}!</Text>
-          <Text style={header}>Welcome to Propreso</Text>
-
-          <Hr style={hr} />
-
-          <Text style={paragraph}>
-            We&apos;re excited to have you join our community of freelancers who
-            are transforming how they win new clients.
-          </Text>
-
-          <Text style={paragraph}>
-            <strong>With Propreso, you can:</strong>
-          </Text>
-
-          <Text style={listItem}>
-            • Generate customized proposals using AI technology
-          </Text>
-          <Text style={listItem}>
-            • Showcase your professional experience effectively
-          </Text>
-          <Text style={listItem}>
-            • Save hours on proposal writing and win more clients
-          </Text>
-          <Text style={listItem}>
-            • Manage all your client communications in one place
-          </Text>
-
-          <Text style={paragraph}>
-            <strong>Your first step</strong> is to create a freelancer profile
-            that will help us generate tailored proposals specific to your
-            skills and experience.
-          </Text>
-
-          <Button style={button} href="https://propreso.com/profile/create">
-            Create Your Profile
-          </Button>
-
-          <Hr style={hr} />
-
-          <Section style={founderBox}>
-            <Img
-              src={`${baseURL}/static/christopher-okafor.jpg`}
-              width="120px"
-              height="120px"
-              alt="Christopher Okafor"
-              style={{ borderRadius: "200px", margin: "0 auto 15px" }}
-            />
-
-            <Text style={founderMessage}>
-              &ldquo;I created Propreso because I saw too many talented
-              freelancers losing opportunities due to poor proposals. Our
-              mission is to help you showcase your value and win the clients you
-              deserve. I&apos;m personally committed to making this platform
-              work for you.
+            <Text style={greeting} className="greeting">
+              Hi {name}!
+            </Text>
+            <Text style={header} className="header">
+              Welcome to Propreso
             </Text>
 
-            <Text style={founderMessage}>
-              I&apos;d love to hear about your experience. Feel free to reach
-              out directly with any feedback or questions.&rdquo;
+            <Hr style={hr} />
+
+            <Text style={paragraph} className="paragraph">
+              We&apos;re excited to have you join our community of freelancers
+              who are transforming how they win new clients.
             </Text>
 
-            <Text style={founderSignature}>Christopher Okafor</Text>
-            <Text style={founderTitle}>Founder, Propreso</Text>
+            <Text style={paragraph} className="paragraph">
+              <strong>With Propreso, you can:</strong>
+            </Text>
+
+            <Text style={listItem} className="list-item">
+              • Generate customized proposals using AI technology
+            </Text>
+            <Text style={listItem} className="list-item">
+              • Showcase your professional experience effectively
+            </Text>
+            <Text style={listItem} className="list-item">
+              • Save hours on proposal writing and win more clients
+            </Text>
+            <Text style={listItem} className="list-item">
+              • Manage all your client communications in one place
+            </Text>
+
+            <Text style={paragraph} className="paragraph">
+              <strong>Your first step</strong> is to create a freelancer profile
+              that will help us generate tailored proposals specific to your
+              skills and experience.
+            </Text>
+
+            <Button
+              style={button}
+              href="https://propreso.com/profile/create"
+              className="button"
+            >
+              Create Your Profile
+            </Button>
+
+            <Hr style={hr} />
+
+            <Section style={founderBox} className="founder-box">
+              <Img
+                src={`${baseURL}/static/christopher-okafor.jpg`}
+                width="120px"
+                height="120px"
+                alt="Christopher Okafor"
+                style={{ borderRadius: "200px", margin: "0 auto 15px" }}
+              />
+
+              <Text style={founderMessage} className="founder-message">
+                &ldquo;I created Propreso because I saw too many talented
+                freelancers losing opportunities due to poor proposals. Our
+                mission is to help you showcase your value and win the clients
+                you deserve. I&apos;m personally committed to making this
+                platform work for you.
+              </Text>
+
+              <Text style={founderMessage} className="founder-message">
+                I&apos;d love to hear about your experience. Feel free to reach
+                out directly with any feedback or questions.&rdquo;
+              </Text>
+
+              <Text style={founderSignature}>Christopher Okafor</Text>
+              <Text style={founderTitle}>Founder, Propreso</Text>
+            </Section>
+
+            <Hr style={hr} />
+
+            <Text style={paragraph} className="paragraph">
+              If you need any assistance, our support team is always here to
+              help. Just reply to this email or visit our{" "}
+              <SafeLink style={anchor} href="https://propreso.com/support">
+                support center
+              </SafeLink>
+              .
+            </Text>
+
+            <Text style={paragraph} className="paragraph">
+              — The Propreso Team
+            </Text>
+
+            <Hr style={hr} />
+
+            <Text style={footer}>© 2025 Propreso. All rights reserved.</Text>
+            <Text style={footer}>
+              You&apos;re receiving this email because you recently created an
+              account on Propreso.
+            </Text>
           </Section>
-
-          <Hr style={hr} />
-
-          <Text style={paragraph}>
-            If you need any assistance, our support team is always here to help.
-            Just reply to this email or visit our{" "}
-            <Link style={anchor} href="https://propreso.com/support">
-              support center
-            </Link>
-            .
-          </Text>
-
-          <Text style={paragraph}>— The Propreso Team</Text>
-
-          <Hr style={hr} />
-
-          <Text style={footer}>© 2025 Propreso. All rights reserved.</Text>
-          <Text style={footer}>
-            You&apos;re receiving this email because you recently created an
-            account on Propreso.
-          </Text>
-        </Section>
-      </Container>
-    </Body>
-  </Html>
-);
-
-export default WelcomeEmail;
+        </Container>
+      </Body>
+    </Html>
+  );
+}
 
 const main = {
   backgroundColor: "#F8E5DB",
@@ -172,7 +230,7 @@ const greeting = {
   fontSize: "24px",
   fontWeight: "600",
   textAlign: "center" as const,
-  margin: "30px 0 0",
+  margin: "30px 0 16px", // Increased spacing between greeting and header
   letterSpacing: "-0.4px",
 };
 
@@ -182,8 +240,9 @@ const header = {
   fontSize: "30px",
   fontWeight: "600",
   textAlign: "center" as const,
-  margin: "5px 0 30px",
+  margin: "0 0 30px", // No top margin since greeting has bottom margin
   letterSpacing: "-0.4px",
+  lineHeight: "1.3", // Added line height for better readability
 };
 
 const hr = {
@@ -223,7 +282,6 @@ const button = {
   textDecoration: "none",
   textAlign: "center" as const,
   display: "block",
-  width: "100%",
   padding: "12px",
   margin: "30px 0",
   fontFamily: "'Lato', sans-serif",

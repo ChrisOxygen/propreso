@@ -42,8 +42,20 @@ export const projectSchema = z.object({
           .string()
           .min(10, "Description should be at least 10 characters")
           .max(3000, "Description should not exceed 3000 characters"),
-      })
+      }),
     )
     .min(1, "At least one project is required")
     .max(4, "Maximum of 4 projects allowed"),
+});
+
+export const VerifyCodeSchema = z.object({
+  code: z.string().length(6, "Verification code must be 6 digits"),
+});
+
+export const SocialUserSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  name: z.string().optional(),
+  image: z.string().url().optional().nullable(),
+  provider: z.string(),
+  providerAccountId: z.string(),
 });

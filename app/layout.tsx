@@ -53,6 +53,7 @@ export const metadata: Metadata = {
     "freelancer platform",
   ],
   authors: [{ name: "Propreso Team" }],
+  metadataBase: new URL("https://propreso.com"),
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -76,11 +77,6 @@ export const metadata: Metadata = {
     description:
       "Create winning freelance proposals in seconds with AI-powered suggestions.",
     images: ["/assets/twitter-image.jpg"],
-  },
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
   },
 };
 
