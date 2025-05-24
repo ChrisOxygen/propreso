@@ -11,7 +11,7 @@ function MainLayoutContainer({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   // Pages that should be accessible without a profile
-  const exemptPages = ["/account", "/support", "/feedback"];
+  const exemptPages = ["/account", "/support", "/feedback", "/profile/create"];
 
   // Check if current page is exempt from profile requirement
   const isExemptPage = exemptPages.some((page) => pathname.startsWith(page));
