@@ -27,8 +27,7 @@ interface VerifyEmailProps {
   name?: string;
 }
 
-const baseURL =
-  process.env.NODE_ENV === "production" ? "https://propreso.com" : "";
+const baseURL = process.env.BASE_URL as string;
 
 // Email Logo Component
 const EmailLogo = () => {

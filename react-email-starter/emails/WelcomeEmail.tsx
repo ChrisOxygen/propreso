@@ -18,8 +18,7 @@ interface WelcomeEmailProps {
   name?: string;
 }
 
-const baseURL =
-  process.env.NODE_ENV === "production" ? "https://propreso.com" : "";
+const baseURL = process.env.BASE_URL as string;
 
 // Create a wrapper component to fix type issues
 interface SafeLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
