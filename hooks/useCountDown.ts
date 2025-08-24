@@ -20,7 +20,7 @@ export function useCountdown(initialTime = 0, options: CountdownOptions = {}) {
       try {
         const savedCountdown = localStorage.getItem(persistKey);
         if (savedCountdown) {
-          const { value, expiry } = JSON.parse(savedCountdown);
+          const { expiry } = JSON.parse(savedCountdown);
           // Check if the saved countdown is still valid
           if (expiry > Date.now()) {
             // Calculate remaining time
